@@ -1,19 +1,56 @@
 from __future__ import annotations
 
+from datetime import date
+from pathlib import Path
+
+from src.scoring import score_candidate
+
 
 def build_report(candidates: list[dict]) -> str:
-    lines: list[str] = []
-    lines.append("# Model Scout Report")
-    lines.append("")
-    lines.append(f"- Total candidates: {len(candidates)}")
-    lines.append(f"- {len(candidates)} candidates")
-    lines.append("- Sources: ollama, huggingface")
-    lines.append("")
-    lines.append("## Candidates")
+    scored = [score_candidate(candidate) for candidate in candidates]
+    groups = {
+        "TEST_NOW": "Test Now",
+        "SURPRISE_TEST": "Surprise Candidates",
+        "WATCH": "Watchlist",
+        "IGNORE": "Ignored",
+    }
+    lines = [
+        "# Model Scout Report",
+        "",
+        f"- Generated: {date.today().isoformat()}",
+        f"- Total candidates: {len(scored)}",
+        f"- {len(scored)} candidates",
+        "- Sources: ollama, huggingface, lmarena, artificial_analysis, swebench",
+        "",
+        "## Executive Summary",
+    ]
+    for action, title in groups.items():
+        lines.append(f"- {title}: {sum(item['recommendation'] == action for item in scored)}")
+    lines.extend(["", "## Recommendations"])
+    for action, title in groups.items():
+        lines.extend(["", f"### {title}"])
+        matching = [item for item in scored if item["recommendation"] == action]
+        if not matching:
+            lines.append("- None")
+            continue
+        for candidate in sorted(matching, key=lambda item: item["score"], reverse=True):
+            lines.append(
+                f"- {candidate.get('name', 'unknown')} "
+                f"(score={candidate['score']:.2f}, tier={candidate['hardware_tier']}, "
+                f"source={candidate.get('source', 'unknown')})"
+            )
+    lines.extend(["", "## Candidates"])
 
-    for candidate in candidates:
+    for candidate in scored:
         name = candidate.get("name", "unknown")
         source = candidate.get("source", "unknown")
-        lines.append(f"- {name} ({source})")
+        lines.append(f"- {name} ({source}, {candidate['hardware_tier']}, {candidate['score']:.2f})")
 
     return "\n".join(lines)
+
+
+def write_report(report: str, output_path: str | Path) -> Path:
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(report, encoding="utf-8")
+    return path

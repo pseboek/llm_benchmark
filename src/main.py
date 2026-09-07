@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from datetime import date
 from pathlib import Path
 
 import yaml
@@ -11,8 +12,9 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from benchmark.runner import run_benchmark
+from database import ModelScoutDB
 from pipeline import discover_candidates
-from report import build_report
+from report import build_report, write_report
 from scoring import Candidate, hardware_tier, recommendation, weighted_score
 
 
@@ -66,6 +68,8 @@ def parse_args():
     parser.add_argument("--models", nargs="*", help="Restrict benchmark to specific model names")
     parser.add_argument("--contexts", nargs="*", type=int, help="Context sizes to use for the benchmark")
     parser.add_argument("--hf-limit", type=int, default=10, help="Maximum number of Hugging Face models to inspect")
+    parser.add_argument("--db", default=str(ROOT / "data" / "model_scout.db"), help="SQLite history database path")
+    parser.add_argument("--output", help="Report output path; defaults to reports/YYYY-MM-DD_model_scout.md")
     return parser.parse_args()
 
 
@@ -81,18 +85,33 @@ def main():
         return
 
     if args.run_benchmark:
-        run_benchmark(models=args.models, contexts=args.contexts)
+        results = run_benchmark(models=args.models, contexts=args.contexts)
+        if results:
+            ModelScoutDB(args.db).save_benchmark_runs(results)
         return
 
     if args.discover:
-        candidates = discover_candidates(huggingface_limit=args.hf_limit)
+        candidates = discover_candidates(
+            huggingface_limit=args.hf_limit,
+            enabled_sources={name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()},
+        )
+        ModelScoutDB(args.db).save_candidates(candidates)
         report = build_report(candidates)
         print(report)
         return
 
     if args.report:
-        candidates = discover_candidates(huggingface_limit=args.hf_limit)
-        print(build_report(candidates))
+        candidates = discover_candidates(
+            huggingface_limit=args.hf_limit,
+            enabled_sources={name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()},
+        )
+        db = ModelScoutDB(args.db)
+        db.save_candidates(candidates)
+        report = build_report(candidates)
+        output = args.output or str(ROOT / "reports" / f"{date.today().isoformat()}_model_scout.md")
+        write_report(report, output)
+        print(report)
+        print(f"Report saved to: {output}")
         return
 
     candidates = build_demo_candidates(config)

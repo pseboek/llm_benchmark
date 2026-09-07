@@ -322,6 +322,7 @@ def run_benchmark():
     print("=" * 80)
 
     print_summary(results)
+    return results
 
 
 # ============================================================

@@ -27,7 +27,7 @@ def run_benchmark(models=None, contexts=None):
     if contexts is not None:
         module.CONTEXT_SIZES = contexts
 
-    module.run_benchmark()
+    return module.run_benchmark()
 
 
 def main():

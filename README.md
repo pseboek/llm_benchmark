@@ -56,6 +56,8 @@ Die Ergebnisse werden zusätzlich in einer lokalen SQLite-Datenbank unter `data/
 python src/main.py --report --hf-limit 10
 ```
 
+Der Report wird als Markdown-Datei unter `reports/YYYY-MM-DD_model_scout.md` gespeichert. Mit `--output` kann ein anderer Zielpfad verwendet werden. Discovery- und Benchmark-Daten werden in `data/model_scout.db` archiviert; dieser Pfad kann mit `--db` geändert werden.
+
 ### 3) Lokalen Benchmark ausführen
 
 ```powershell
@@ -113,16 +115,16 @@ python src/main.py --list-models
 
 - Der lokale Benchmark nutzt Ollama auf `http://localhost:11434/api/generate`.
 - Die Discovery-Ausgabe ist bewusst einfach und soll als Grundlage für spätere Scoring- und Ranking-Logik dienen.
-- Die zusätzlichen Quellen sind derzeit als adapterbasierte Vorschau integriert und können später mit echten API-Daten verfeinert werden.
+- Die Kandidaten werden anhand der konfigurierten Gewichtung bewertet und in `TEST_NOW`, `SURPRISE_TEST`, `WATCH` und `IGNORE` eingeteilt.
+- Die Quellenadapter sind fehlertolerant: eine nicht erreichbare externe Quelle verhindert nicht die lokale Ollama-Auswertung.
+- Welche Quellen aktiv sind, wird im Abschnitt `sources` von `config.yaml` gesteuert.
 - Die Dokumentation in [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) beschreibt die nächste Phasen-Planung für Champion/Challenger, Hardware-Fit und Automated Reports.
 
 ## Nächste Erweiterungen
 
-- Source-Adapter für weitere Anbieter ergänzen
-- Datenbankmodell für Benchmarks und Empfehlungen ausbauen
-- Score- und Hardware-Logik tiefer mit echten Benchmarks verknüpfen
-- Historie und Reporting in Dateien oder SQLite abspeichern
-- Auswahl von Kandidaten für automatische Benchmark-Queues
+- Champion/Challenger-Vergleich mit historischen Benchmark-Runs
+- Dashboard für Report-Historie
+- Auswahl von `TEST_NOW`-Kandidaten für manuelle Benchmark-Queues
 
 ## Weiterführende Doku
 
