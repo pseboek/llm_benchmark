@@ -14,13 +14,13 @@ def test_source_status_is_persisted_and_summarized(tmp_path):
     status = {
         "ollama": {"status": "OK", "candidates": 13},
         "huggingface": {"status": "OK", "candidates": 1},
-        "lmarena": {"status": "EMPTY", "candidates": 0},
+        "swebench": {"status": "EMPTY", "candidates": 0},
     }
     db.save_source_status(status)
 
     rows = db.list_source_status()
     assert summarize_source_status(rows) == [
         {"source": "huggingface", "status": "OK", "candidates": 1},
-        {"source": "lmarena", "status": "EMPTY", "candidates": 0},
         {"source": "ollama", "status": "OK", "candidates": 13},
+        {"source": "swebench", "status": "EMPTY", "candidates": 0},
     ]

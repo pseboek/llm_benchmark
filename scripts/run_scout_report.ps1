@@ -8,7 +8,7 @@ $dbPath = Join-Path $projectRoot "data\model_scout.db"
 
 Push-Location $projectRoot
 try {
-    # Live discovery: queries Ollama, Hugging Face and (best-effort) LMArena,
+    # Live discovery: queries Ollama, Hugging Face and (best-effort)
     # Artificial Analysis and SWE-bench. Broken/misconfigured sources report
     # ERROR in the report's Source Status section instead of aborting the run.
     # Starts no downloads and no local model benchmark.
