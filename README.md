@@ -178,6 +178,12 @@ Den Status der Benchmark-Tasks kannst du separat prüfen:
 python src/main.py --task-status --db data/model_scout.db
 ```
 
+Die Discovery-Quellen können separat geprüft werden:
+
+```powershell
+python src/main.py --source-status --offline --hf-limit 0
+```
+
 Fehlgeschlagene Tasks können gezielt wieder freigegeben werden:
 
 ```powershell
