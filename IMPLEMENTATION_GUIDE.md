@@ -537,6 +537,9 @@ ergänzt werden.
 Gespeicherte erfolgreiche Runs werden bei der Report-Erzeugung wieder in die
 Kandidatenprofile und deren Score übernommen.
 
+Der Report weist zusätzlich die gemessene Benchmark-Evidence pro Modell aus:
+Generation tok/s, Quality-Score und Anzahl erfolgreicher Runs.
+
 ### V3
 SQLite-Historie
 
