@@ -91,6 +91,7 @@ def build_report(
         "WATCH": "Watchlist",
         "NEEDS_DATA": "Needs Data",
         "IGNORE": "Ignored",
+        "NOT_LOCAL": "Not Locally Available (Proprietary)",
     }
     lines = [
         "# Model Scout Report",

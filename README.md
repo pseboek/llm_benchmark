@@ -96,6 +96,7 @@ flowchart TD
     B -->|"TEST_NOW / SURPRISE_TEST"| C["7: --queue\nbenchmark_queue.json\n(PENDING_REVIEW)"]
     B -->|"WATCH"| Z["vorerst nicht handeln,\nbei nächstem Scout-Lauf erneut prüfen"]
     B -->|"NEEDS_DATA"| Y["kein Ollama-Tag bekannt:\nmanuell passenden Tag suchen\n(z.B. ollama.com/library)"]
+    B -->|"NOT_LOCAL"| X["proprietäres Cloud-Modell\n(Gemini/Claude/Grok/GPT-4+):\nkein ollama pull möglich,\naus Scope"]
     C --> D["9: --download-queue\ndownload_plan.json\n(PENDING_APPROVAL)"]
     D -->|"--approve-models + --execute-downloads"| E["ollama pull <model>"]
     E --> F["10: --benchmark-plan\nbenchmark_plan.json\n(PENDING_EXECUTION)"]
@@ -110,7 +111,7 @@ flowchart TD
 **Schritt für Schritt:**
 
 1. **Entdecken** ([Schritt 1](#1-kandidaten-entdecken)): `--discover` oder `--report` sammelt Kandidaten aus allen aktiven Quellen und speichert sie in `data/model_scout.db`.
-2. **Einordnen**: Im Report (Abschnitt "Recommendations") bzw. im Dashboard steht pro Kandidat der Score, die Empfehlung (`TEST_NOW`, `SURPRISE_TEST`, `WATCH`, `IGNORE`) und der Bewertungsstatus (`ASSESSED`, `METADATA_ONLY`, `NEEDS_DATA`). Nur `TEST_NOW`/`SURPRISE_TEST`-Kandidaten lohnen in der Regel den nächsten Schritt.
+2. **Einordnen**: Im Report (Abschnitt "Recommendations") bzw. im Dashboard steht pro Kandidat der Score, die Empfehlung (`TEST_NOW`, `SURPRISE_TEST`, `WATCH`, `IGNORE`, `NOT_LOCAL`) und der Bewertungsstatus (`ASSESSED`, `METADATA_ONLY`, `NEEDS_DATA`, `EXTERNAL_ONLY`). Nur `TEST_NOW`/`SURPRISE_TEST`-Kandidaten lohnen in der Regel den nächsten Schritt. Kandidaten mit `NOT_LOCAL` (z.B. Gemini, Claude, Grok, GPT-4/5/6, o1/o3/o4) sind proprietäre Cloud-Modelle ohne veröffentlichte Gewichte und werden automatisch aussortiert, da sie nie per `ollama pull` verfügbar sind.
 3. **In die Queue aufnehmen** ([Schritt 7](#7-manuelle-benchmark-queue-erzeugen)): `--queue` erzeugt `benchmark_queue.json` mit den Top-Kandidaten (`PENDING_REVIEW`), ohne etwas herunterzuladen oder zu testen.
 4. **Download freigeben** ([Schritt 9](#9-download-plan-prüfen-und-freigeben)): `--download-queue` erzeugt zunächst nur `PENDING_APPROVAL`-Einträge. Erst mit expliziten `--approve-models` und `--execute-downloads` wird `ollama pull` ausgeführt. Existiert für einen Hugging-Face-/Artificial-Analysis-/SWE-bench-Kandidaten kein passendes Ollama-Tag, muss der Tag manuell recherchiert werden (z.B. über `ollama.com/library`); ein `ollama pull <tag>` außerhalb der Queue ist dafür der pragmatische Weg.
 5. **Benchmark-Plan erzeugen und ausführen** ([Schritt 10](#10-benchmark-plan-nach-freigabe-erzeugen)): `--benchmark-plan` erstellt je Modell/Kontext/Prompt-Kategorie einen `PENDING_EXECUTION`-Task; `--dry-run-plan` prüft ihn ohne Ollama-Aufruf, `--run-plan` führt ihn aus und speichert Ergebnisse (tok/s, Quality-Score, GPU/CPU-Split, VRAM) in SQLite und CSV.
@@ -414,9 +415,10 @@ sequenceDiagram
 - Endpunkte können über Umgebungsvariablen überschrieben werden; für Artificial Analysis ist `ARTIFICIAL_ANALYSIS_API_KEY` erforderlich.
 - Die Discovery-Ausgabe ist bewusst einfach und soll als Grundlage für spätere Scoring- und Ranking-Logik dienen.
 - Jeder Report enthält eine Source-Coverage mit Kandidatenanzahl pro Quelle; `0` bedeutet, dass die Quelle in diesem Lauf keine verwertbaren Kandidaten geliefert hat.
-- Jeder Kandidat erhält im Report einen Bewertungsstatus: `ASSESSED`, `METADATA_ONLY` oder `NEEDS_DATA`.
+- Jeder Kandidat erhält im Report einen Bewertungsstatus: `ASSESSED`, `METADATA_ONLY`, `NEEDS_DATA` oder `EXTERNAL_ONLY`.
 - Jeder Report enthält zusätzlich den Quellenstatus `OK`, `EMPTY`, `DISABLED` oder `ERROR`, damit leere externe Quellen diagnostizierbar bleiben.
-- Die Kandidaten werden anhand der konfigurierten Gewichtung bewertet und in `TEST_NOW`, `SURPRISE_TEST`, `WATCH` und `IGNORE` eingeteilt.
+- Die Kandidaten werden anhand der konfigurierten Gewichtung bewertet und in `TEST_NOW`, `SURPRISE_TEST`, `WATCH`, `IGNORE` und `NOT_LOCAL` eingeteilt.
+- Kandidaten mit bekannten proprietären Namensmustern (`Gemini`, `Claude`, `Grok`, `GPT-4`/`5`/`6`, `o1`/`o3`/`o4`) aus nicht-Ollama-Quellen werden automatisch als `NOT_LOCAL`/`EXTERNAL_ONLY` markiert, da für sie nie Gewichte veröffentlicht werden und `ollama pull` daher grundsätzlich fehlschlägt (siehe `is_known_proprietary_model` in `src/scoring.py`). Offene Modelle mit ähnlichen Namen wie `gpt-oss` sind davon ausdrücklich ausgenommen.
 - Kandidaten ohne eigene Qualitätsmessung werden als `NEEDS_DATA` mit Score `not assessed` geführt; sie werden nicht fälschlich als `IGNORE` mit neutralem Score bewertet.
 - Die Quellenadapter sind fehlertolerant: eine nicht erreichbare externe Quelle verhindert nicht die lokale Ollama-Auswertung.
 - SWE-bench liefert Kandidaten durch Parsen des in `swebench.com` eingebetteten `leaderboard-data`-JSON-Blocks (keine offizielle API). Artificial Analysis nutzt ohne konfigurierten `ARTIFICIAL_ANALYSIS_API_KEY` einen Best-Effort-Fallback über die auf der Startseite verlinkten Modelle (nur ein Ausschnitt der vollen Rangliste).

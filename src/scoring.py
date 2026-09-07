@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import re
 
 from src.discovery import normalize_model_name
 
@@ -7,6 +8,24 @@ WEIGHTS = {
     "speed": 0.15, "vram_efficiency": 0.10, "context": 0.05,
     "tool_agent": 0.05, "freshness": 0.05,
 }
+
+# Closed, API-only model families that never publish downloadable weights and
+# therefore can never be pulled via `ollama pull`, regardless of the exact
+# name/tag a discovery source reports. Deliberately does NOT match open-weight
+# lookalikes such as "gpt-oss" (OpenAI's open-weight release).
+_PROPRIETARY_NAME_PATTERNS = [
+    re.compile(r"^gemini\b", re.IGNORECASE),
+    re.compile(r"^claude\b", re.IGNORECASE),
+    re.compile(r"^grok\b", re.IGNORECASE),
+    re.compile(r"^(chat)?gpt[\s\-]?\d", re.IGNORECASE),
+    re.compile(r"^o[134](\s|$|-)", re.IGNORECASE),
+]
+
+
+def is_known_proprietary_model(name: str) -> bool:
+    """True for well-known closed, API-only model families (Gemini, Claude, Grok, GPT-4/5/6, o1/o3/o4)."""
+    candidate_name = (name or "").strip()
+    return any(pattern.match(candidate_name) for pattern in _PROPRIETARY_NAME_PATTERNS)
 
 @dataclass
 class Candidate:
@@ -67,10 +86,27 @@ def rationale(score: float, tier: str, action: str, vram_gb: float | None = None
 def score_candidate(candidate: dict, *, weights=None, thresholds=None, hardware_limits=None) -> dict:
     """Add score, hardware tier, and action fields to a candidate record."""
     scored = dict(candidate)
+    name = str(candidate.get("name", "unknown"))
+    source = str(candidate.get("source", "")).lower()
+
+    if source != "ollama" and is_known_proprietary_model(name):
+        scored.update({
+            "score": None,
+            "hardware_tier": "EXTERNAL_ONLY",
+            "recommendation": "NOT_LOCAL",
+            "vram_gb": candidate.get("vram_gb", candidate.get("estimated_vram_gb")),
+            "rationale": (
+                f"NOT_LOCAL: {name} is a closed, API-only model with no published weights; "
+                "it cannot be pulled via `ollama pull` and is out of scope for this local benchmark."
+            ),
+            "assessment_status": "EXTERNAL_ONLY",
+        })
+        return scored
+
     quality_fields = set(WEIGHTS).intersection(candidate)
     has_quality_data = bool(quality_fields)
     model = Candidate(
-        name=str(candidate.get("name", "unknown")),
+        name=name,
         **{field: float(candidate.get(field, 0.0)) for field in WEIGHTS},
         vram_gb=candidate.get("vram_gb", candidate.get("estimated_vram_gb")),
         is_moe=bool(candidate.get("is_moe", False)),
@@ -83,7 +119,7 @@ def score_candidate(candidate: dict, *, weights=None, thresholds=None, hardware_
         active_params_b=model.active_params_b,
         limits=hardware_limits,
     )
-    if model.vram_gb is None and str(candidate.get("source", "")).lower() not in {"", "ollama", "config"}:
+    if model.vram_gb is None and source not in {"", "ollama", "config"}:
         tier = "EXTERNAL"
     action = recommendation(score, tier, thresholds)
     scored.update({
