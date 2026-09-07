@@ -1,9 +1,9 @@
 # Model Scout Report
 
 - Generated: 2026-09-07
-- Total candidates: 14
-- 14 candidates
-- Sources: ollama, huggingface, lmarena, artificial_analysis, swebench
+- Total candidates: 131
+- 131 candidates
+- Sources: ollama, huggingface, artificial_analysis, swebench
 
 ## Executive Summary
 - Benchmark evidence: available
@@ -11,22 +11,20 @@
 - Test Now: 2
 - Surprise Candidates: 0
 - Watchlist: 4
-- Needs Data: 4
-- Ignored: 4
+- Needs Data: 120
+- Ignored: 5
 
 ## Source Coverage
-- ollama: 13
-- huggingface: 1
-- lmarena: 0
-- artificial_analysis: 0
-- swebench: 0
+- ollama: 14
+- huggingface: 2
+- artificial_analysis: 15
+- swebench: 100
 
 ## Source Status
 - ollama: OK
 - huggingface: OK
-- lmarena: EMPTY
-- artificial_analysis: EMPTY
-- swebench: EMPTY
+- artificial_analysis: OK
+- swebench: OK
 
 ## Recommendations
 
@@ -48,14 +46,132 @@
 - nomic-embed-text:latest (score=not assessed, tier=SAFE, source=ollama, VRAM=0.26 GB, assessment=METADATA_ONLY) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier SAFE, estimated VRAM 0.26 GB.
 - qwen2.5-coder:14b (score=not assessed, tier=SAFE, source=ollama, VRAM=8.37 GB, assessment=METADATA_ONLY) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier SAFE, estimated VRAM 8.37 GB.
 - google/electra-base-discriminator (score=not assessed, tier=EXTERNAL, source=huggingface, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Comfy-Org/MiniMax-H3 (score=not assessed, tier=EXTERNAL, source=huggingface, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gpt 6 Astra Non Reasoning (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gpt 6 Astra Low (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gpt 6 Astra Medium (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gpt 6 Astra High (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gpt 6 Astra Xhigh (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gpt 6 Astra (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- K2 Horizon 375B A23B (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Muse Spark 1 3 (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Muse Spark 1 3 Xhigh (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 3 8 Flash Low (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 3 8 Flash Medium (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 3 8 Flash (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude Fable 5 1 High (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude Fable 5 1 Xhigh (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude Fable 5 1 Medium (score=not assessed, tier=EXTERNAL, source=artificial_analysis, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 3 Flash (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 4.6 Opus (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 4.5 Opus (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GLM 5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 3 Pro (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- MiniMax M2.5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Kimi K2.5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 4.5 Sonnet (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 5.2 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 5.2 Codex (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 4.5 Haiku (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- DeepSeek V3.2 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 5 mini (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Multiple (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Undisclosed (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 3.7 Sonnet (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- CodeAct v2.1 (claude-3-5-sonnet-20241022) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 3.5-Sonnet-20241022 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-4o (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 3.5 Sonnet (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-4 (1106) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 3 Opus (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 2 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- SWE-Llama 13B (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- SWE-Llama 7B (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-3.5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Doubao-Seed-Code (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 3 Pro Preview (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 4 Sonnet (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude Sonnet 4 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 4 Opus (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Kimi K2 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Qwen3-Coder-480B-A35B-Instruct (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GLM-4.6 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 5.1 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 5.1 Codex (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- o1-preview (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- o4-mini (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GLM-4.5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Kimi K2 Thinking (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 3.7 Sonnet w/ Review Heavy (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- swe-search (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- MiniMax M2 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- 4x Scaled (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Qwen3-Coder-30B-A3B-Instruct (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- DeepSeek V3.2 Reasoner (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- TTS(Bo16) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- o3 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Devstral Small (2512) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Qwen3-Coder 480B/A35B Instruct (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GLM 4.6 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GLM 4.5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Devstral (2512) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Frogboss 32B 2510 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 2.5 Pro (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Kimi K2 Instruct (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 2.0 Flash (v20241212-experimental) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- TTS(Bo8) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- DevStral Small 2505 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Co-PatcheR (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Frogmini 14B 2510 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 2.0 Flash (Experimental) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- O3 Mini (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Amazon.nova Premier v1:0 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- DeepSWE-Preview (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- DeepSeek V3 0324 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Llama3-SWE-RL-70B (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude 3.5 Haiku (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- SWE-agent-LM-32B (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 4.1 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Qwen2.5 Coder 32B Instruct (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- DevStral Small 2507 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 5 nano (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Qwen2.5 (7B + 72B) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Lingma SWE-GPT 72b (v0925) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 2.5 Flash (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- gpt-oss-120b (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Lingma SWE-GPT 72b (v0918) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 4.1 mini (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- MCTS Refine 7B (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT 4o (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Llama 4 Maverick Instruct (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Lingma SWE-GPT 7b (v0925) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Gemini 2.0 Flash (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Lingma SWE-GPT 7b (v0918) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Llama 4 Scout Instruct (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Qwen2.5-Coder 32B Instruct (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Mixed Models (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-4 (0806) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- DeepSeek V3 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- o3-mini_1.0 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- claude-3-5-sonnet-20241022 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- CodeAct v1.8 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-4o & Claude 3 Opus (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-4 (0613) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-4 (0125) (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- GPT-4.1 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
+- Claude Sonnet 3.5 (score=not assessed, tier=EXTERNAL, source=swebench, VRAM=None GB, assessment=NEEDS_DATA) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
 
 ### Ignored
 - gemma3:4b (score=30.28, tier=SAFE, source=ollama, VRAM=3.11 GB, assessment=ASSESSED) Reason: IGNORE: score 30.28, hardware tier SAFE, estimated VRAM 3.11 GB.
+- qwen3:0.6b (score=28.55, tier=SAFE, source=ollama, VRAM=0.49 GB, assessment=ASSESSED) Reason: IGNORE: score 28.55, hardware tier SAFE, estimated VRAM 0.49 GB.
 - ministral-3:14b (score=25.49, tier=SAFE, source=ollama, VRAM=8.46 GB, assessment=ASSESSED) Reason: IGNORE: score 25.49, hardware tier SAFE, estimated VRAM 8.46 GB.
 - Codestral:latest (score=18.27, tier=SAFE, source=ollama, VRAM=11.71 GB, assessment=ASSESSED) Reason: IGNORE: score 18.27, hardware tier SAFE, estimated VRAM 11.71 GB.
 - devstral-small-2:latest (score=17.05, tier=BORDERLINE, source=ollama, VRAM=14.14 GB, assessment=ASSESSED) Reason: IGNORE: score 17.05, hardware tier BORDERLINE, estimated VRAM 14.14 GB.
 
 ## Candidates
+- qwen3:0.6b (ollama, SAFE, 28.55, VRAM=0.49 GB, assessment=ASSESSED)
 - qwen3.6:27b-q4_K_M (ollama, BORDERLINE, not assessed, VRAM=16.22 GB, assessment=METADATA_ONLY)
 - ministral-3:14b (ollama, SAFE, 25.49, VRAM=8.46 GB, assessment=ASSESSED)
 - devstral-small-2:latest (ollama, BORDERLINE, 17.05, VRAM=14.14 GB, assessment=ASSESSED)
@@ -70,6 +186,122 @@
 - deepseek-r1:8b (ollama, SAFE, 84.65, VRAM=4.87 GB, assessment=ASSESSED)
 - gemma3:4b (ollama, SAFE, 30.28, VRAM=3.11 GB, assessment=ASSESSED)
 - google/electra-base-discriminator (huggingface, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Comfy-Org/MiniMax-H3 (huggingface, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gpt 6 Astra Non Reasoning (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gpt 6 Astra Low (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gpt 6 Astra Medium (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gpt 6 Astra High (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gpt 6 Astra Xhigh (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gpt 6 Astra (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- K2 Horizon 375B A23B (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Muse Spark 1 3 (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Muse Spark 1 3 Xhigh (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 3 8 Flash Low (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 3 8 Flash Medium (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 3 8 Flash (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude Fable 5 1 High (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude Fable 5 1 Xhigh (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude Fable 5 1 Medium (artificial_analysis, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 3 Flash (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 4.6 Opus (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 4.5 Opus (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GLM 5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 3 Pro (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- MiniMax M2.5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Kimi K2.5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 4.5 Sonnet (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 5.2 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 5.2 Codex (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 4.5 Haiku (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- DeepSeek V3.2 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 5 mini (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Multiple (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Undisclosed (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 3.7 Sonnet (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- CodeAct v2.1 (claude-3-5-sonnet-20241022) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 3.5-Sonnet-20241022 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-4o (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 3.5 Sonnet (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-4 (1106) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 3 Opus (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 2 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- SWE-Llama 13B (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- SWE-Llama 7B (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-3.5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Doubao-Seed-Code (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 3 Pro Preview (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 4 Sonnet (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude Sonnet 4 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 4 Opus (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Kimi K2 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Qwen3-Coder-480B-A35B-Instruct (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GLM-4.6 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 5.1 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 5.1 Codex (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- o1-preview (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- o4-mini (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GLM-4.5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Kimi K2 Thinking (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 3.7 Sonnet w/ Review Heavy (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- swe-search (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- MiniMax M2 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- 4x Scaled (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Qwen3-Coder-30B-A3B-Instruct (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- DeepSeek V3.2 Reasoner (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- TTS(Bo16) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- o3 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Devstral Small (2512) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Qwen3-Coder 480B/A35B Instruct (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GLM 4.6 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GLM 4.5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Devstral (2512) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Frogboss 32B 2510 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 2.5 Pro (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Kimi K2 Instruct (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 2.0 Flash (v20241212-experimental) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- TTS(Bo8) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- DevStral Small 2505 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Co-PatcheR (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Frogmini 14B 2510 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 2.0 Flash (Experimental) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- O3 Mini (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Amazon.nova Premier v1:0 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- DeepSWE-Preview (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- DeepSeek V3 0324 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Llama3-SWE-RL-70B (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude 3.5 Haiku (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- SWE-agent-LM-32B (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 4.1 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Qwen2.5 Coder 32B Instruct (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- DevStral Small 2507 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 5 nano (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Qwen2.5 (7B + 72B) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Lingma SWE-GPT 72b (v0925) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 2.5 Flash (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- gpt-oss-120b (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Lingma SWE-GPT 72b (v0918) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 4.1 mini (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- MCTS Refine 7B (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT 4o (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Llama 4 Maverick Instruct (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Lingma SWE-GPT 7b (v0925) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Gemini 2.0 Flash (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Lingma SWE-GPT 7b (v0918) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Llama 4 Scout Instruct (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Qwen2.5-Coder 32B Instruct (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Mixed Models (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-4 (0806) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- DeepSeek V3 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- o3-mini_1.0 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- claude-3-5-sonnet-20241022 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- CodeAct v1.8 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-4o & Claude 3 Opus (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-4 (0613) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-4 (0125) (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- GPT-4.1 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
+- Claude Sonnet 3.5 (swebench, EXTERNAL, not assessed, VRAM=None GB, assessment=NEEDS_DATA)
 
 ## Benchmark Evidence
 - Codestral:latest: 25.85 tok/s, 33.20 quality, runs=30
@@ -82,6 +314,7 @@
 - ministral-3:14b: 67.57 tok/s, 36.67 quality, runs=30
 - qwen2.5-coder:14b-instruct: 58.67 tok/s, 33.53 quality, runs=30
 - qwen3.5:9B: 89.29 tok/s, 36.40 quality, runs=30
+- qwen3:0.6b: 466.10 tok/s, 30.20 quality, runs=30
 
 ### By Context
 - Codestral:latest @ 8192: 47.36 tok/s, 33.20 quality, runs=10
@@ -114,8 +347,12 @@
 - qwen3.5:9B @ 8192: 86.33 tok/s, 36.40 quality, runs=10
 - qwen3.5:9B @ 16384: 89.70 tok/s, 36.40 quality, runs=10
 - qwen3.5:9B @ 32768: 91.84 tok/s, 36.40 quality, runs=10
+- qwen3:0.6b @ 8192: 464.30 tok/s, 30.20 quality, runs=10
+- qwen3:0.6b @ 16384: 466.66 tok/s, 30.20 quality, runs=10
+- qwen3:0.6b @ 32768: 467.33 tok/s, 30.20 quality, runs=10
 
 ## Champion Comparison
+- qwen3:0.6b vs gpt-oss:20b: delta=not assessed (needs_data, speed_delta=+330.46 tok/s, quality_delta=+0.60)
 - qwen3.6:27b-q4_K_M vs gpt-oss:20b: delta=not assessed (needs_data)
 - ministral-3:14b vs gpt-oss:20b: delta=not assessed (needs_data, speed_delta=-68.07 tok/s, quality_delta=+7.07)
 - devstral-small-2:latest vs gpt-oss:20b: delta=not assessed (needs_data, speed_delta=-123.82 tok/s, quality_delta=+6.80)
@@ -130,3 +367,119 @@
 - deepseek-r1:8b vs gpt-oss:20b: delta=not assessed (needs_data, speed_delta=-29.01 tok/s, quality_delta=-15.20)
 - gemma3:4b vs gpt-oss:20b: delta=not assessed (needs_data, speed_delta=+29.46 tok/s, quality_delta=+6.80)
 - google/electra-base-discriminator vs gpt-oss:20b: delta=not assessed (needs_data)
+- Comfy-Org/MiniMax-H3 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gpt 6 Astra Non Reasoning vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gpt 6 Astra Low vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gpt 6 Astra Medium vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gpt 6 Astra High vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gpt 6 Astra Xhigh vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gpt 6 Astra vs gpt-oss:20b: delta=not assessed (needs_data)
+- K2 Horizon 375B A23B vs gpt-oss:20b: delta=not assessed (needs_data)
+- Muse Spark 1 3 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Muse Spark 1 3 Xhigh vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 3 8 Flash Low vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 3 8 Flash Medium vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 3 8 Flash vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude Fable 5 1 High vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude Fable 5 1 Xhigh vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude Fable 5 1 Medium vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 3 Flash vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 4.6 Opus vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 4.5 Opus vs gpt-oss:20b: delta=not assessed (needs_data)
+- GLM 5 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 3 Pro vs gpt-oss:20b: delta=not assessed (needs_data)
+- MiniMax M2.5 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Kimi K2.5 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 4.5 Sonnet vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 5.2 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 5.2 Codex vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 4.5 Haiku vs gpt-oss:20b: delta=not assessed (needs_data)
+- DeepSeek V3.2 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 5 mini vs gpt-oss:20b: delta=not assessed (needs_data)
+- Multiple vs gpt-oss:20b: delta=not assessed (needs_data)
+- Undisclosed vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 3.7 Sonnet vs gpt-oss:20b: delta=not assessed (needs_data)
+- CodeAct v2.1 (claude-3-5-sonnet-20241022) vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 3.5-Sonnet-20241022 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-4o vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 3.5 Sonnet vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-4 (1106) vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 3 Opus vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 2 vs gpt-oss:20b: delta=not assessed (needs_data)
+- SWE-Llama 13B vs gpt-oss:20b: delta=not assessed (needs_data)
+- SWE-Llama 7B vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-3.5 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Doubao-Seed-Code vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 3 Pro Preview vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 4 Sonnet vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude Sonnet 4 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-5 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 4 Opus vs gpt-oss:20b: delta=not assessed (needs_data)
+- Kimi K2 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Qwen3-Coder-480B-A35B-Instruct vs gpt-oss:20b: delta=not assessed (needs_data)
+- GLM-4.6 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 5.1 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 5.1 Codex vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 5 vs gpt-oss:20b: delta=not assessed (needs_data)
+- o1-preview vs gpt-oss:20b: delta=not assessed (needs_data)
+- o4-mini vs gpt-oss:20b: delta=not assessed (needs_data)
+- GLM-4.5 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Kimi K2 Thinking vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 3.7 Sonnet w/ Review Heavy vs gpt-oss:20b: delta=not assessed (needs_data)
+- swe-search vs gpt-oss:20b: delta=not assessed (needs_data)
+- MiniMax M2 vs gpt-oss:20b: delta=not assessed (needs_data)
+- 4x Scaled vs gpt-oss:20b: delta=not assessed (needs_data)
+- Qwen3-Coder-30B-A3B-Instruct vs gpt-oss:20b: delta=not assessed (needs_data)
+- DeepSeek V3.2 Reasoner vs gpt-oss:20b: delta=not assessed (needs_data)
+- TTS(Bo16) vs gpt-oss:20b: delta=not assessed (needs_data)
+- o3 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Devstral Small (2512) vs gpt-oss:20b: delta=not assessed (needs_data)
+- Qwen3-Coder 480B/A35B Instruct vs gpt-oss:20b: delta=not assessed (needs_data)
+- GLM 4.6 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GLM 4.5 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Devstral (2512) vs gpt-oss:20b: delta=not assessed (needs_data)
+- Frogboss 32B 2510 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 2.5 Pro vs gpt-oss:20b: delta=not assessed (needs_data)
+- Kimi K2 Instruct vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 2.0 Flash (v20241212-experimental) vs gpt-oss:20b: delta=not assessed (needs_data)
+- TTS(Bo8) vs gpt-oss:20b: delta=not assessed (needs_data)
+- DevStral Small 2505 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Co-PatcheR vs gpt-oss:20b: delta=not assessed (needs_data)
+- Frogmini 14B 2510 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 2.0 Flash (Experimental) vs gpt-oss:20b: delta=not assessed (needs_data)
+- O3 Mini vs gpt-oss:20b: delta=not assessed (needs_data)
+- Amazon.nova Premier v1:0 vs gpt-oss:20b: delta=not assessed (needs_data)
+- DeepSWE-Preview vs gpt-oss:20b: delta=not assessed (needs_data)
+- DeepSeek V3 0324 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Llama3-SWE-RL-70B vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude 3.5 Haiku vs gpt-oss:20b: delta=not assessed (needs_data)
+- SWE-agent-LM-32B vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 4.1 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Qwen2.5 Coder 32B Instruct vs gpt-oss:20b: delta=not assessed (needs_data)
+- DevStral Small 2507 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 5 nano vs gpt-oss:20b: delta=not assessed (needs_data)
+- Qwen2.5 (7B + 72B) vs gpt-oss:20b: delta=not assessed (needs_data)
+- Lingma SWE-GPT 72b (v0925) vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 2.5 Flash vs gpt-oss:20b: delta=not assessed (needs_data)
+- gpt-oss-120b vs gpt-oss:20b: delta=not assessed (needs_data)
+- Lingma SWE-GPT 72b (v0918) vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 4.1 mini vs gpt-oss:20b: delta=not assessed (needs_data)
+- MCTS Refine 7B vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT 4o vs gpt-oss:20b: delta=not assessed (needs_data)
+- Llama 4 Maverick Instruct vs gpt-oss:20b: delta=not assessed (needs_data)
+- Lingma SWE-GPT 7b (v0925) vs gpt-oss:20b: delta=not assessed (needs_data)
+- Gemini 2.0 Flash vs gpt-oss:20b: delta=not assessed (needs_data)
+- Lingma SWE-GPT 7b (v0918) vs gpt-oss:20b: delta=not assessed (needs_data)
+- Llama 4 Scout Instruct vs gpt-oss:20b: delta=not assessed (needs_data)
+- Qwen2.5-Coder 32B Instruct vs gpt-oss:20b: delta=not assessed (needs_data)
+- Mixed Models vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-4 (0806) vs gpt-oss:20b: delta=not assessed (needs_data)
+- DeepSeek V3 vs gpt-oss:20b: delta=not assessed (needs_data)
+- o3-mini_1.0 vs gpt-oss:20b: delta=not assessed (needs_data)
+- claude-3-5-sonnet-20241022 vs gpt-oss:20b: delta=not assessed (needs_data)
+- CodeAct v1.8 vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-4o & Claude 3 Opus vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-4 (0613) vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-4 (0125) vs gpt-oss:20b: delta=not assessed (needs_data)
+- GPT-4.1 vs gpt-oss:20b: delta=not assessed (needs_data)
+- Claude Sonnet 3.5 vs gpt-oss:20b: delta=not assessed (needs_data)
