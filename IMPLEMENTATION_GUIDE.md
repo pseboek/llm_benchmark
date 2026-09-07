@@ -526,7 +526,7 @@ Ollama-Benchmark integrieren (inklusive persönlicher Prompts, Prompt-tok/s und 
 SQLite-Historie
 
 ### V4
-Streamlit-Dashboard (implementiert in `dashboard.py`)
+Streamlit-Dashboard mit Modell-/Empfehlungsfiltern und Kontextvergleich (implementiert in `dashboard.py`)
 
 ### V5
 automatischer Champion/Challenger-Vergleich (implementiert in `src/scoring.py` und `src/report.py`)

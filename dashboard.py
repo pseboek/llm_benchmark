@@ -32,6 +32,37 @@ def summarize_runs(runs: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_context_runs(runs: list[dict]) -> list[dict]:
+    grouped: dict[tuple[str, int], list[float]] = {}
+    for run in runs:
+        if run.get("status") != "OK":
+            continue
+        key = (str(run.get("model", "unknown")), int(run.get("context", 0)))
+        grouped.setdefault(key, []).append(float(run.get("tok_per_sec", 0)))
+    return [
+        {"model": model, "context": context, "avg_tok_per_sec": round(sum(values) / len(values), 2), "runs": len(values)}
+        for (model, context), values in sorted(grouped.items())
+    ]
+
+
+def filter_dashboard_data(
+    data: dict[str, list[dict]],
+    *,
+    model: str | None = None,
+    recommendation: str | None = None,
+) -> dict[str, list[dict]]:
+    filtered = {key: list(value) for key, value in data.items()}
+    if model:
+        filtered["candidates"] = [item for item in filtered["candidates"] if item.get("name") == model]
+        filtered["recommendations"] = [item for item in filtered["recommendations"] if item.get("model") == model]
+        filtered["benchmark_runs"] = [item for item in filtered["benchmark_runs"] if item.get("model") == model]
+    if recommendation:
+        filtered["recommendations"] = [
+            item for item in filtered["recommendations"] if item.get("recommendation") == recommendation
+        ]
+    return filtered
+
+
 def render_dashboard(db_path: str | Path) -> None:
     import streamlit as st
 
@@ -39,6 +70,16 @@ def render_dashboard(db_path: str | Path) -> None:
     st.set_page_config(page_title="LLM Model Scout", layout="wide")
     st.title("LLM Model Scout")
     st.caption(f"History: {db_path}")
+
+    model_options = ["All"] + sorted({str(item.get("name")) for item in data["candidates"]})
+    selected_model = st.selectbox("Model", model_options)
+    recommendation_options = ["All"] + sorted({str(item.get("recommendation")) for item in data["recommendations"]})
+    selected_recommendation = st.selectbox("Recommendation", recommendation_options)
+    data = filter_dashboard_data(
+        data,
+        model=None if selected_model == "All" else selected_model,
+        recommendation=None if selected_recommendation == "All" else selected_recommendation,
+    )
 
     candidates = data["candidates"]
     recommendations = data["recommendations"]
@@ -57,6 +98,8 @@ def render_dashboard(db_path: str | Path) -> None:
 
     st.subheader("Benchmark throughput")
     st.dataframe(summarize_runs(runs), use_container_width=True, hide_index=True)
+    st.subheader("Throughput by context")
+    st.dataframe(summarize_context_runs(runs), use_container_width=True, hide_index=True)
 
     st.subheader("Discovered candidates")
     st.dataframe(candidates, use_container_width=True, hide_index=True)
