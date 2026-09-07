@@ -88,6 +88,10 @@ Das Dashboard liest die SQLite-Historie und zeigt Kandidaten, Empfehlungen sowie
 streamlit run dashboard.py -- --db data/alternative.db
 ```
 
+### 6) Adaptive Gewichtung prüfen
+
+Die Funktion `src/adaptive.py` kann historische Benchmark-Runs auswerten und eine vorgeschlagene Gewichtung berechnen. Die Änderung wird bewusst nicht automatisch in `config.yaml` geschrieben; dadurch bleibt jede Anpassung nachvollziehbar und reviewbar.
+
 ## Projektstruktur
 
 ```text
@@ -107,6 +111,7 @@ streamlit run dashboard.py -- --db data/alternative.db
 │   ├── database.py
 │   ├── discovery.py
 │   ├── scoring.py
+│   ├── adaptive.py
 │   └── sources/
 │       ├── __init__.py
 │       ├── lmarena.py
