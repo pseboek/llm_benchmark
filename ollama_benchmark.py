@@ -3,6 +3,7 @@ import json
 import time
 import requests
 from datetime import datetime
+from pathlib import Path
 from statistics import mean
 
 from benchmark.prompts import PERSONAL_PROMPTS, PROMPT_VERSION
@@ -15,6 +16,7 @@ from src.grading import grade_response
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 REQUEST_TIMEOUT_SECONDS = 600
+RESULTS_DIR = Path(".")
 
 MODELS = [
     "Codestral:latest",
@@ -134,6 +136,12 @@ def collect_stream_response(lines, started_at, clock=time.perf_counter):
         "load_duration_ns": final_data.get("load_duration", 0),
         "ttft_seconds": first_token_at - started_at if first_token_at is not None else None,
     }
+
+
+def result_path(output_dir, timestamp):
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    return output_dir / f"ollama_benchmark_{timestamp}.csv"
 
 
 def generate(model, prompt, num_ctx, measure_ttft=False):
@@ -344,11 +352,7 @@ def run_benchmark():
     # Save detailed results
     # ========================================================
 
-    filename = (
-        "ollama_benchmark_"
-        + datetime.now().strftime("%Y%m%d_%H%M%S")
-        + ".csv"
-    )
+    filename = result_path(RESULTS_DIR, datetime.now().strftime("%Y%m%d_%H%M%S"))
 
     fieldnames = [
         "timestamp",

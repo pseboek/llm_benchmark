@@ -154,6 +154,7 @@ Dabei werden ausschließlich Tasks mit `PENDING_EXECUTION` ausgeführt und die E
 Die Plan-Datei wird dabei ebenfalls auf `COMPLETED` oder `FAILED` aktualisiert.
 Mit `--max-tasks` kann die Ausführung schrittweise begrenzt werden; nicht ausgewählte Pending-Tasks bleiben offen.
 Mit `--request-timeout 300` kann das Zeitlimit pro Ollama-Anfrage angepasst werden; der Standardwert beträgt 600 Sekunden.
+CSV-Ergebnisse werden standardmäßig unter `data/benchmarks/` gespeichert und können mit `--results-dir` umgeleitet werden.
 
 Vor der Ausführung kann der Plan sicher geprüft werden:
 

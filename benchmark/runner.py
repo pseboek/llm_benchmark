@@ -18,7 +18,7 @@ def load_ollama_benchmark_module():
     return module
 
 
-def run_benchmark(models=None, contexts=None, timeout_seconds=None):
+def run_benchmark(models=None, contexts=None, timeout_seconds=None, results_dir=None):
     module = load_ollama_benchmark_module()
 
     if models is not None:
@@ -28,6 +28,8 @@ def run_benchmark(models=None, contexts=None, timeout_seconds=None):
         module.CONTEXT_SIZES = contexts
     if timeout_seconds is not None:
         module.REQUEST_TIMEOUT_SECONDS = timeout_seconds
+    if results_dir is not None:
+        module.RESULTS_DIR = Path(results_dir)
 
     return module.run_benchmark()
 
@@ -64,10 +66,12 @@ def reset_failed_tasks(plan):
     ]
 
 
-def run_benchmark_plan(plan, timeout_seconds=None):
+def run_benchmark_plan(plan, timeout_seconds=None, results_dir=None):
     module = load_ollama_benchmark_module()
     if timeout_seconds is not None:
         module.REQUEST_TIMEOUT_SECONDS = timeout_seconds
+    if results_dir is not None:
+        module.RESULTS_DIR = Path(results_dir)
     models, contexts, categories = plan_dimensions(plan)
     module.MODELS = models
     module.CONTEXT_SIZES = contexts
