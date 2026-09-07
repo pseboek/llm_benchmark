@@ -4,7 +4,7 @@
     "context": 8192,
     "category": "01 Java",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",

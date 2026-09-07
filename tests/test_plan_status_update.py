@@ -19,3 +19,15 @@ def test_apply_result_statuses_updates_plan_tasks():
 
     assert updated[0]["status"] == "COMPLETED"
     assert updated[1]["status"] == "FAILED"
+
+
+def test_unselected_pending_tasks_remain_pending():
+    plan = [
+        {"model": "model-a", "context": 8192, "category": "01 Java", "status": "PENDING_EXECUTION"},
+        {"model": "model-a", "context": 8192, "category": "02 Spring Boot", "status": "PENDING_EXECUTION"},
+    ]
+
+    updated = apply_result_statuses(plan, [], {("model-a", 8192, "01 Java")})
+
+    assert updated[0]["status"] == "FAILED"
+    assert updated[1]["status"] == "PENDING_EXECUTION"

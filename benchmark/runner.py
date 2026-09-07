@@ -38,7 +38,11 @@ def plan_dimensions(plan):
     return models, contexts, categories
 
 
-def apply_result_statuses(plan, results):
+def apply_result_statuses(plan, results, attempted_tasks=None):
+    attempted = attempted_tasks or {
+        (item.get("model"), item.get("context"), item.get("category"))
+        for item in plan
+    }
     result_status = {
         (item.get("model"), item.get("context"), item.get("category")): "COMPLETED" if item.get("status") == "OK" else "FAILED"
         for item in results
@@ -46,7 +50,7 @@ def apply_result_statuses(plan, results):
     updated = []
     for task in plan:
         key = (task.get("model"), task.get("context"), task.get("category"))
-        fallback = "FAILED" if task.get("status") == "PENDING_EXECUTION" else task.get("status", "PENDING_EXECUTION")
+        fallback = "FAILED" if key in attempted and task.get("status") == "PENDING_EXECUTION" else task.get("status", "PENDING_EXECUTION")
         updated.append({**task, "status": result_status.get(key, fallback)})
     return updated
 

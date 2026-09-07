@@ -159,7 +159,8 @@ def main():
         try:
             results = run_benchmark_plan(plan)
         except Exception:
-            failed_plan = apply_result_statuses(all_plan, [])
+            attempted = {(task.get("model"), task.get("context"), task.get("category")) for task in plan}
+            failed_plan = apply_result_statuses(all_plan, [], attempted)
             Path(args.run_plan).write_text(json.dumps(failed_plan, indent=2), encoding="utf-8")
             for task in plan:
                 db.update_benchmark_task_status(task["model"], task["context"], task["category"], "FAILED")
