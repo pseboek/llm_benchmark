@@ -108,6 +108,16 @@ python src/main.py --queue --baseline-only --output reports/benchmark_queue.json
 
 Die Queue enthält höchstens `--max-candidates` Modelle mit `TEST_NOW` oder `SURPRISE_TEST`. Sie startet keinen Download und keinen Benchmark automatisch; jedes Element bleibt zunächst auf `PENDING_REVIEW`.
 
+### 8) Zweiwöchigen Report automatisieren
+
+Das portable Skript [scripts/run_scout_report.ps1](scripts/run_scout_report.ps1) erzeugt einen Offline-Report mit repository-relativen Pfaden:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_scout_report.ps1
+```
+
+Für den Windows Task Scheduler wird dieses Skript als Aktion mit dem Trigger `Alle 14 Tage` hinterlegt. Es startet keine Downloads und keinen lokalen Modellbenchmark.
+
 ## Projektstruktur
 
 ```text
@@ -118,6 +128,8 @@ Die Queue enthält höchstens `--max-candidates` Modelle mit `TEST_NOW` oder `SU
 ├── requirements.txt
 ├── ollama_benchmark.py
 ├── dashboard.py
+├── scripts/
+│   └── run_scout_report.ps1
 ├── benchmark/
 │   ├── runner.py
 │   └── prompts/
