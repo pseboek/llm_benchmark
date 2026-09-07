@@ -31,7 +31,9 @@ MODELS = [
     "gpt-oss:20b",
     "ministral-3:14b",
     "qwen2.5-coder:14b-instruct",
+    "qwen2.5-coder:14b",
     "qwen3.5:9B",
+    "qwen3.6:27b-q4_K_M",
 ]
 
 # Test all three context sizes
