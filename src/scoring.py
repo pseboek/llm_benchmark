@@ -118,6 +118,36 @@ def enrich_from_baseline(candidate: dict, baseline: list[dict]) -> dict:
     return candidate
 
 
+def enrich_from_benchmark(candidate: dict, runs: list[dict]) -> dict:
+    model_runs = [
+        run for run in runs
+        if run.get("model") == candidate.get("name") and run.get("status") == "OK"
+    ]
+    quality_runs = [run for run in model_runs if run.get("quality_score") is not None]
+    if not model_runs:
+        return candidate
+
+    enriched = dict(candidate)
+    speeds = [float(run.get("tok_per_sec", 0)) for run in model_runs]
+    enriched["speed"] = round(sum(speeds) / len(speeds), 2)
+    coding_categories = ("Java", "Spring", "React", "TypeScript", "SQL", "Debugging", "Architecture", "MCP", "RAG")
+    coding_scores = [
+        float(run["quality_score"])
+        for run in quality_runs
+        if any(category in str(run.get("category", "")) for category in coding_categories)
+    ]
+    reasoning_scores = [
+        float(run["quality_score"])
+        for run in quality_runs
+        if "Reasoning" in str(run.get("category", ""))
+    ]
+    if coding_scores:
+        enriched["coding"] = round(sum(coding_scores) / len(coding_scores), 2)
+    if reasoning_scores:
+        enriched["reasoning"] = round(sum(reasoning_scores) / len(reasoning_scores), 2)
+    return enriched
+
+
 def champion_comparison(candidate: dict, champions: list[dict], *, weights=None, thresholds=None, hardware_limits=None) -> dict:
     scored_candidate = score_candidate(
         candidate,

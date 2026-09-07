@@ -534,6 +534,9 @@ Benchmark-Antworten werden zusätzlich mit dem transparent gekennzeichneten
 dieser später durch domänenspezifische oder menschlich validierte Grader
 ergänzt werden.
 
+Gespeicherte erfolgreiche Runs werden bei der Report-Erzeugung wieder in die
+Kandidatenprofile und deren Score übernommen.
+
 ### V3
 SQLite-Historie
 

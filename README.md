@@ -222,6 +222,7 @@ Dabei werden ausschließlich Tasks mit `PENDING_EXECUTION` ausgeführt und die E
 - Der lokale Benchmark nutzt Ollama auf `http://localhost:11434/api/generate`.
 - Der Benchmark verwendet den versionierten Promptkatalog `v1` und speichert Prompt-Version sowie Prompt-tok/s in SQLite und CSV.
 - Jeder Benchmark-Run erhält zusätzlich einen transparent gekennzeichneten `heuristic_v1`-Quality-Score; dieser ist ein technischer Hinweis und kein menschlicher Qualitätsentscheid.
+- Bei der nächsten Report-Erzeugung werden gespeicherte Benchmark-Runs wieder in Speed-, Coding- und Reasoning-Score der betroffenen Modelle übernommen.
 - TTFT wird im Benchmark über Ollama-Streaming bis zum ersten Antworttoken gemessen und in CSV sowie SQLite gespeichert.
 - Wenn verfügbar, werden zusätzlich GPU-Auslastung, GPU-Speicher, RAM-Nutzung und CPU-Auslastung über `nvidia-smi` und `psutil` erfasst.
 - Ollama-Kandidaten werden über `/api/show` um Architektur, Quantisierung, Parametergröße und Kontextlänge angereichert.
