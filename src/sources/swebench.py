@@ -4,7 +4,7 @@ from typing import Any
 
 import requests
 
-from src.sources.http import request_json
+from src.sources.http import endpoint_from_env, request_json
 
 SWEBENCH_API_URL = "https://api.swebench.com/benchmarks"
 
@@ -29,8 +29,8 @@ def parse_swebench_models(payload: Any) -> list[dict[str, Any]]:
     return parsed
 
 
-def list_swebench_candidates(url: str = SWEBENCH_API_URL) -> list[dict[str, Any]]:
+def list_swebench_candidates(url: str | None = None) -> list[dict[str, Any]]:
     try:
-        return fetch_swebench_models(url)
+        return fetch_swebench_models(url or endpoint_from_env("SWEBENCH_API_URL", SWEBENCH_API_URL))
     except Exception:
         return []

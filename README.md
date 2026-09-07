@@ -274,7 +274,8 @@ python src/main.py --recover-running-tasks --db data/model_scout.db
 
 - Der lokale Benchmark nutzt Ollama auf `http://localhost:11434/api/generate`.
 - Der Benchmark verwendet den versionierten Promptkatalog `v1` und speichert Prompt-Version sowie Prompt-tok/s in SQLite und CSV.
-- Jeder Benchmark-Run erhält zusätzlich einen transparent gekennzeichneten `heuristic_v1`-Quality-Score; dieser ist ein technischer Hinweis und kein menschlicher Qualitätsentscheid.
+- Jeder Benchmark-Run erhält zusätzlich einen transparent gekennzeichneten Quality-Score; dieser ist ein technischer Hinweis und kein menschlicher Qualitätsentscheid.
+- Der aktuelle Grader `heuristic_v2` speichert zusätzlich Teilwerte für Vollständigkeit, Struktur, Relevanz und eine Konfidenz.
 - Bei der nächsten Report-Erzeugung werden gespeicherte Benchmark-Runs wieder in Speed-, Coding- und Reasoning-Score der betroffenen Modelle übernommen.
 - Reports enthalten zusätzlich eine Benchmark-Evidence mit gemessener Geschwindigkeit, Quality-Score, erfolgreicher Run-Anzahl und Kontextvergleich.
 - Fehlerhafte Benchmark-Runs speichern ihren Fehlertext in SQLite, damit Timeouts und Ollama-Probleme im Dashboard nachvollziehbar bleiben.
@@ -283,6 +284,7 @@ python src/main.py --recover-running-tasks --db data/model_scout.db
 - Ollama-Kandidaten werden über `/api/show` um Architektur, Quantisierung, Parametergröße und Kontextlänge angereichert.
 - Hugging Face filtert bekannte Nicht-Text-Generationsmodelle wie Embedding- und Encoder-Modelle aus der LLM-Kandidatenliste.
 - Externe Quellen verwenden `.env`-Tokens, JSON-Validierung, Timeouts und Retries für temporäre HTTP-Fehler.
+- Endpunkte können über Umgebungsvariablen überschrieben werden; für Artificial Analysis ist `ARTIFICIAL_ANALYSIS_API_KEY` erforderlich.
 - Die Discovery-Ausgabe ist bewusst einfach und soll als Grundlage für spätere Scoring- und Ranking-Logik dienen.
 - Jeder Report enthält eine Source-Coverage mit Kandidatenanzahl pro Quelle; `0` bedeutet, dass die Quelle in diesem Lauf keine verwertbaren Kandidaten geliefert hat.
 - Jeder Report enthält zusätzlich den Quellenstatus `OK`, `EMPTY`, `DISABLED` oder `ERROR`, damit leere externe Quellen diagnostizierbar bleiben.

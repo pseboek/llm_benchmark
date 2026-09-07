@@ -4,7 +4,7 @@ from typing import Any
 
 import requests
 
-from src.sources.http import request_json
+from src.sources.http import endpoint_from_env, request_json
 
 LMARENA_API_URL = "https://lmarena.ai/leaderboard"
 
@@ -29,8 +29,8 @@ def parse_lmarena_models(payload: Any) -> list[dict[str, Any]]:
     return parsed
 
 
-def list_lmarena_candidates(url: str = LMARENA_API_URL) -> list[dict[str, Any]]:
+def list_lmarena_candidates(url: str | None = None) -> list[dict[str, Any]]:
     try:
-        return fetch_lmarena_models(url)
+        return fetch_lmarena_models(url or endpoint_from_env("LMARENA_API_URL", LMARENA_API_URL))
     except Exception:
         return []
