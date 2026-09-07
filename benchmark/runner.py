@@ -30,6 +30,23 @@ def run_benchmark(models=None, contexts=None):
     return module.run_benchmark()
 
 
+def plan_dimensions(plan):
+    pending = [item for item in plan if item.get("status") == "PENDING_EXECUTION"]
+    models = sorted({item["model"] for item in pending if item.get("model")})
+    contexts = sorted({int(item["context"]) for item in pending if item.get("context")})
+    categories = list(dict.fromkeys(item["category"] for item in pending if item.get("category")))
+    return models, contexts, categories
+
+
+def run_benchmark_plan(plan):
+    module = load_ollama_benchmark_module()
+    models, contexts, categories = plan_dimensions(plan)
+    module.MODELS = models
+    module.CONTEXT_SIZES = contexts
+    module.PROMPTS = {category: module.PROMPTS[category] for category in categories if category in module.PROMPTS}
+    return module.run_benchmark()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Run the local Ollama benchmark")
     parser.add_argument("--models", nargs="*", help="Specific model names to benchmark")

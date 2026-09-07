@@ -144,6 +144,14 @@ python src/main.py --benchmark-plan reports/benchmark_queue.json --approve-model
 
 Der Plan erzeugt je freigegebenem Modell, Kontext und persönlicher Prompt-Kategorie einen `PENDING_EXECUTION`-Task. Die Ausführung bleibt ein separater, kontrollierbarer Schritt.
 
+Nach Prüfung kann der Plan explizit ausgeführt werden:
+
+```powershell
+python src/main.py --run-plan reports/benchmark_plan.json --db data/model_scout.db
+```
+
+Dabei werden ausschließlich Tasks mit `PENDING_EXECUTION` ausgeführt und die Ergebnisse anschließend in SQLite gespeichert.
+
 ## Projektstruktur
 
 ```text
@@ -227,8 +235,8 @@ Der Plan erzeugt je freigegebenem Modell, Kontext und persönlicher Prompt-Kateg
 
 ## Nächste Erweiterungen
 
-- historische Report-Vergleiche
-- automatische Auswahl von Benchmark-Tasks nach bestätigter Freigabe
+- bessere externe Quellenadapter mit verifizierten API-Endpunkten
+- zusätzliche Qualitätsgrader für Antwortqualität und Coding-Ergebnisse
 
 ## Weiterführende Doku
 
