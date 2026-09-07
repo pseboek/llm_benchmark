@@ -62,6 +62,9 @@ Das System soll **nicht jedes neue Modell automatisch herunterladen**.
 
 Quelle für lokale Verfügbarkeit, Tags, Größen, Kontext, Tools/Thinking und Varianten.
 
+Die Discovery nutzt `/api/tags` für die Liste und `/api/show` für verfügbare
+Architektur-, Quantisierungs-, Parameter- und Kontextmetadaten.
+
 https://ollama.com/library
 
 ### Hugging Face
