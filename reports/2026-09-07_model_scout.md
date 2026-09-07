@@ -23,34 +23,34 @@
 - None
 
 ### Ignored
-- qwen3.6:27b-q4_K_M (score=50.00, tier=UNKNOWN, source=ollama)
-- ministral-3:14b (score=50.00, tier=UNKNOWN, source=ollama)
-- devstral-small-2:latest (score=50.00, tier=UNKNOWN, source=ollama)
-- Codestral:latest (score=50.00, tier=UNKNOWN, source=ollama)
-- qwen3.5:9B (score=50.00, tier=UNKNOWN, source=ollama)
-- gemma4:12B (score=50.00, tier=UNKNOWN, source=ollama)
-- nomic-embed-text:latest (score=50.00, tier=UNKNOWN, source=ollama)
-- qwen2.5-coder:14b-instruct (score=50.00, tier=UNKNOWN, source=ollama)
-- gpt-oss:20b (score=50.00, tier=UNKNOWN, source=ollama)
-- deepseek-coder:latest (score=50.00, tier=UNKNOWN, source=ollama)
-- qwen2.5-coder:14b (score=50.00, tier=UNKNOWN, source=ollama)
-- deepseek-r1:8b (score=50.00, tier=UNKNOWN, source=ollama)
-- gemma3:4b (score=50.00, tier=UNKNOWN, source=ollama)
+- qwen3.6:27b-q4_K_M (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- ministral-3:14b (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- devstral-small-2:latest (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- Codestral:latest (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- qwen3.5:9B (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- gemma4:12B (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- nomic-embed-text:latest (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- qwen2.5-coder:14b-instruct (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- gpt-oss:20b (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- deepseek-coder:latest (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- qwen2.5-coder:14b (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- deepseek-r1:8b (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
+- gemma3:4b (score=50.00, tier=UNKNOWN, source=ollama, VRAM=unknown GB) Reason: IGNORE: score 50.00, hardware tier UNKNOWN, VRAM estimate unavailable.
 
 ## Candidates
-- qwen3.6:27b-q4_K_M (ollama, UNKNOWN, 50.00)
-- ministral-3:14b (ollama, UNKNOWN, 50.00)
-- devstral-small-2:latest (ollama, UNKNOWN, 50.00)
-- Codestral:latest (ollama, UNKNOWN, 50.00)
-- qwen3.5:9B (ollama, UNKNOWN, 50.00)
-- gemma4:12B (ollama, UNKNOWN, 50.00)
-- nomic-embed-text:latest (ollama, UNKNOWN, 50.00)
-- qwen2.5-coder:14b-instruct (ollama, UNKNOWN, 50.00)
-- gpt-oss:20b (ollama, UNKNOWN, 50.00)
-- deepseek-coder:latest (ollama, UNKNOWN, 50.00)
-- qwen2.5-coder:14b (ollama, UNKNOWN, 50.00)
-- deepseek-r1:8b (ollama, UNKNOWN, 50.00)
-- gemma3:4b (ollama, UNKNOWN, 50.00)
+- qwen3.6:27b-q4_K_M (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- ministral-3:14b (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- devstral-small-2:latest (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- Codestral:latest (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- qwen3.5:9B (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- gemma4:12B (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- nomic-embed-text:latest (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- qwen2.5-coder:14b-instruct (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- gpt-oss:20b (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- deepseek-coder:latest (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- qwen2.5-coder:14b (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- deepseek-r1:8b (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
+- gemma3:4b (ollama, UNKNOWN, 50.00, VRAM=unknown GB)
 
 ## Champion Comparison
 - qwen3.6:27b-q4_K_M vs gpt-oss:20b: delta=+0.00 (champion)
