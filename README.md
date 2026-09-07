@@ -118,6 +118,20 @@ powershell -ExecutionPolicy Bypass -File scripts/run_scout_report.ps1
 
 Für den Windows Task Scheduler wird dieses Skript als Aktion mit dem Trigger `Alle 14 Tage` hinterlegt. Es startet keine Downloads und keinen lokalen Modellbenchmark.
 
+### 9) Download-Plan prüfen und freigeben
+
+```powershell
+python src/main.py --download-queue reports/benchmark_queue.json --output reports/download_plan.json
+```
+
+Das erzeugt zunächst nur `PENDING_APPROVAL`-Einträge. Nach manueller Prüfung können ausgewählte Modelle explizit freigegeben und ausgeführt werden:
+
+```powershell
+python src/main.py --download-queue reports/benchmark_queue.json --approve-models deepseek-coder:latest --execute-downloads
+```
+
+Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
+
 ## Projektstruktur
 
 ```text
@@ -128,6 +142,10 @@ Für den Windows Task Scheduler wird dieses Skript als Aktion mit dem Trigger `A
 ├── requirements.txt
 ├── ollama_benchmark.py
 ├── dashboard.py
+├── reports/
+│   ├── benchmark_queue.json
+│   ├── download_plan.json
+│   └── offline_model_scout.md
 ├── scripts/
 │   └── run_scout_report.ps1
 ├── benchmark/

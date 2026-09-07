@@ -524,7 +524,7 @@ Streamlit-Dashboard (implementiert in `dashboard.py`)
 automatischer Champion/Challenger-Vergleich (implementiert in `src/scoring.py` und `src/report.py`)
 
 ### V6
-automatische Downloads ausgewählter Kandidaten
+kontrollierte Downloads ausgewählter Kandidaten (implementiert als Planungs- und Freigabefluss in `src/download_queue.py`)
 
 ### V7
 adaptive Gewichte anhand historischer Benchmarks (Vorschlag in `src/adaptive.py`, keine automatische Konfigurationsänderung)
