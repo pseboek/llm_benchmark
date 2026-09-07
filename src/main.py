@@ -20,7 +20,7 @@ from src.benchmark_plan import build_benchmark_plan, write_benchmark_plan
 from src.download_queue import build_download_plan, execute_download_plan, load_queue, write_download_plan
 from src.pipeline import discover_candidates
 from src.report import build_report, build_report_snapshot, write_report
-from src.scoring import Candidate, enrich_from_baseline, hardware_tier, recommendation, score_candidate, weighted_score
+from src.scoring import Candidate, enrich_from_baseline, enrich_from_benchmark, hardware_tier, recommendation, score_candidate, weighted_score
 
 
 def load_config():
@@ -182,6 +182,7 @@ def main():
         candidates = candidates or build_baseline_records(config)
         candidates = [enrich_from_baseline(candidate, config.get("baseline", [])) for candidate in candidates]
         db = ModelScoutDB(args.db)
+        candidates = [enrich_from_benchmark(candidate, db.list_benchmark_runs()) for candidate in candidates]
         db.save_candidates(candidates)
         db.save_recommendations([score_candidate(candidate) for candidate in candidates])
         report = build_report(
