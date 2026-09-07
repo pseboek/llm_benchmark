@@ -159,6 +159,27 @@ def main():
             for result in results:
                 status = "COMPLETED" if result.get("status") == "OK" else "FAILED"
                 db.update_benchmark_task_status(result["model"], result["context"], result["category"], status)
+            candidates = [
+                enrich_from_benchmark(enrich_from_baseline(candidate, config.get("baseline", [])), db.list_benchmark_runs())
+                for candidate in db.list_candidates()
+            ]
+            db.save_recommendations([
+                score_candidate(
+                    candidate,
+                    weights=config.get("scoring"),
+                    thresholds=config.get("thresholds"),
+                    hardware_limits=config.get("hardware", {}).get("vram"),
+                )
+                for candidate in candidates
+            ])
+            db.save_report_snapshot({
+                **build_report_snapshot(
+                    candidates,
+                    config.get("scoring"),
+                    {**config.get("hardware", {}), "thresholds": config.get("thresholds", {})},
+                ),
+                "output_path": args.run_plan,
+            })
         return
 
     if args.dry_run_plan:
