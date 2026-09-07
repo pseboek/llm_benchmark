@@ -105,6 +105,19 @@ def summarize_quality(runs: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_errors(runs: list[dict]) -> list[dict]:
+    return [
+        {
+            "model": run.get("model", MISSING_VALUE),
+            "context": run.get("context", MISSING_VALUE),
+            "category": run.get("category", MISSING_VALUE),
+            "error": run.get("error", MISSING_VALUE),
+        }
+        for run in runs
+        if run.get("status") == "ERROR"
+    ]
+
+
 def summarize_source_status(rows: list[dict]) -> list[dict]:
     latest: dict[str, dict] = {}
     for row in rows:
@@ -194,6 +207,7 @@ def render_dashboard(db_path: str | Path) -> None:
     show_table(st, "Recommendations", recommendations, "No recommendations match the selected filters.")
     show_table(st, "Benchmark throughput", summarize_runs(runs), "No successful benchmark runs are stored yet.")
     show_table(st, "Quality by category", summarize_quality(runs), "Quality scores appear after a benchmark plan has run.")
+    show_table(st, "Benchmark errors", summarize_errors(runs), "No failed benchmark runs recorded.")
     show_table(st, "Throughput by context", summarize_context_runs(runs), "Context throughput appears after a successful benchmark run.")
     show_table(st, "Hardware telemetry", summarize_telemetry(runs), "Hardware telemetry appears after a successful benchmark run.")
     show_table(st, "Report history", summarize_report_history(data["report_snapshots"]), "Report history appears after the next report run.")
