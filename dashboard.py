@@ -118,6 +118,18 @@ def summarize_errors(runs: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_task_progress(tasks: list[dict]) -> list[dict]:
+    counts: dict[str, int] = {}
+    for task in tasks:
+        status = str(task.get("status", "UNKNOWN"))
+        counts[status] = counts.get(status, 0) + 1
+    total = sum(counts.values())
+    return [
+        {"status": status, "tasks": count, "percent": round(count / total * 100, 2) if total else 0.0}
+        for status, count in sorted(counts.items())
+    ]
+
+
 def dashboard_metrics(recommendations: list[dict], runs: list[dict]) -> dict[str, int]:
     return {
         "test_now": sum(item.get("recommendation") == "TEST_NOW" for item in recommendations),
@@ -222,6 +234,7 @@ def render_dashboard(db_path: str | Path) -> None:
     show_table(st, "Hardware telemetry", summarize_telemetry(runs), "Hardware telemetry appears after a successful benchmark run.")
     show_table(st, "Report history", summarize_report_history(data["report_snapshots"]), "Report history appears after the next report run.")
     show_table(st, "Benchmark task status", data["benchmark_tasks"], "Benchmark tasks appear after an approved plan is created.")
+    show_table(st, "Benchmark progress", summarize_task_progress(data["benchmark_tasks"]), "Benchmark progress appears after an approved plan is created.")
     show_table(st, "Source status", summarize_source_status(data["source_status"]), "Source status appears after the next discovery run.")
     show_table(st, "Discovered candidates", candidates, "No candidates were discovered for the selected filters.")
 
