@@ -45,18 +45,27 @@ def test_parse_artificial_analysis_models_extracts_names():
 
 
 def test_parse_swebench_models_extracts_names():
-    payload = {
-        "tasks": [
-            {"repo": "langchain-ai/langchain"},
-            {"repo": "pallets/flask"},
-        ]
-    }
+    payload = [
+        {
+            "name": "Verified",
+            "results": [
+                {"model_display": "Claude 4.5 Opus", "model_org": "Anthropic"},
+                {"model_display": "GPT 5.2", "model_org": "OpenAI"},
+            ],
+        },
+        {
+            "name": "Lite",
+            "results": [
+                {"model_display": "Claude 4.5 Opus", "model_org": "Anthropic"},
+            ],
+        },
+    ]
 
     models = parse_swebench_models(payload)
 
     assert models == [
-        {"name": "langchain-ai/langchain", "source": "swebench"},
-        {"name": "pallets/flask", "source": "swebench"},
+        {"name": "Claude 4.5 Opus", "source": "swebench"},
+        {"name": "GPT 5.2", "source": "swebench"},
     ]
 
 

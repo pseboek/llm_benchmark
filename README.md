@@ -386,12 +386,13 @@ sequenceDiagram
 - Die Kandidaten werden anhand der konfigurierten Gewichtung bewertet und in `TEST_NOW`, `SURPRISE_TEST`, `WATCH` und `IGNORE` eingeteilt.
 - Kandidaten ohne eigene Qualitätsmessung werden als `NEEDS_DATA` mit Score `not assessed` geführt; sie werden nicht fälschlich als `IGNORE` mit neutralem Score bewertet.
 - Die Quellenadapter sind fehlertolerant: eine nicht erreichbare externe Quelle verhindert nicht die lokale Ollama-Auswertung.
+- SWE-bench liefert Kandidaten durch Parsen des in `swebench.com` eingebetteten `leaderboard-data`-JSON-Blocks (keine offizielle API). Artificial Analysis nutzt ohne konfigurierten `ARTIFICIAL_ANALYSIS_API_KEY` einen Best-Effort-Fallback über die auf der Startseite verlinkten Modelle (nur ein Ausschnitt der vollen Rangliste). LMArena (`arena.ai`) ist eine rein clientseitig gerenderte Seite hinter einem Cookie-Consent-Layer und liefert ohne echten Browser keine Daten; die Quelle bleibt als `ERROR` sichtbar.
 - Welche Quellen aktiv sind, wird im Abschnitt `sources` von `config.yaml` gesteuert.
 - [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) beschreibt Architektur, Datenmodell und verbleibende Betriebsschritte.
 
 ## Nächste Erweiterungen
 
-- bessere externe Quellenadapter mit verifizierten API-Endpunkten
+- echte API-Anbindung für LMArena, sobald ein verifizierter, maschinenlesbarer Endpunkt verfügbar ist
 - zusätzliche Qualitätsgrader für Antwortqualität und Coding-Ergebnisse
 
 ## Weiterführende Doku
