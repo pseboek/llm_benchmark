@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from benchmark.runner import run_benchmark
+from benchmark.runner import run_benchmark, run_benchmark_plan
 from src.adaptive import adaptive_weights
 from src.database import ModelScoutDB
 from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
@@ -105,6 +105,7 @@ def parse_args():
     parser.add_argument("--execute-downloads", action="store_true", help="Execute approved ollama pull commands")
     parser.add_argument("--suggest-weights", action="store_true", help="Suggest scoring weights from benchmark history")
     parser.add_argument("--benchmark-plan", help="Create benchmark tasks from an approved model queue")
+    parser.add_argument("--run-plan", help="Execute a previously generated benchmark plan")
     return parser.parse_args()
 
 
@@ -133,6 +134,13 @@ def main():
 
     if args.run_benchmark:
         results = run_benchmark(models=args.models, contexts=args.contexts)
+        if results:
+            ModelScoutDB(args.db).save_benchmark_runs(results)
+        return
+
+    if args.run_plan:
+        plan = load_queue(args.run_plan)
+        results = run_benchmark_plan(plan)
         if results:
             ModelScoutDB(args.db).save_benchmark_runs(results)
         return
