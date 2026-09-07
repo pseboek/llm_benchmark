@@ -55,6 +55,13 @@ def apply_result_statuses(plan, results, attempted_tasks=None):
     return updated
 
 
+def reset_failed_tasks(plan):
+    return [
+        {**task, "status": "PENDING_EXECUTION" if task.get("status") == "FAILED" else task.get("status", "PENDING_EXECUTION")}
+        for task in plan
+    ]
+
+
 def run_benchmark_plan(plan):
     module = load_ollama_benchmark_module()
     models, contexts, categories = plan_dimensions(plan)

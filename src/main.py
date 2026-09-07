@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from benchmark.runner import apply_result_statuses, run_benchmark, run_benchmark_plan
+from benchmark.runner import apply_result_statuses, reset_failed_tasks, run_benchmark, run_benchmark_plan
 from src.adaptive import adaptive_weights
 from src.database import ModelScoutDB
 from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
@@ -110,6 +110,7 @@ def parse_args():
     parser.add_argument("--dry-run-plan", help="Show pending benchmark tasks without executing Ollama")
     parser.add_argument("--db-summary", action="store_true", help="Show a compact SQLite data summary")
     parser.add_argument("--task-status", action="store_true", help="Show benchmark task status counts")
+    parser.add_argument("--retry-failed-plan", help="Reset failed benchmark tasks to pending execution")
     return parser.parse_args()
 
 
@@ -130,6 +131,16 @@ def main():
 
     if args.task_status:
         print(json.dumps(ModelScoutDB(args.db).benchmark_task_summary(), indent=2))
+        return
+
+    if args.retry_failed_plan:
+        db = ModelScoutDB(args.db)
+        plan = reset_failed_tasks(load_queue(args.retry_failed_plan))
+        Path(args.retry_failed_plan).write_text(json.dumps(plan, indent=2), encoding="utf-8")
+        for task in plan:
+            if task.get("status") == "PENDING_EXECUTION":
+                db.update_benchmark_task_status(task["model"], task["context"], task["category"], "PENDING_EXECUTION")
+        print(json.dumps({"reset_tasks": sum(task.get("status") == "PENDING_EXECUTION" for task in plan)}, indent=2))
         return
 
     if args.suggest_weights:
