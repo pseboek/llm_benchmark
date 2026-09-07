@@ -115,6 +115,8 @@ def filter_dashboard_data(
     *,
     model: str | None = None,
     recommendation: str | None = None,
+    source: str | None = None,
+    hardware_tier: str | None = None,
 ) -> dict[str, list[dict]]:
     filtered = {key: list(value) for key, value in data.items()}
     if model:
@@ -125,6 +127,10 @@ def filter_dashboard_data(
         filtered["recommendations"] = [
             item for item in filtered["recommendations"] if item.get("recommendation") == recommendation
         ]
+    if source:
+        filtered["candidates"] = [item for item in filtered["candidates"] if item.get("source") == source]
+    if hardware_tier:
+        filtered["candidates"] = [item for item in filtered["candidates"] if item.get("hardware_tier") == hardware_tier]
     return filtered
 
 
@@ -156,10 +162,16 @@ def render_dashboard(db_path: str | Path) -> None:
     selected_model = st.selectbox("Model", model_options)
     recommendation_options = ["All"] + sorted({str(item.get("recommendation")) for item in data["recommendations"]})
     selected_recommendation = st.selectbox("Recommendation", recommendation_options)
+    source_options = ["All"] + sorted({str(item.get("source")) for item in data["candidates"]})
+    selected_source = st.selectbox("Source", source_options)
+    tier_options = ["All"] + sorted({str(item.get("hardware_tier")) for item in data["candidates"] if item.get("hardware_tier")})
+    selected_tier = st.selectbox("Hardware tier", tier_options)
     data = filter_dashboard_data(
         data,
         model=None if selected_model == "All" else selected_model,
         recommendation=None if selected_recommendation == "All" else selected_recommendation,
+        source=None if selected_source == "All" else selected_source,
+        hardware_tier=None if selected_tier == "All" else selected_tier,
     )
 
     candidates = data["candidates"]
