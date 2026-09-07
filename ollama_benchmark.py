@@ -14,6 +14,7 @@ from src.grading import grade_response
 # ============================================================
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
+REQUEST_TIMEOUT_SECONDS = 600
 
 MODELS = [
     "Codestral:latest",
@@ -152,7 +153,7 @@ def generate(model, prompt, num_ctx, measure_ttft=False):
 
     start = time.perf_counter()
 
-    response = requests.post(OLLAMA_URL, json=payload, timeout=600, stream=measure_ttft)
+    response = requests.post(OLLAMA_URL, json=payload, timeout=REQUEST_TIMEOUT_SECONDS, stream=measure_ttft)
 
     response.raise_for_status()
 
