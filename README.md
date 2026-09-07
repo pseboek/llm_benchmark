@@ -76,6 +76,18 @@ python src/main.py --run-benchmark
 python src/main.py --list-models
 ```
 
+### 5) Dashboard starten
+
+```powershell
+streamlit run dashboard.py
+```
+
+Das Dashboard liest die SQLite-Historie und zeigt Kandidaten, Empfehlungen sowie durchschnittliche Benchmark-Geschwindigkeit. Ein anderer Datenbankpfad kann über den Startparameter gesetzt werden:
+
+```powershell
+streamlit run dashboard.py -- --db data/alternative.db
+```
+
 ## Projektstruktur
 
 ```text
@@ -85,6 +97,7 @@ python src/main.py --list-models
 ├── config.yaml
 ├── requirements.txt
 ├── ollama_benchmark.py
+├── dashboard.py
 ├── benchmark/
 │   └── runner.py
 ├── src/
@@ -105,7 +118,8 @@ python src/main.py --list-models
 │   ├── test_discovery.py
 │   ├── test_ollama_source.py
 │   ├── test_huggingface_source.py
-│   └── test_report.py
+│   ├── test_report.py
+│   └── test_dashboard.py
 ├── data/
 ├── reports/
 └── .env.example
