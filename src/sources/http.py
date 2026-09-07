@@ -10,6 +10,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def endpoint_from_env(env_name: str, default: str) -> str:
+    return os.getenv(env_name, default).strip() or default
+
+
 def request_json(
     url: str,
     *,
@@ -17,10 +21,13 @@ def request_json(
     token_env: str | None = None,
     timeout: int = 30,
     retries: int = 2,
+    token_required: bool = False,
     request_get: Callable[..., Any] = requests.get,
 ) -> Any:
     headers = {"Accept": "application/json"}
     token = os.getenv(token_env) if token_env else None
+    if token_required and not token:
+        raise RuntimeError(f"Required API token is missing: {token_env}")
     if token:
         headers["Authorization"] = f"Bearer {token}"
 

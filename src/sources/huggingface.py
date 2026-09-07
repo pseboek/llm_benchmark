@@ -4,7 +4,7 @@ from typing import Any
 
 import requests
 
-from src.sources.http import request_json
+from src.sources.http import endpoint_from_env, request_json
 
 HUGGINGFACE_API_URL = "https://huggingface.co/api/models"
 
@@ -15,7 +15,7 @@ def fetch_huggingface_models(limit: int = 10, search: str | None = None) -> list
         params["search"] = search
 
     payload = request_json(
-        HUGGINGFACE_API_URL,
+        endpoint_from_env("HUGGINGFACE_API_URL", HUGGINGFACE_API_URL),
         params=params,
         token_env="HUGGINGFACE_TOKEN",
     )

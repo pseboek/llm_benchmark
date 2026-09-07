@@ -530,7 +530,8 @@ Discovery + Scoring + Markdown Report
 Ollama-Benchmark integrieren (inklusive persönlicher Prompts, Prompt-tok/s und TTFT)
 
 Benchmark-Antworten werden zusätzlich mit dem transparent gekennzeichneten
-`heuristic_v1`-Grader bewertet. Für produktive Qualitätsentscheidungen sollte
+`heuristic_v2`-Grader bewertet. Er liefert Teilwerte für Vollständigkeit,
+Struktur und Relevanz sowie eine Konfidenz. Für produktive Qualitätsentscheidungen sollte
 dieser später durch domänenspezifische oder menschlich validierte Grader
 ergänzt werden.
 

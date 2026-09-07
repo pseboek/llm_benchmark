@@ -276,6 +276,7 @@ def run_benchmark():
                         f"{result['tok_per_sec']:>7.2f} tok/s"
                     )
 
+                    graded = grade_response(result["response"], category)
                     results.append({
                         "timestamp": timestamp,
                         "model": model,
@@ -311,9 +312,11 @@ def run_benchmark():
                             result["total_duration_ns"]
                             / 1_000_000_000,
 
-                        "response":
-                            result["response"]
-                        , **grade_response(result["response"], category)
+                        "response": result["response"],
+                        "quality_score": graded["quality_score"],
+                        "quality_method": graded["quality_method"],
+                        "quality_confidence": graded["quality_confidence"],
+                        "quality_components": json.dumps(graded["quality_components"]),
                     })
 
                 except Exception as e:
@@ -343,7 +346,9 @@ def run_benchmark():
                         "total_seconds": 0,
                         "response": "",
                         "quality_score": 0.0,
-                        "quality_method": "heuristic_v1",
+                        "quality_method": "heuristic_v2",
+                        "quality_confidence": 0.0,
+                        "quality_components": "{}",
                         "error": str(e)
                     })
 
@@ -370,6 +375,8 @@ def run_benchmark():
         "ttft_seconds",
         "quality_score",
         "quality_method",
+        "quality_confidence",
+        "quality_components",
         "gpu_utilization_percent",
         "gpu_memory_used_mb",
         "gpu_memory_total_mb",
