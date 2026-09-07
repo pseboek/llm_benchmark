@@ -529,6 +529,11 @@ Discovery + Scoring + Markdown Report
 ### V2
 Ollama-Benchmark integrieren (inklusive persönlicher Prompts, Prompt-tok/s und TTFT)
 
+Benchmark-Antworten werden zusätzlich mit dem transparent gekennzeichneten
+`heuristic_v1`-Grader bewertet. Für produktive Qualitätsentscheidungen sollte
+dieser später durch domänenspezifische oder menschlich validierte Grader
+ergänzt werden.
+
 ### V3
 SQLite-Historie
 
