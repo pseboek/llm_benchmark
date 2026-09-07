@@ -363,6 +363,8 @@ def run_benchmark():
         "prompt_seconds",
         "prompt_tok_per_sec",
         "ttft_seconds",
+        "quality_score",
+        "quality_method",
         "gpu_utilization_percent",
         "gpu_memory_used_mb",
         "gpu_memory_total_mb",
