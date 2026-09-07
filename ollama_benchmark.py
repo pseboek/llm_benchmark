@@ -154,6 +154,63 @@ def result_path(output_dir, timestamp):
     return output_dir / f"ollama_benchmark_{timestamp}.csv"
 
 
+def get_gpu_cpu_split(model):
+    """Query `ollama ps` for the GPU/CPU memory split of the resident model."""
+    try:
+        response = requests.get("http://localhost:11434/api/ps", timeout=10)
+        response.raise_for_status()
+        loaded = response.json().get("models", [])
+    except Exception:
+        return None
+
+    for entry in loaded:
+        name = entry.get("name") or entry.get("model")
+        if name != model:
+            continue
+        size = entry.get("size") or 0
+        size_vram = entry.get("size_vram") or 0
+        if not size:
+            return None
+        gpu_percent = round(size_vram / size * 100, 1)
+        return {"gpu_percent": gpu_percent, "cpu_percent": round(100 - gpu_percent, 1)}
+
+    return None
+
+
+def print_block_summary(model, tok_per_sec_values, telemetry):
+    """Print avg/min/max tok/s, GPU/CPU split and nvidia-smi readout for one context block."""
+    print("-" * 80)
+
+    if tok_per_sec_values:
+        print(
+            f"BLOCK SUMMARY: avg {mean(tok_per_sec_values):.2f} tok/s | "
+            f"min {min(tok_per_sec_values):.2f} tok/s | "
+            f"max {max(tok_per_sec_values):.2f} tok/s"
+        )
+    else:
+        print("BLOCK SUMMARY: no successful runs")
+
+    split = get_gpu_cpu_split(model)
+    if split:
+        print(
+            f"GPU/CPU SPLIT:  {split['gpu_percent']:.1f}% GPU / "
+            f"{split['cpu_percent']:.1f}% CPU (ollama ps)"
+        )
+    else:
+        print("GPU/CPU SPLIT:  n/a (model not resident / ollama ps unavailable)")
+
+    if telemetry and telemetry.get("gpu_utilization_percent") is not None:
+        print(
+            f"NVIDIA-SMI:     GPU util {telemetry['gpu_utilization_percent']:.1f}% | "
+            f"VRAM {telemetry.get('gpu_memory_used_mb') or 0:.0f}/"
+            f"{telemetry.get('gpu_memory_total_mb') or 0:.0f} MB"
+        )
+    else:
+        print("NVIDIA-SMI:     n/a")
+
+    print("-" * 80)
+
+
 def unload_loaded_models():
     """Evict any models still resident in VRAM from a previous run/session.
 
@@ -303,6 +360,9 @@ def run_benchmark():
             # Ollama will unload/reload if necessary.
             # ------------------------------------------------
 
+            block_tok_per_sec = []
+            block_telemetry = None
+
             for category, prompt in PROMPTS.items():
 
                 current_run += 1
@@ -334,6 +394,9 @@ def run_benchmark():
                     print(
                         f"{result['tok_per_sec']:>7.2f} tok/s"
                     )
+
+                    block_tok_per_sec.append(result["tok_per_sec"])
+                    block_telemetry = telemetry_after
 
                     graded = grade_response(result["response"], category)
                     results.append({
@@ -424,6 +487,7 @@ def run_benchmark():
                         "error": str(e)
                     })
 
+            print_block_summary(model, block_tok_per_sec, block_telemetry)
 
     # ========================================================
     # Save detailed results
