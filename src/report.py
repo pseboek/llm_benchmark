@@ -6,8 +6,24 @@ from pathlib import Path
 from src.scoring import champion_comparison, score_candidate
 
 
-def build_report(candidates: list[dict], champions: list[dict] | None = None) -> str:
-    scored = [score_candidate(candidate) for candidate in candidates]
+def build_report(
+    candidates: list[dict],
+    champions: list[dict] | None = None,
+    scoring_config: dict | None = None,
+    hardware_config: dict | None = None,
+) -> str:
+    scoring_config = scoring_config or {}
+    hardware_limits = (hardware_config or {}).get("vram", {})
+    thresholds = (hardware_config or {}).get("thresholds")
+    scored = [
+        score_candidate(
+            candidate,
+            weights=scoring_config,
+            thresholds=thresholds,
+            hardware_limits=hardware_limits,
+        )
+        for candidate in candidates
+    ]
     groups = {
         "TEST_NOW": "Test Now",
         "SURPRISE_TEST": "Surprise Candidates",
@@ -49,7 +65,13 @@ def build_report(candidates: list[dict], champions: list[dict] | None = None) ->
     if champions is not None:
         lines.extend(["", "## Champion Comparison"])
         for candidate in scored:
-            comparison = champion_comparison(candidate, champions)
+            comparison = champion_comparison(
+                candidate,
+                champions,
+                weights=scoring_config,
+                thresholds=thresholds,
+                hardware_limits=hardware_limits,
+            )
             if comparison["champion"] is None:
                 lines.append(f"- {comparison['candidate']}: no champion configured")
             else:
