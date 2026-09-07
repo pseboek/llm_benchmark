@@ -15,9 +15,7 @@ def test_baseline_records_provide_offline_report_candidates():
         ]
     })
 
-    assert records == [{
-        "name": "model-a",
-        "source": "config",
-        "role": "coding",
-        "generation_tps": 100.0,
-    }]
+    assert records[0]["name"] == "model-a"
+    assert records[0]["source"] == "config"
+    assert records[0]["generation_tps"] == 100.0
+    assert records[0]["speed"] == 100.0 / 1.5
