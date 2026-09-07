@@ -537,6 +537,10 @@ automatischer Champion/Challenger-Vergleich (implementiert in `src/scoring.py` u
 ### V6
 kontrollierte Downloads ausgewählter Kandidaten (implementiert als Planungs- und Freigabefluss in `src/download_queue.py`)
 
+Nach einer expliziten Freigabe erzeugt `src/benchmark_plan.py` aus den
+freigegebenen Modellen, konfigurierten Kontextgrößen und dem versionierten
+Promptkatalog reproduzierbare `PENDING_EXECUTION`-Tasks.
+
 ### V7
 adaptive Gewichte anhand historischer Benchmarks (Vorschlag in `src/adaptive.py` und über `--suggest-weights`, keine automatische Konfigurationsänderung)
 
