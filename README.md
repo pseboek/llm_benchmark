@@ -270,7 +270,7 @@ python src/main.py --recover-running-tasks --db data/model_scout.db
 - Der Benchmark verwendet den versionierten Promptkatalog `v1` und speichert Prompt-Version sowie Prompt-tok/s in SQLite und CSV.
 - Jeder Benchmark-Run erhält zusätzlich einen transparent gekennzeichneten `heuristic_v1`-Quality-Score; dieser ist ein technischer Hinweis und kein menschlicher Qualitätsentscheid.
 - Bei der nächsten Report-Erzeugung werden gespeicherte Benchmark-Runs wieder in Speed-, Coding- und Reasoning-Score der betroffenen Modelle übernommen.
-- Reports enthalten zusätzlich eine Benchmark-Evidence mit gemessener Geschwindigkeit, Quality-Score und erfolgreicher Run-Anzahl.
+- Reports enthalten zusätzlich eine Benchmark-Evidence mit gemessener Geschwindigkeit, Quality-Score, erfolgreicher Run-Anzahl und Kontextvergleich.
 - Fehlerhafte Benchmark-Runs speichern ihren Fehlertext in SQLite, damit Timeouts und Ollama-Probleme im Dashboard nachvollziehbar bleiben.
 - TTFT wird im Benchmark über Ollama-Streaming bis zum ersten Antworttoken gemessen und in CSV sowie SQLite gespeichert.
 - Wenn verfügbar, werden zusätzlich GPU-Auslastung, GPU-Speicher, RAM-Nutzung und CPU-Auslastung über `nvidia-smi` und `psutil` erfasst.
