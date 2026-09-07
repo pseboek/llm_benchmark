@@ -538,6 +538,10 @@ ergänzt werden.
 Gespeicherte erfolgreiche Runs werden bei der Report-Erzeugung wieder in die
 Kandidatenprofile und deren Score übernommen.
 
+Jeder Kandidat wird außerdem als `ASSESSED`, `METADATA_ONLY` oder `NEEDS_DATA`
+gekennzeichnet. Champion/Challenger-Vergleiche verwenden verfügbare lokale
+Benchmarkprofile für Speed- und Quality-Deltas.
+
 Der Report weist zusätzlich die gemessene Benchmark-Evidence pro Modell aus:
 Generation tok/s, Quality-Score und Anzahl erfolgreicher Runs.
 
