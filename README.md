@@ -86,6 +86,41 @@ pip install -r requirements.txt
 
 ## Nutzung
 
+### Ablauf: Neuen Kandidaten entdecken, herunterladen, benchmarken und bewerten
+
+Dieser Abschnitt beschreibt den kompletten Weg von einem neuen, unbekannten Modell bis zur Entscheidung "behalten oder verwerfen". Jeder Schritt ist bewusst manuell freizugeben; es gibt keinen Automatismus, der ungefragt Modelle herunterlädt oder benchmarkt.
+
+```mermaid
+flowchart TD
+    A["1: --discover / --report\nfindet neue Kandidaten aus\nOllama, Hugging Face,\nArtificial Analysis, SWE-bench"] --> B{"Score & Tier\nprüfen (Report/Dashboard)"}
+    B -->|"TEST_NOW / SURPRISE_TEST"| C["7: --queue\nbenchmark_queue.json\n(PENDING_REVIEW)"]
+    B -->|"WATCH"| Z["vorerst nicht handeln,\nbei nächstem Scout-Lauf erneut prüfen"]
+    B -->|"NEEDS_DATA"| Y["kein Ollama-Tag bekannt:\nmanuell passenden Tag suchen\n(z.B. ollama.com/library)"]
+    C --> D["9: --download-queue\ndownload_plan.json\n(PENDING_APPROVAL)"]
+    D -->|"--approve-models + --execute-downloads"| E["ollama pull <model>"]
+    E --> F["10: --benchmark-plan\nbenchmark_plan.json\n(PENDING_EXECUTION)"]
+    F -->|"--dry-run-plan (Prüfung, kein Ollama-Call)"| F
+    F -->|"--run-plan"| G["Benchmark läuft:\ntok/s, Quality-Score,\nGPU/CPU-Split, VRAM"]
+    G --> H["2: --report\nSpeed-/Coding-/Reasoning-Score\n+ Champion-Vergleich"]
+    H --> I{"Entscheidung"}
+    I -->|"Score verbessert Champion\nbzw. schließt Lücke"| K["behalten:\ndauerhaft in MODELS\n(ollama_benchmark.py) aufnehmen"]
+    I -->|"Score/Quality zu niedrig,\nVRAM zu groß, kein Mehrwert"| L["verwerfen:\nollama rm <model>"]
+```
+
+**Schritt für Schritt:**
+
+1. **Entdecken** ([Schritt 1](#1-kandidaten-entdecken)): `--discover` oder `--report` sammelt Kandidaten aus allen aktiven Quellen und speichert sie in `data/model_scout.db`.
+2. **Einordnen**: Im Report (Abschnitt "Recommendations") bzw. im Dashboard steht pro Kandidat der Score, die Empfehlung (`TEST_NOW`, `SURPRISE_TEST`, `WATCH`, `IGNORE`) und der Bewertungsstatus (`ASSESSED`, `METADATA_ONLY`, `NEEDS_DATA`). Nur `TEST_NOW`/`SURPRISE_TEST`-Kandidaten lohnen in der Regel den nächsten Schritt.
+3. **In die Queue aufnehmen** ([Schritt 7](#7-manuelle-benchmark-queue-erzeugen)): `--queue` erzeugt `benchmark_queue.json` mit den Top-Kandidaten (`PENDING_REVIEW`), ohne etwas herunterzuladen oder zu testen.
+4. **Download freigeben** ([Schritt 9](#9-download-plan-prüfen-und-freigeben)): `--download-queue` erzeugt zunächst nur `PENDING_APPROVAL`-Einträge. Erst mit expliziten `--approve-models` und `--execute-downloads` wird `ollama pull` ausgeführt. Existiert für einen Hugging-Face-/Artificial-Analysis-/SWE-bench-Kandidaten kein passendes Ollama-Tag, muss der Tag manuell recherchiert werden (z.B. über `ollama.com/library`); ein `ollama pull <tag>` außerhalb der Queue ist dafür der pragmatische Weg.
+5. **Benchmark-Plan erzeugen und ausführen** ([Schritt 10](#10-benchmark-plan-nach-freigabe-erzeugen)): `--benchmark-plan` erstellt je Modell/Kontext/Prompt-Kategorie einen `PENDING_EXECUTION`-Task; `--dry-run-plan` prüft ihn ohne Ollama-Aufruf, `--run-plan` führt ihn aus und speichert Ergebnisse (tok/s, Quality-Score, GPU/CPU-Split, VRAM) in SQLite und CSV.
+6. **Bewerten**: Ein erneuter `--report`-Lauf ([Schritt 2](#2-report-erzeugen)) berücksichtigt die neuen Benchmark-Daten und zeigt im Abschnitt "Champion Comparison" den `speed_delta`/`quality_delta` gegenüber dem aktuellen Champion je Rolle (General/Coding/Reasoning, siehe `baseline` in `config.yaml`).
+7. **Entscheiden**:
+   - **Behalten**, wenn der Kandidat einen bestehenden Champion in Score, Geschwindigkeit oder Quality klar übertrifft oder eine bisher fehlende Nische abdeckt (z.B. sehr kleines VRAM-Budget, sehr hoher Kontext). Dauerhaft aufnehmen in die `MODELS`-Liste in [ollama_benchmark.py](ollama_benchmark.py), damit er bei künftigen `--run-benchmark`-Läufen automatisch mitgetestet wird.
+   - **Verwerfen**, wenn Quality-Score und Relevance-Komponente durchgehend niedrig sind, das Modell bei den benötigten Kontextgrößen stark einbricht (siehe `CONTEXT COMPARISON` im Benchmark-Output) oder kein Mehrwert gegenüber dem Champion besteht. Mit `ollama rm <model>` wieder aus dem lokalen Cache entfernen.
+
+**Benötigte Skripte/Dateien:** [src/main.py](src/main.py) (zentrale CLI für alle Schritte), [benchmark/runner.py](benchmark/runner.py) und [ollama_benchmark.py](ollama_benchmark.py) (führen den eigentlichen Benchmark aus), `data/model_scout.db` (Persistenz), `reports/benchmark_queue.json` → `reports/download_plan.json` → `reports/benchmark_plan.json` (die drei Zwischenstände der Freigabekette). Für die regelmäßige, automatisierte Discovery läuft [scripts/run_scout_report.ps1](scripts/run_scout_report.ps1) alle 14 Tage über den Windows Task Scheduler (siehe [Schritt 8](#8-zweiwöchigen-report-automatisieren)) — dieser automatisierte Lauf entdeckt und bewertet nur, lädt nichts herunter und benchmarkt nichts.
+
 ### 1) Kandidaten entdecken
 
 ```powershell
