@@ -56,20 +56,39 @@ def summarize_telemetry(runs: list[dict]) -> list[dict]:
         values = [float(run[field]) for run in runs_for_model if run.get(field) is not None]
         return round(sum(values) / len(values), 2) if values else None
 
-    return [
-        {
+    rows = []
+    for model, model_runs in sorted(grouped.items()):
+        row = {
             "model": model,
             "avg_gpu_percent": average(model_runs, "gpu_utilization_percent"),
             "peak_gpu_memory_mb": max(
-                [float(run["gpu_memory_used_mb"]) for run in model_runs if run.get("gpu_memory_used_mb") is not None],
+                [float(run.get("gpu_memory_used_mb_peak", run["gpu_memory_used_mb"])) for run in model_runs if run.get("gpu_memory_used_mb") is not None],
                 default=None,
             ),
             "avg_ram_mb": average(model_runs, "ram_used_mb"),
             "avg_cpu_percent": average(model_runs, "cpu_percent"),
             "runs": len(model_runs),
         }
-        for model, model_runs in sorted(grouped.items())
-    ]
+        if any("gpu_utilization_peak_percent" in run or "ram_used_mb_peak" in run for run in model_runs):
+            row.update({
+                "peak_gpu_percent": max(
+                    [float(run.get("gpu_utilization_percent_peak", run.get("gpu_utilization_peak_percent"))) for run in model_runs if run.get("gpu_utilization_percent_peak", run.get("gpu_utilization_peak_percent")) is not None],
+                    default=None,
+                ),
+                "avg_gpu_memory_utilization_percent": average(model_runs, "gpu_memory_utilization_percent"),
+                "peak_ram_mb": max(
+                    [float(run.get("ram_used_mb_peak", run["ram_used_mb"])) for run in model_runs if run.get("ram_used_mb") is not None],
+                    default=None,
+                ),
+                "peak_cpu_percent": max(
+                    [float(run.get("cpu_percent_peak", run["cpu_percent"])) for run in model_runs if run.get("cpu_percent") is not None],
+                    default=None,
+                ),
+                "avg_gpu_utilization_delta": average(model_runs, "gpu_utilization_percent_delta"),
+                "avg_ram_delta_mb": average(model_runs, "ram_used_mb_delta"),
+            })
+        rows.append(row)
+    return rows
 
 
 def summarize_report_history(snapshots: list[dict]) -> list[dict]:

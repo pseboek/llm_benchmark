@@ -101,13 +101,26 @@ class ModelScoutDB:
             self._ensure_column(connection, "benchmark_runs", "quality_components", "TEXT")
             self._ensure_column(connection, "benchmark_runs", "error", "TEXT")
             for column in (
+                "gpu_count",
                 "gpu_utilization_percent",
+                "gpu_utilization_peak_percent",
                 "gpu_memory_used_mb",
                 "gpu_memory_total_mb",
+                "gpu_memory_utilization_percent",
                 "ram_used_mb",
                 "cpu_percent",
+                "telemetry_duration_seconds",
+                "gpu_utilization_percent_delta",
+                "gpu_utilization_percent_peak",
+                "gpu_memory_used_mb_delta",
+                "gpu_memory_used_mb_peak",
+                "ram_used_mb_delta",
+                "ram_used_mb_peak",
+                "cpu_percent_delta",
+                "cpu_percent_peak",
             ):
                 self._ensure_column(connection, "benchmark_runs", column, "REAL")
+            self._ensure_column(connection, "benchmark_runs", "telemetry_captured_at", "TEXT")
             self._ensure_column(connection, "candidates", "parameter_size", "TEXT")
             self._ensure_column(connection, "candidates", "quantization", "TEXT")
             self._ensure_column(connection, "candidates", "architecture", "TEXT")
@@ -214,8 +227,11 @@ class ModelScoutDB:
                 INSERT INTO benchmark_runs
                     (model, context, category, status, tok_per_sec, prompt_version,
                      prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, quality_confidence, quality_components, error,
-                     gpu_utilization_percent, gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     telemetry_captured_at, telemetry_duration_seconds, gpu_count, gpu_utilization_percent, gpu_utilization_peak_percent,
+                     gpu_utilization_percent_delta, gpu_utilization_percent_peak, gpu_memory_used_mb, gpu_memory_total_mb,
+                     gpu_memory_utilization_percent, gpu_memory_used_mb_delta, gpu_memory_used_mb_peak, ram_used_mb, ram_used_mb_delta,
+                     ram_used_mb_peak, cpu_percent, cpu_percent_delta, cpu_percent_peak)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 [
                     (
@@ -232,11 +248,24 @@ class ModelScoutDB:
                         run.get("quality_confidence"),
                         run.get("quality_components"),
                         run.get("error"),
+                        run.get("telemetry_captured_at"),
+                        run.get("telemetry_duration_seconds"),
+                        run.get("gpu_count"),
                         run.get("gpu_utilization_percent"),
+                        run.get("gpu_utilization_peak_percent"),
+                        run.get("gpu_utilization_percent_delta"),
+                        run.get("gpu_utilization_percent_peak"),
                         run.get("gpu_memory_used_mb"),
                         run.get("gpu_memory_total_mb"),
+                        run.get("gpu_memory_utilization_percent"),
+                        run.get("gpu_memory_used_mb_delta"),
+                        run.get("gpu_memory_used_mb_peak"),
                         run.get("ram_used_mb"),
+                        run.get("ram_used_mb_delta"),
+                        run.get("ram_used_mb_peak"),
                         run.get("cpu_percent"),
+                        run.get("cpu_percent_delta"),
+                        run.get("cpu_percent_peak"),
                     )
                     for run in runs
                 ],
@@ -245,7 +274,7 @@ class ModelScoutDB:
     def list_benchmark_runs(self) -> list[dict]:
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, quality_confidence, quality_components, error, gpu_utilization_percent, gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent FROM benchmark_runs ORDER BY id ASC"
+                "SELECT model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, quality_confidence, quality_components, error, telemetry_captured_at, telemetry_duration_seconds, gpu_count, gpu_utilization_percent, gpu_utilization_peak_percent, gpu_utilization_percent_delta, gpu_utilization_percent_peak, gpu_memory_used_mb, gpu_memory_total_mb, gpu_memory_utilization_percent, gpu_memory_used_mb_delta, gpu_memory_used_mb_peak, ram_used_mb, ram_used_mb_delta, ram_used_mb_peak, cpu_percent, cpu_percent_delta, cpu_percent_peak FROM benchmark_runs ORDER BY id ASC"
             ).fetchall()
         return [
             {
@@ -258,15 +287,30 @@ class ModelScoutDB:
                 "quality_confidence": quality_confidence,
                 "quality_components": quality_components,
                 "error": error,
+                "telemetry_captured_at": telemetry_captured_at,
+                "telemetry_duration_seconds": telemetry_duration_seconds,
+                "gpu_count": gpu_count,
                 "gpu_utilization_percent": gpu_utilization_percent,
+                "gpu_utilization_peak_percent": gpu_utilization_peak_percent,
+                "gpu_utilization_percent_delta": gpu_utilization_percent_delta,
+                "gpu_utilization_percent_peak": gpu_utilization_percent_peak,
                 "gpu_memory_used_mb": gpu_memory_used_mb,
                 "gpu_memory_total_mb": gpu_memory_total_mb,
+                "gpu_memory_utilization_percent": gpu_memory_utilization_percent,
+                "gpu_memory_used_mb_delta": gpu_memory_used_mb_delta,
+                "gpu_memory_used_mb_peak": gpu_memory_used_mb_peak,
                 "ram_used_mb": ram_used_mb,
+                "ram_used_mb_delta": ram_used_mb_delta,
+                "ram_used_mb_peak": ram_used_mb_peak,
                 "cpu_percent": cpu_percent,
+                "cpu_percent_delta": cpu_percent_delta,
+                "cpu_percent_peak": cpu_percent_peak,
             }
             for model, context, category, status, tok_per_sec, prompt_version,
-            prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, quality_confidence, quality_components, error, gpu_utilization_percent,
-            gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent in rows
+            prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, quality_confidence, quality_components, error, telemetry_captured_at,
+            telemetry_duration_seconds, gpu_count, gpu_utilization_percent, gpu_utilization_peak_percent, gpu_utilization_percent_delta,
+            gpu_utilization_percent_peak, gpu_memory_used_mb, gpu_memory_total_mb, gpu_memory_utilization_percent, gpu_memory_used_mb_delta,
+            gpu_memory_used_mb_peak, ram_used_mb, ram_used_mb_delta, ram_used_mb_peak, cpu_percent, cpu_percent_delta, cpu_percent_peak in rows
         ]
 
     def save_recommendations(self, recommendations: Iterable[dict]) -> None:
