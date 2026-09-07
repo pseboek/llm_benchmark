@@ -153,7 +153,15 @@ def main():
         plan = load_queue(args.run_plan)
         db = ModelScoutDB(args.db)
         db.save_benchmark_tasks([{**task, "status": "RUNNING"} for task in plan])
-        results = run_benchmark_plan(plan)
+        try:
+            results = run_benchmark_plan(plan)
+        except Exception:
+            failed_plan = apply_result_statuses(plan, [])
+            Path(args.run_plan).write_text(json.dumps(failed_plan, indent=2), encoding="utf-8")
+            for task in failed_plan:
+                if task.get("status") == "FAILED":
+                    db.update_benchmark_task_status(task["model"], task["context"], task["category"], "FAILED")
+            raise
         if results:
             db.save_benchmark_runs(results)
             for result in results:
