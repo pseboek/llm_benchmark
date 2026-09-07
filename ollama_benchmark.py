@@ -4,6 +4,8 @@ import requests
 from datetime import datetime
 from statistics import mean
 
+from benchmark.prompts import PERSONAL_PROMPTS, PROMPT_VERSION
+
 # ============================================================
 # Configuration
 # ============================================================
@@ -90,6 +92,9 @@ deployment architecture, and important architectural decisions.
 """
 }
 
+# Keep the benchmark tasks versioned and shared with the personal prompt catalog.
+PROMPTS = PERSONAL_PROMPTS
+
 
 # ============================================================
 # Ollama API
@@ -143,6 +148,12 @@ def generate(model, prompt, num_ctx):
         "prompt_eval_count": data.get("prompt_eval_count", 0),
         "prompt_eval_duration_ns": data.get(
             "prompt_eval_duration", 0
+        ),
+        "prompt_tok_per_sec": (
+            data.get("prompt_eval_count", 0)
+            / (data.get("prompt_eval_duration", 0) / 1_000_000_000)
+            if data.get("prompt_eval_duration")
+            else 0
         ),
         "elapsed": elapsed,
     }
@@ -223,6 +234,7 @@ def run_benchmark():
                         "model": model,
                         "context": num_ctx,
                         "category": category,
+                        "prompt_version": PROMPT_VERSION,
                         "status": "OK",
 
                         "tokens": result["eval_count"],
@@ -239,6 +251,8 @@ def run_benchmark():
                         "prompt_seconds":
                             result["prompt_eval_duration_ns"]
                             / 1_000_000_000,
+
+                        "prompt_tok_per_sec": result["prompt_tok_per_sec"],
 
                         "load_seconds":
                             result["load_duration_ns"]
@@ -261,12 +275,14 @@ def run_benchmark():
                         "model": model,
                         "context": num_ctx,
                         "category": category,
+                        "prompt_version": PROMPT_VERSION,
                         "status": "ERROR",
                         "tokens": 0,
                         "generation_seconds": 0,
                         "tok_per_sec": 0,
                         "prompt_tokens": 0,
                         "prompt_seconds": 0,
+                        "prompt_tok_per_sec": 0,
                         "load_seconds": 0,
                         "total_seconds": 0,
                         "response": "",
@@ -289,12 +305,14 @@ def run_benchmark():
         "model",
         "context",
         "category",
+        "prompt_version",
         "status",
         "tokens",
         "generation_seconds",
         "tok_per_sec",
         "prompt_tokens",
         "prompt_seconds",
+        "prompt_tok_per_sec",
         "load_seconds",
         "total_seconds",
         "response",

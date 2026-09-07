@@ -51,6 +51,14 @@ class ModelScoutDB:
                 )
                 """
             )
+            self._ensure_column(connection, "benchmark_runs", "prompt_version", "TEXT NOT NULL DEFAULT 'unknown'")
+            self._ensure_column(connection, "benchmark_runs", "prompt_tok_per_sec", "REAL NOT NULL DEFAULT 0")
+
+    @staticmethod
+    def _ensure_column(connection: sqlite3.Connection, table: str, column: str, definition: str) -> None:
+        columns = {row[1] for row in connection.execute(f"PRAGMA table_info({table})")}
+        if column not in columns:
+            connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
     def save_candidates(self, candidates: Iterable[dict]) -> list[dict]:
         saved: list[dict] = []
@@ -77,7 +85,7 @@ class ModelScoutDB:
     def save_benchmark_runs(self, runs: Iterable[dict]) -> None:
         with self._connect() as connection:
             connection.executemany(
-                "INSERT INTO benchmark_runs (model, context, category, status, tok_per_sec) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO benchmark_runs (model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 [
                     (
                         str(run.get("model", "unknown")),
@@ -85,6 +93,8 @@ class ModelScoutDB:
                         str(run.get("category", "unknown")),
                         str(run.get("status", "UNKNOWN")),
                         float(run.get("tok_per_sec", 0.0)),
+                        str(run.get("prompt_version", "unknown")),
+                        float(run.get("prompt_tok_per_sec", 0.0)),
                     )
                     for run in runs
                 ],
@@ -93,11 +103,11 @@ class ModelScoutDB:
     def list_benchmark_runs(self) -> list[dict]:
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT model, context, category, status, tok_per_sec FROM benchmark_runs ORDER BY id ASC"
+                "SELECT model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec FROM benchmark_runs ORDER BY id ASC"
             ).fetchall()
         return [
-            {"model": model, "context": context, "category": category, "status": status, "tok_per_sec": tok_per_sec}
-            for model, context, category, status, tok_per_sec in rows
+            {"model": model, "context": context, "category": category, "status": status, "tok_per_sec": tok_per_sec, "prompt_version": prompt_version, "prompt_tok_per_sec": prompt_tok_per_sec}
+            for model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec in rows
         ]
 
     def save_recommendations(self, recommendations: Iterable[dict]) -> None:
