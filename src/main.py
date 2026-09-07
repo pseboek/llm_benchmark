@@ -114,6 +114,7 @@ def parse_args():
     parser.add_argument("--task-status", action="store_true", help="Show benchmark task status counts")
     parser.add_argument("--retry-failed-plan", help="Reset failed benchmark tasks to pending execution")
     parser.add_argument("--recover-running-tasks", action="store_true", help="Reset stale RUNNING tasks after an interrupted process")
+    parser.add_argument("--source-status", action="store_true", help="Show live discovery source status")
     return parser.parse_args()
 
 
@@ -134,6 +135,14 @@ def main():
 
     if args.task_status:
         print(json.dumps(ModelScoutDB(args.db).benchmark_task_summary(), indent=2))
+        return
+
+    if args.source_status:
+        enabled_sources = {name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()}
+        if args.offline:
+            enabled_sources = {name: name == "ollama" for name in enabled_sources}
+        _, status = discover_with_status(huggingface_limit=args.hf_limit, enabled_sources=enabled_sources)
+        print(json.dumps(status, indent=2))
         return
 
     if args.retry_failed_plan:
