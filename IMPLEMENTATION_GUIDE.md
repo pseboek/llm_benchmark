@@ -535,7 +535,7 @@ automatischer Champion/Challenger-Vergleich (implementiert in `src/scoring.py` u
 kontrollierte Downloads ausgewählter Kandidaten (implementiert als Planungs- und Freigabefluss in `src/download_queue.py`)
 
 ### V7
-adaptive Gewichte anhand historischer Benchmarks (Vorschlag in `src/adaptive.py`, keine automatische Konfigurationsänderung)
+adaptive Gewichte anhand historischer Benchmarks (Vorschlag in `src/adaptive.py` und über `--suggest-weights`, keine automatische Konfigurationsänderung)
 
 ---
 

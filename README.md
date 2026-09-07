@@ -100,6 +100,10 @@ streamlit run dashboard.py -- --db data/alternative.db
 
 Die Funktion `src/adaptive.py` kann historische Benchmark-Runs auswerten und eine vorgeschlagene Gewichtung berechnen. Die Änderung wird bewusst nicht automatisch in `config.yaml` geschrieben; dadurch bleibt jede Anpassung nachvollziehbar und reviewbar.
 
+```powershell
+python src/main.py --suggest-weights --output reports/weight_suggestion.json
+```
+
 ### 7) Manuelle Benchmark-Queue erzeugen
 
 ```powershell
@@ -179,7 +183,16 @@ Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
 │   ├── test_adaptive.py
 │   ├── test_prompts.py
 │   ├── test_dashboard_filters.py
-│   └── test_telemetry.py
+│   ├── test_telemetry.py
+│   ├── test_source_http.py
+│   ├── test_download_queue.py
+│   ├── test_ollama_details.py
+│   ├── test_ollama_metadata.py
+│   ├── test_stream_metrics.py
+│   ├── test_report_reasons.py
+│   ├── test_configured_scoring.py
+│   ├── test_scheduler_script.py
+│   └── test_adaptive_cli.py
 ├── data/
 ├── reports/
 └── .env.example
@@ -201,9 +214,9 @@ Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
 
 ## Nächste Erweiterungen
 
-- Windows-Task-Scheduler-Vorlage für den zweiwöchigen Offline-Report
-- bessere Metadatenanreicherung aus Ollama-Tags und lokalen Benchmark-Runs
-- Auswahl von `TEST_NOW`-Kandidaten für manuelle Download- und Benchmark-Queues
+- bessere Hardware-Telemetrie-Dokumentation und Visualisierung
+- historische Report-Vergleiche
+- automatische Auswahl von Benchmark-Tasks nach bestätigter Freigabe
 
 ## Weiterführende Doku
 
