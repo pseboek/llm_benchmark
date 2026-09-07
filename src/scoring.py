@@ -53,6 +53,11 @@ def recommendation(score, tier, thresholds=None):
     return "IGNORE"
 
 
+def rationale(score: float, tier: str, action: str, vram_gb: float | None = None) -> str:
+    hardware = f"estimated VRAM {vram_gb:g} GB" if vram_gb is not None else "VRAM estimate unavailable"
+    return f"{action}: score {score:.2f}, hardware tier {tier}, {hardware}."
+
+
 def score_candidate(candidate: dict, *, weights=None, thresholds=None, hardware_limits=None) -> dict:
     """Add score, hardware tier, and action fields to a candidate record."""
     scored = dict(candidate)
@@ -70,10 +75,12 @@ def score_candidate(candidate: dict, *, weights=None, thresholds=None, hardware_
         active_params_b=model.active_params_b,
         limits=hardware_limits,
     )
+    action = recommendation(score, tier, thresholds)
     scored.update({
         "score": score,
         "hardware_tier": tier,
-        "recommendation": recommendation(score, tier, thresholds),
+        "recommendation": action,
+        "rationale": rationale(score, tier, action, model.vram_gb),
     })
     return scored
 

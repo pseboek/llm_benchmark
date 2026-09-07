@@ -53,14 +53,19 @@ def build_report(
             lines.append(
                 f"- {candidate.get('name', 'unknown')} "
                 f"(score={candidate['score']:.2f}, tier={candidate['hardware_tier']}, "
-                f"source={candidate.get('source', 'unknown')})"
+                f"source={candidate.get('source', 'unknown')}, "
+                f"VRAM={candidate.get('vram_gb', 'unknown')} GB) "
+                f"Reason: {candidate['rationale']}"
             )
     lines.extend(["", "## Candidates"])
 
     for candidate in scored:
         name = candidate.get("name", "unknown")
         source = candidate.get("source", "unknown")
-        lines.append(f"- {name} ({source}, {candidate['hardware_tier']}, {candidate['score']:.2f})")
+        lines.append(
+            f"- {name} ({source}, {candidate['hardware_tier']}, {candidate['score']:.2f}, "
+            f"VRAM={candidate.get('vram_gb', 'unknown')} GB)"
+        )
 
     if champions is not None:
         lines.extend(["", "## Champion Comparison"])
