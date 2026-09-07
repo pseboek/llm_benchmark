@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from benchmark.runner import run_benchmark
+from src.adaptive import adaptive_weights
 from src.database import ModelScoutDB
 from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
 from src.download_queue import build_download_plan, execute_download_plan, load_queue, write_download_plan
@@ -101,6 +102,7 @@ def parse_args():
     parser.add_argument("--download-queue", help="Create or apply a controlled Ollama download plan from a queue JSON")
     parser.add_argument("--approve-models", nargs="*", default=[], help="Explicit model names approved for download")
     parser.add_argument("--execute-downloads", action="store_true", help="Execute approved ollama pull commands")
+    parser.add_argument("--suggest-weights", action="store_true", help="Suggest scoring weights from benchmark history")
     return parser.parse_args()
 
 
@@ -113,6 +115,18 @@ def main():
         print("Configured benchmark models:")
         for item in benchmark_models:
             print(f"- {item.get('name')}")
+        return
+
+    if args.suggest_weights:
+        history = ModelScoutDB(args.db).list_benchmark_runs()
+        suggestion = adaptive_weights(config.get("scoring", {}), history)
+        output = args.output
+        if output:
+            Path(output).parent.mkdir(parents=True, exist_ok=True)
+            Path(output).write_text(json.dumps(suggestion, indent=2), encoding="utf-8")
+            print(f"Weight suggestion saved to: {output}")
+        else:
+            print(json.dumps(suggestion, indent=2))
         return
 
     if args.run_benchmark:
