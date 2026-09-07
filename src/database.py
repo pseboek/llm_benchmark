@@ -402,6 +402,9 @@ class ModelScoutDB:
             summary["scored"] = connection.execute(
                 "SELECT COUNT(*) FROM recommendations WHERE score IS NOT NULL"
             ).fetchone()[0]
+            summary["benchmark_errors"] = connection.execute(
+                "SELECT COUNT(*) FROM benchmark_runs WHERE status = 'ERROR'"
+            ).fetchone()[0]
             return summary
 
     def recover_running_tasks(self) -> int:
