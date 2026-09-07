@@ -183,6 +183,10 @@ Dabei werden ausschließlich Tasks mit `PENDING_EXECUTION` ausgeführt und die E
 │   ├── scoring.py
 │   ├── adaptive.py
 │   ├── benchmark_plan.py
+│   ├── benchmark_queue.py
+│   ├── download_queue.py
+│   ├── grading.py
+│   ├── telemetry.py
 │   └── sources/
 │       ├── __init__.py
 │       ├── lmarena.py
@@ -211,7 +215,12 @@ Dabei werden ausschließlich Tasks mit `PENDING_EXECUTION` ausgeführt und die E
 │   ├── test_configured_scoring.py
 │   ├── test_scheduler_script.py
 │   ├── test_adaptive_cli.py
-│   └── test_benchmark_plan.py
+│   ├── test_benchmark_plan.py
+│   ├── test_benchmark_task_status.py
+│   ├── test_benchmark_scoring.py
+│   ├── test_grading.py
+│   ├── test_huggingface_filter.py
+│   └── test_dashboard_quality.py
 ├── data/
 ├── reports/
 └── .env.example
