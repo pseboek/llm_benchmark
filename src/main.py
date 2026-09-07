@@ -108,6 +108,7 @@ def parse_args():
     parser.add_argument("--run-plan", help="Execute a previously generated benchmark plan")
     parser.add_argument("--max-tasks", type=int, help="Limit plan execution to this many pending tasks")
     parser.add_argument("--request-timeout", type=int, default=600, help="Ollama request timeout in seconds")
+    parser.add_argument("--results-dir", default=str(ROOT / "data" / "benchmarks"), help="Directory for benchmark CSV results")
     parser.add_argument("--dry-run-plan", help="Show pending benchmark tasks without executing Ollama")
     parser.add_argument("--db-summary", action="store_true", help="Show a compact SQLite data summary")
     parser.add_argument("--task-status", action="store_true", help="Show benchmark task status counts")
@@ -163,7 +164,7 @@ def main():
         return
 
     if args.run_benchmark:
-        results = run_benchmark(models=args.models, contexts=args.contexts, timeout_seconds=args.request_timeout)
+        results = run_benchmark(models=args.models, contexts=args.contexts, timeout_seconds=args.request_timeout, results_dir=args.results_dir)
         if results:
             ModelScoutDB(args.db).save_benchmark_runs(results)
         return
@@ -175,7 +176,7 @@ def main():
         db = ModelScoutDB(args.db)
         db.save_benchmark_tasks([{**task, "status": "RUNNING"} for task in plan])
         try:
-            results = run_benchmark_plan(plan, timeout_seconds=args.request_timeout)
+            results = run_benchmark_plan(plan, timeout_seconds=args.request_timeout, results_dir=args.results_dir)
         except Exception:
             attempted = {(task.get("model"), task.get("context"), task.get("category")) for task in plan}
             failed_plan = apply_result_statuses(all_plan, [], attempted)
