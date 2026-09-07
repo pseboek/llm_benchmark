@@ -38,6 +38,19 @@ def plan_dimensions(plan):
     return models, contexts, categories
 
 
+def apply_result_statuses(plan, results):
+    result_status = {
+        (item.get("model"), item.get("context"), item.get("category")): "COMPLETED" if item.get("status") == "OK" else "FAILED"
+        for item in results
+    }
+    updated = []
+    for task in plan:
+        key = (task.get("model"), task.get("context"), task.get("category"))
+        fallback = "FAILED" if task.get("status") == "PENDING_EXECUTION" else task.get("status", "PENDING_EXECUTION")
+        updated.append({**task, "status": result_status.get(key, fallback)})
+    return updated
+
+
 def run_benchmark_plan(plan):
     module = load_ollama_benchmark_module()
     models, contexts, categories = plan_dimensions(plan)

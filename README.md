@@ -151,6 +151,7 @@ python src/main.py --run-plan reports/benchmark_plan.json --db data/model_scout.
 ```
 
 Dabei werden ausschließlich Tasks mit `PENDING_EXECUTION` ausgeführt und die Ergebnisse anschließend in SQLite gespeichert.
+Die Plan-Datei wird dabei ebenfalls auf `COMPLETED` oder `FAILED` aktualisiert.
 
 Vor der Ausführung kann der Plan sicher geprüft werden:
 

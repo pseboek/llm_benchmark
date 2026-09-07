@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from benchmark.runner import run_benchmark, run_benchmark_plan
+from benchmark.runner import apply_result_statuses, run_benchmark, run_benchmark_plan
 from src.adaptive import adaptive_weights
 from src.database import ModelScoutDB
 from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
@@ -159,6 +159,7 @@ def main():
             for result in results:
                 status = "COMPLETED" if result.get("status") == "OK" else "FAILED"
                 db.update_benchmark_task_status(result["model"], result["context"], result["category"], status)
+            Path(args.run_plan).write_text(json.dumps(apply_result_statuses(plan, results), indent=2), encoding="utf-8")
             candidates = [
                 enrich_from_benchmark(enrich_from_baseline(candidate, config.get("baseline", [])), db.list_benchmark_runs())
                 for candidate in db.list_candidates()
