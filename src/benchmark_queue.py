@@ -6,8 +6,23 @@ from pathlib import Path
 from src.scoring import score_candidate
 
 
-def build_benchmark_queue(candidates: list[dict], max_candidates: int = 5) -> list[dict]:
-    scored = [score_candidate(candidate) for candidate in candidates]
+def build_benchmark_queue(
+    candidates: list[dict],
+    max_candidates: int = 5,
+    *,
+    scoring_config: dict | None = None,
+    thresholds: dict | None = None,
+    hardware_limits: dict | None = None,
+) -> list[dict]:
+    scored = [
+        score_candidate(
+            candidate,
+            weights=scoring_config,
+            thresholds=thresholds,
+            hardware_limits=hardware_limits,
+        )
+        for candidate in candidates
+    ]
     selected = [
         candidate
         for candidate in scored

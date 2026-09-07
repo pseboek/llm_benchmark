@@ -128,7 +128,12 @@ def main():
         candidates = candidates or build_baseline_records(config)
         ModelScoutDB(args.db).save_candidates(candidates)
         ModelScoutDB(args.db).save_recommendations([score_candidate(candidate) for candidate in candidates])
-        report = build_report(candidates, champions=config.get("baseline", []))
+        report = build_report(
+            candidates,
+            champions=config.get("baseline", []),
+            scoring_config=config.get("scoring"),
+            hardware_config={**config.get("hardware", {}), "thresholds": config.get("thresholds", {})},
+        )
         print(report)
         return
 
@@ -144,7 +149,12 @@ def main():
         db = ModelScoutDB(args.db)
         db.save_candidates(candidates)
         db.save_recommendations([score_candidate(candidate) for candidate in candidates])
-        report = build_report(candidates, champions=config.get("baseline", []))
+        report = build_report(
+            candidates,
+            champions=config.get("baseline", []),
+            scoring_config=config.get("scoring"),
+            hardware_config={**config.get("hardware", {}), "thresholds": config.get("thresholds", {})},
+        )
         output = args.output or str(ROOT / "reports" / f"{date.today().isoformat()}_model_scout.md")
         write_report(report, output)
         print(report)
@@ -158,7 +168,13 @@ def main():
         candidates = [] if args.baseline_only else discover_candidates(huggingface_limit=args.hf_limit, enabled_sources=enabled_sources)
         candidates = candidates or build_baseline_records(config)
         output = args.output or str(ROOT / "reports" / "benchmark_queue.json")
-        queue = build_benchmark_queue(candidates, max_candidates=args.max_candidates)
+        queue = build_benchmark_queue(
+            candidates,
+            max_candidates=args.max_candidates,
+            scoring_config=config.get("scoring"),
+            thresholds=config.get("thresholds"),
+            hardware_limits=config.get("hardware", {}).get("vram"),
+        )
         write_benchmark_queue(queue, output)
         print(json.dumps(queue, indent=2))
         print(f"Queue saved to: {output}")

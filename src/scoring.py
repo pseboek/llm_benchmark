@@ -21,36 +21,39 @@ class Candidate:
     is_moe: bool = False
     active_params_b: float | None = None
 
-def weighted_score(c: Candidate) -> float:
+def weighted_score(c: Candidate, weights: dict[str, float] | None = None) -> float:
+    active_weights = weights or WEIGHTS
     return round(sum(
-        max(0.0, min(100.0, getattr(c, key))) * weight
-        for key, weight in WEIGHTS.items()
+        max(0.0, min(100.0, getattr(c, key, 0.0))) * weight
+        for key, weight in active_weights.items()
     ), 2)
 
-def hardware_tier(vram_gb, *, is_moe=False, active_params_b=None):
+def hardware_tier(vram_gb, *, is_moe=False, active_params_b=None, limits=None):
+    active_limits = limits or {"safe_gb": 13, "borderline_gb": 18, "experimental_gb": 24}
     if vram_gb is None:
         return "UNKNOWN"
-    if vram_gb <= 13:
+    if vram_gb <= active_limits["safe_gb"]:
         return "SAFE"
-    if vram_gb <= 18:
+    if vram_gb <= active_limits["borderline_gb"]:
         return "BORDERLINE"
-    if vram_gb <= 24:
+    if vram_gb <= active_limits["experimental_gb"]:
         return "EXPERIMENTAL"
     if is_moe and active_params_b is not None and active_params_b <= 5:
         return "SURPRISE"
     return "UNLIKELY"
 
-def recommendation(score, tier):
-    if score >= 85:
+def recommendation(score, tier, thresholds=None):
+    active_thresholds = thresholds or {"test_now": 85, "surprise": 80, "watch": 70}
+    if score >= active_thresholds["test_now"]:
         return "TEST_NOW"
-    if score >= 80 and tier in {"BORDERLINE", "EXPERIMENTAL", "SURPRISE"}:
+    if score >= active_thresholds["surprise"] and tier in {"BORDERLINE", "EXPERIMENTAL", "SURPRISE"}:
         return "SURPRISE_TEST"
-    if score >= 70:
+    if score >= active_thresholds["watch"]:
         return "WATCH"
     return "IGNORE"
 
 
-def score_candidate(candidate: dict) -> dict:
+def score_candidate(candidate: dict, *, weights=None, thresholds=None, hardware_limits=None) -> dict:
     """Add score, hardware tier, and action fields to a candidate record."""
     scored = dict(candidate)
     model = Candidate(
@@ -60,26 +63,40 @@ def score_candidate(candidate: dict) -> dict:
         is_moe=bool(candidate.get("is_moe", False)),
         active_params_b=candidate.get("active_params_b"),
     )
-    score = weighted_score(model)
+    score = weighted_score(model, weights)
     tier = hardware_tier(
         model.vram_gb,
         is_moe=model.is_moe,
         active_params_b=model.active_params_b,
+        limits=hardware_limits,
     )
     scored.update({
         "score": score,
         "hardware_tier": tier,
-        "recommendation": recommendation(score, tier),
+        "recommendation": recommendation(score, tier, thresholds),
     })
     return scored
 
 
-def champion_comparison(candidate: dict, champions: list[dict]) -> dict:
-    scored_candidate = score_candidate(candidate)
+def champion_comparison(candidate: dict, champions: list[dict], *, weights=None, thresholds=None, hardware_limits=None) -> dict:
+    scored_candidate = score_candidate(
+        candidate,
+        weights=weights,
+        thresholds=thresholds,
+        hardware_limits=hardware_limits,
+    )
     if not champions:
         return {"candidate": candidate.get("name", "unknown"), "champion": None, "delta": None, "advantage": "unknown"}
 
-    scored_champions = [score_candidate(champion) for champion in champions]
+    scored_champions = [
+        score_candidate(
+            champion,
+            weights=weights,
+            thresholds=thresholds,
+            hardware_limits=hardware_limits,
+        )
+        for champion in champions
+    ]
     champion = max(scored_champions, key=lambda item: item["score"])
     delta = round(scored_candidate["score"] - champion["score"], 2)
     return {
