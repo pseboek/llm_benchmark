@@ -175,6 +175,24 @@ def summarize_task_progress(tasks: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_model_progress(tasks: list[dict]) -> list[dict]:
+    grouped: dict[str, dict[str, int]] = {}
+    for task in tasks:
+        model = str(task.get("model", "unknown"))
+        row = grouped.setdefault(model, {"completed": 0, "pending": 0, "failed": 0})
+        status = task.get("status")
+        if status == "COMPLETED":
+            row["completed"] += 1
+        elif status == "FAILED":
+            row["failed"] += 1
+        elif status in {"PENDING_EXECUTION", "RUNNING"}:
+            row["pending"] += 1
+    return [
+        {"model": model, **values, "total": sum(values.values())}
+        for model, values in sorted(grouped.items())
+    ]
+
+
 def dashboard_metrics(recommendations: list[dict], runs: list[dict]) -> dict[str, int]:
     return {
         "test_now": sum(item.get("recommendation") == "TEST_NOW" for item in recommendations),
@@ -283,6 +301,7 @@ def render_dashboard(db_path: str | Path) -> None:
     show_table(st, "Report history", summarize_report_history(data["report_snapshots"]), "Report history appears after the next report run.")
     show_table(st, "Benchmark task status", data["benchmark_tasks"], "Benchmark tasks appear after an approved plan is created.")
     show_table(st, "Benchmark progress", summarize_task_progress(data["benchmark_tasks"]), "Benchmark progress appears after an approved plan is created.")
+    show_table(st, "Progress by model", summarize_model_progress(data["benchmark_tasks"]), "Model progress appears after an approved plan is created.")
     show_table(st, "Source status", summarize_source_status(data["source_status"]), "Source status appears after the next discovery run.")
     show_table(st, "Discovered candidates", candidates, "No candidates were discovered for the selected filters.")
 
