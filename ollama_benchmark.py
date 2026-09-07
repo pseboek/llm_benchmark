@@ -177,8 +177,8 @@ def get_gpu_cpu_split(model):
     return None
 
 
-def print_block_summary(model, tok_per_sec_values, telemetry):
-    """Print avg/min/max tok/s, GPU/CPU split and nvidia-smi readout for one context block."""
+def print_block_summary(model, tok_per_sec_values, telemetry, load_seconds_values=None):
+    """Print avg/min/max tok/s, GPU/CPU split, nvidia-smi and model load time for one context block."""
     print("-" * 80)
 
     if tok_per_sec_values:
@@ -207,6 +207,11 @@ def print_block_summary(model, tok_per_sec_values, telemetry):
         )
     else:
         print("NVIDIA-SMI:     n/a")
+
+    # Ollama only reports a non-zero load_duration on the request that
+    # actually (re)loaded the model into VRAM/RAM for this context size.
+    load_seconds = max(load_seconds_values, default=0) if load_seconds_values else 0
+    print(f"MODEL LOAD TIME: {load_seconds:.2f}s")
 
     print("-" * 80)
 
@@ -362,6 +367,7 @@ def run_benchmark():
 
             block_tok_per_sec = []
             block_telemetry = None
+            block_load_seconds = []
 
             for category, prompt in PROMPTS.items():
 
@@ -397,6 +403,7 @@ def run_benchmark():
 
                     block_tok_per_sec.append(result["tok_per_sec"])
                     block_telemetry = telemetry_after
+                    block_load_seconds.append(result["load_duration_ns"] / 1_000_000_000)
 
                     graded = grade_response(result["response"], category)
                     results.append({
@@ -487,7 +494,7 @@ def run_benchmark():
                         "error": str(e)
                     })
 
-            print_block_summary(model, block_tok_per_sec, block_telemetry)
+            print_block_summary(model, block_tok_per_sec, block_telemetry, block_load_seconds)
 
     # ========================================================
     # Save detailed results
