@@ -66,9 +66,13 @@ def test_database_stores_candidate_metadata(tmp_path):
         "quantization": "Q4_K_M",
         "architecture": "qwen2",
         "estimated_vram_gb": 8.0,
+        "parameters_total_b": 14.8,
+        "context_length": 32768,
     }])
 
     candidate = db.list_candidates()[0]
     assert candidate["parameter_size"] == "14B"
     assert candidate["quantization"] == "Q4_K_M"
     assert candidate["estimated_vram_gb"] == 8.0
+    assert candidate["parameters_total_b"] == 14.8
+    assert candidate["context_length"] == 32768

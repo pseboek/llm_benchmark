@@ -66,6 +66,8 @@ class ModelScoutDB:
             self._ensure_column(connection, "candidates", "quantization", "TEXT")
             self._ensure_column(connection, "candidates", "architecture", "TEXT")
             self._ensure_column(connection, "candidates", "estimated_vram_gb", "REAL")
+            self._ensure_column(connection, "candidates", "parameters_total_b", "REAL")
+            self._ensure_column(connection, "candidates", "context_length", "INTEGER")
 
     @staticmethod
     def _ensure_column(connection: sqlite3.Connection, table: str, column: str, definition: str) -> None:
@@ -84,14 +86,16 @@ class ModelScoutDB:
                 connection.execute(
                     """
                     INSERT INTO candidates
-                        (name, source, parameter_size, quantization, architecture, estimated_vram_gb)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                        (name, source, parameter_size, quantization, architecture, estimated_vram_gb, parameters_total_b, context_length)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(name) DO UPDATE SET
                         source = excluded.source,
                         parameter_size = COALESCE(excluded.parameter_size, candidates.parameter_size),
                         quantization = COALESCE(excluded.quantization, candidates.quantization),
                         architecture = COALESCE(excluded.architecture, candidates.architecture),
-                        estimated_vram_gb = COALESCE(excluded.estimated_vram_gb, candidates.estimated_vram_gb)
+                        estimated_vram_gb = COALESCE(excluded.estimated_vram_gb, candidates.estimated_vram_gb),
+                        parameters_total_b = COALESCE(excluded.parameters_total_b, candidates.parameters_total_b),
+                        context_length = COALESCE(excluded.context_length, candidates.context_length)
                     """,
                     (
                         name,
@@ -100,6 +104,8 @@ class ModelScoutDB:
                         candidate.get("quantization"),
                         candidate.get("architecture"),
                         candidate.get("estimated_vram_gb"),
+                        candidate.get("parameters_total_b"),
+                        candidate.get("context_length"),
                     ),
                 )
                 saved.append(dict(candidate, name=name, source=source))
@@ -108,16 +114,18 @@ class ModelScoutDB:
     def list_candidates(self) -> list[dict]:
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT name, source, parameter_size, quantization, architecture, estimated_vram_gb FROM candidates ORDER BY id ASC"
+                "SELECT name, source, parameter_size, quantization, architecture, estimated_vram_gb, parameters_total_b, context_length FROM candidates ORDER BY id ASC"
             ).fetchall()
         candidates = []
-        for name, source, parameter_size, quantization, architecture, estimated_vram_gb in rows:
+        for name, source, parameter_size, quantization, architecture, estimated_vram_gb, parameters_total_b, context_length in rows:
             candidate = {"name": name, "source": source}
             for key, value in {
                 "parameter_size": parameter_size,
                 "quantization": quantization,
                 "architecture": architecture,
                 "estimated_vram_gb": estimated_vram_gb,
+                "parameters_total_b": parameters_total_b,
+                "context_length": context_length,
             }.items():
                 if value is not None:
                     candidate[key] = value
