@@ -7,6 +7,7 @@ from statistics import mean
 
 from benchmark.prompts import PERSONAL_PROMPTS, PROMPT_VERSION
 from src.telemetry import capture_telemetry
+from src.grading import grade_response
 
 # ============================================================
 # Configuration
@@ -303,6 +304,7 @@ def run_benchmark():
 
                         "response":
                             result["response"]
+                        , **grade_response(result["response"], category)
                     })
 
                 except Exception as e:
@@ -331,6 +333,8 @@ def run_benchmark():
                         "load_seconds": 0,
                         "total_seconds": 0,
                         "response": "",
+                        "quality_score": 0.0,
+                        "quality_method": "heuristic_v1",
                         "error": str(e)
                     })
 
