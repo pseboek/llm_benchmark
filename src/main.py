@@ -106,6 +106,7 @@ def parse_args():
     parser.add_argument("--suggest-weights", action="store_true", help="Suggest scoring weights from benchmark history")
     parser.add_argument("--benchmark-plan", help="Create benchmark tasks from an approved model queue")
     parser.add_argument("--run-plan", help="Execute a previously generated benchmark plan")
+    parser.add_argument("--max-tasks", type=int, help="Limit plan execution to this many pending tasks")
     parser.add_argument("--dry-run-plan", help="Show pending benchmark tasks without executing Ollama")
     parser.add_argument("--db-summary", action="store_true", help="Show a compact SQLite data summary")
     parser.add_argument("--task-status", action="store_true", help="Show benchmark task status counts")
@@ -150,24 +151,25 @@ def main():
         return
 
     if args.run_plan:
-        plan = load_queue(args.run_plan)
+        all_plan = load_queue(args.run_plan)
+        pending = [task for task in all_plan if task.get("status") == "PENDING_EXECUTION"]
+        plan = pending[:args.max_tasks] if args.max_tasks is not None else pending
         db = ModelScoutDB(args.db)
         db.save_benchmark_tasks([{**task, "status": "RUNNING"} for task in plan])
         try:
             results = run_benchmark_plan(plan)
         except Exception:
-            failed_plan = apply_result_statuses(plan, [])
+            failed_plan = apply_result_statuses(all_plan, [])
             Path(args.run_plan).write_text(json.dumps(failed_plan, indent=2), encoding="utf-8")
-            for task in failed_plan:
-                if task.get("status") == "FAILED":
-                    db.update_benchmark_task_status(task["model"], task["context"], task["category"], "FAILED")
+            for task in plan:
+                db.update_benchmark_task_status(task["model"], task["context"], task["category"], "FAILED")
             raise
         if results:
             db.save_benchmark_runs(results)
             for result in results:
                 status = "COMPLETED" if result.get("status") == "OK" else "FAILED"
                 db.update_benchmark_task_status(result["model"], result["context"], result["category"], status)
-            Path(args.run_plan).write_text(json.dumps(apply_result_statuses(plan, results), indent=2), encoding="utf-8")
+            Path(args.run_plan).write_text(json.dumps(apply_result_statuses(all_plan, results), indent=2), encoding="utf-8")
             candidates = [
                 enrich_from_benchmark(enrich_from_baseline(candidate, config.get("baseline", [])), db.list_benchmark_runs())
                 for candidate in db.list_candidates()

@@ -147,11 +147,12 @@ Der Plan erzeugt je freigegebenem Modell, Kontext und persönlicher Prompt-Kateg
 Nach Prüfung kann der Plan explizit ausgeführt werden:
 
 ```powershell
-python src/main.py --run-plan reports/benchmark_plan.json --db data/model_scout.db
+python src/main.py --run-plan reports/benchmark_plan.json --max-tasks 1 --db data/model_scout.db
 ```
 
 Dabei werden ausschließlich Tasks mit `PENDING_EXECUTION` ausgeführt und die Ergebnisse anschließend in SQLite gespeichert.
 Die Plan-Datei wird dabei ebenfalls auf `COMPLETED` oder `FAILED` aktualisiert.
+Mit `--max-tasks` kann die Ausführung schrittweise begrenzt werden; nicht ausgewählte Pending-Tasks bleiben offen.
 
 Vor der Ausführung kann der Plan sicher geprüft werden:
 
