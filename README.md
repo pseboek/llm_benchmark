@@ -11,6 +11,18 @@ Das Projekt kombiniert zwei Ebenen:
 - Benchmark: ausgewählte Modelle lokal mit definierter Kontextgröße und Prompts testen
 - Reporting: zusammengefasste Kandidatenliste und erste Auswertung erzeugen
 - Persistence: entdeckte Kandidaten in einer SQLite-Datenbank speichern und später wieder verwenden
+- Dashboard: historische Summaries, Filters, Fehlertrends, Lauf-Delta und Hardware-Telemetrie visualisieren
+- Champion/Challenger: echte Benchmark-Deltas statt reiner Score-Vergleiche nutzen
+
+## Aktueller Status
+
+Die aktuelle Implementierung ist vollständig für die verifizierte Test-Suite und umfasst:
+
+- Discovery/Scoring/Ranking, inklusive `NEEDS_DATA`-Status
+- Benchmark-Tasks, Recovery und Status-Updates
+- Benchmark-Profile mit Speed-/Quality-Deltas
+- Report- und Dashboard-Auswertung über die SQLite-Historie
+- Multi-GPU und RAM/CPU-Telemetrie mit Peak-/Delta-Werten
 
 ## Voraussetzungen
 

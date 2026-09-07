@@ -4,6 +4,21 @@
 
 Der **LLM Model Scout** entdeckt regelmäßig neue Open-Weight-LLMs, bewertet deren Eignung für das konkrete lokale Setup und schlägt nur Kandidaten für einen lokalen Benchmark vor.
 
+### Verifizierter Umsetzungsstand (2026-09-07)
+
+Die aktuelle Implementierung umfasst die folgenden, in der Test-Suite bestätigten Funktionen:
+
+- Discovery über Ollama, Hugging Face, LMArena, Artificial Analysis und SWE-bench
+- Kandidaten-Normalisierung und De-Duplizierung
+- SQLite-basierte Persistenz mit Kandidaten, Runs, Empfehlungen, Tasks und Source-Status
+- Benchmark-Task-Lifecycle mit `PENDING_EXECUTION`, `RUNNING`, `COMPLETED` und `FAILED`
+- Champion/Challenger-Vergleich mit Benchmark-Speeed-/Quality-Deltas
+- Dashboard mit Filtern, Summaries und Bewertungs-/Telemetrie-Tabellen
+- Hardware-Telemetrie mit GPU-, RAM-, CPU- und Peak-/Delta-Metriken
+- Markdown-Reports mit Source-Coverage und Benchmark-Evidence
+
+---
+
 ### Zielsystem
 
 - Windows 11
@@ -251,44 +266,49 @@ Die mitgelieferte Konfiguration enthält dein aktuelles RTX-4080-Profil und dein
 
 ## 11. Datenmodell
 
-Für Version 1 genügt SQLite.
+Die aktuelle Implementierung nutzt SQLite mit einem nachvollziehbaren, in der Praxis bewährten Schema.
 
-Empfohlene Tabellen:
+Aktuelle Tabellen:
 
 ```text
-models
-sources
-model_sources
-benchmarks
+candidates
 benchmark_runs
-quality_scores
 recommendations
+report_snapshots
+benchmark_tasks
+source_status
 ```
 
 Wichtige Felder:
 
 ```text
-model_name
-version
-source
-release_date
-parameters_total
-parameters_active
-is_moe
-context_length
-quantization
-estimated_vram_gb
-coding_score
-reasoning_score
-general_score
-speed_score
-tool_score
-freshness_score
-hardware_tier
-candidate_score
-recommendation
-created_at
+candidates:
+  name, source, parameter_size, quantization, architecture,
+  estimated_vram_gb, parameters_total_b, context_length
+
+benchmark_runs:
+  model, context, category, status, tok_per_sec, prompt_version,
+  prompt_tok_per_sec, ttft_seconds, quality_score,
+  quality_method, quality_confidence, quality_components, error,
+  telemetry_captured_at, telemetry_duration_seconds,
+  gpu_count, gpu_utilization_percent, gpu_utilization_peak_percent,
+  gpu_memory_used_mb, gpu_memory_total_mb, gpu_memory_utilization_percent,
+  ram_used_mb, cpu_percent
+
+recommendations:
+  model, score, hardware_tier, recommendation
+
+report_snapshots:
+  total_candidates, test_now, surprise_test, watch, needs_data, ignored
+
+benchmark_tasks:
+  model, context, category, prompt_version, status
+
+source_status:
+  source, status, candidates, error
 ```
+
+Die Tabelle `benchmark_runs` enthält außerdem Peak- und Delta-Werte für GPU-, RAM- und CPU-Telemetrie, um Laufvergleich und Dashboard-Visualisierung sauber zu unterstützen.
 
 ---
 
@@ -337,9 +357,9 @@ quantization
 
 ## 14. Lokaler Benchmark
 
-Der vorhandene Benchmark wird als zweite Phase integriert.
+Der vorhandene Benchmark ist als zweite Phase integriert und lauffähig.
 
-Für ausgewählte Kandidaten:
+Für ausgewählte Kandidaten werden typischerweise folgende Context-Größen gemessen:
 
 ```text
 8K
@@ -347,7 +367,7 @@ Für ausgewählte Kandidaten:
 32K
 ```
 
-messen:
+Gemessen werden unter anderem:
 
 - TTFT
 - Prompt tok/s
@@ -355,14 +375,15 @@ messen:
 - Gesamtdauer
 - Prompt Tokens
 - Output Tokens
-- VRAM
+- VRAM-/GPU-Metriken
 - CPU/GPU-Aufteilung
 - RAM
 - GPU-Auslastung
+- Telemetrie-Delta und Peak-Werte
 
 Der aktuelle Benchmark misst Prompt tok/s und speichert die Prompt-Version.
-TTFT wird inzwischen per Ollama-Streaming gemessen und persistiert. Wenn die
-lokale Umgebung `nvidia-smi` und `psutil` bereitstellt, werden außerdem
+TTFT wird über Ollama-Streaming ermittelt und persistiert. Wenn die lokale
+Umgebung `nvidia-smi` und `psutil` bereitstellt, werden zusätzlich
 GPU-Auslastung, GPU-Speicher, RAM und CPU-Auslastung erfasst. Fehlende
 Telemetrie-Tools bleiben ohne Einfluss auf den Benchmarklauf.
 
@@ -371,6 +392,10 @@ Generation tok/s:
 ```python
 generation_tps = eval_count / (eval_duration / 1_000_000_000)
 ```
+
+Für jeden Run werden außerdem ein UTC-Zeitstempel, die Messdauer und die
+Vorher-/Nachher-Delta-Werte gespeichert, damit Performance-Unterschiede im
+Dashboard und in Reports nachvollziehbar bleiben.
 
 ---
 
@@ -406,7 +431,7 @@ vergleichbar bleiben.
 
 ## 16. Entscheidungslogik
 
-Start:
+Die aktuelle Logik ist implementiert und in der Datenbank sowie im Dashboard sichtbar:
 
 ```text
 score >= 85
@@ -425,35 +450,40 @@ sonst
     -> IGNORE
 ```
 
-Zusätzlich sollte der Vergleich mit dem jeweiligen Champion berücksichtigt werden.
+Zusätzlich wird der jeweilige Champion berücksichtigt. Der Vergleich nutzt
+`benchmark_profile()` und `champion_comparison()` mit tatsächlichen
+Benchmark-Runs, sodass Speed- und Quality-Delta statt nur eines Gesamt-Score-Deltas
+berücksichtigt werden.
 
 ---
 
 ## 17. Reports
 
-Alle zwei Wochen entsteht beispielsweise:
+Das Reporting ist implementiert und in der Praxis nutzbar. Ein Beispiel:
 
 ```text
-reports/2026-09-06_model_scout.md
+reports/2026-09-07_model_scout.md
 ```
 
 Der Report enthält:
 
 ```text
 Executive Summary
-Test Now
-Surprise Candidates
-Watchlist
-Champion-Vergleich
-Hardware-Fit
-Quellen
+Source Coverage
+Source Status
+Recommendations
+Candidates
+Benchmark Evidence
+Champion Comparison
+Benchmark task progress
 ```
 
-Zusätzlich weist der Report die Kandidatenanzahl je Quelle aus. Nicht
-verfügbare oder nicht strukturierte externe Endpunkte werden dadurch sichtbar,
-ohne lokale Discovery-Ergebnisse zu verschleiern.
+Zusätzlich weist der Report die Kandidatenanzahl je Quelle aus und dokumentiert
+Quellenstatus (`OK`, `EMPTY`, `DISABLED`, `ERROR`). Nicht verfügbare oder
+nicht strukturierte externe Endpunkte werden dadurch sichtbar, ohne lokale
+Discovery-Ergebnisse zu verschleiern.
 
-Jede Empfehlung soll begründen:
+Jede Empfehlung begründet:
 
 - Warum?
 - Gegen welchen Champion?
@@ -466,32 +496,23 @@ Jede Empfehlung soll begründen:
 
 ## 18. Automatisierung
 
-Für Windows 11:
+Für Windows 11 ist die Automated-Report-Pipeline bereits vorbereitet:
 
 ```text
 Windows Task Scheduler
         ↓
-python src/main.py
+python src/main.py --report --offline
         ↓
-Discovery
-        ↓
-Scoring
+Discovery/Scoring
         ↓
 Markdown Report
 ```
 
-Empfehlung für V1:
-
-**Alle 14 Tage nur Discovery und Report automatisieren.**
-
-Download und Benchmark zunächst bewusst manuell auslösen.
-
-Später kann die Pipeline für `TEST_NOW` automatisiert werden.
-
 Der aktuelle Stand stellt die CLI, das Dashboard und
 `scripts/run_scout_report.ps1` bereit. Das Skript kann im Windows Task
 Scheduler als Aktion für einen zweiwöchigen Offline-Report hinterlegt werden.
-Downloads und lokale Modellbenchmarks bleiben bewusst manuell.
+Downloads und lokale Modellbenchmarks bleiben bewusst manuell, während die
+Benchmark-Planung, Task-Status-Verwaltung und Recovery gesteuert werden.
 
 ---
 
