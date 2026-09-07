@@ -186,18 +186,18 @@ class ModelScoutDB:
 
     def save_recommendations(self, recommendations: Iterable[dict]) -> None:
         with self._connect() as connection:
-            connection.executemany(
-                "INSERT INTO recommendations (model, score, hardware_tier, recommendation) VALUES (?, ?, ?, ?)",
-                [
+            for item in recommendations:
+                model = str(item.get("model", item.get("name", "unknown")))
+                connection.execute("DELETE FROM recommendations WHERE model = ?", (model,))
+                connection.execute(
+                    "INSERT INTO recommendations (model, score, hardware_tier, recommendation) VALUES (?, ?, ?, ?)",
                     (
-                        str(item.get("model", item.get("name", "unknown"))),
+                        model,
                         float(item.get("score", 0.0)),
                         str(item.get("hardware_tier", "UNKNOWN")),
                         str(item.get("recommendation", "IGNORE")),
-                    )
-                    for item in recommendations
-                ],
-            )
+                    ),
+                )
 
     def list_recommendations(self) -> list[dict]:
         with self._connect() as connection:
