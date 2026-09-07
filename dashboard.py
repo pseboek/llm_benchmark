@@ -105,6 +105,18 @@ def summarize_quality(runs: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_quality_by_context(runs: list[dict]) -> list[dict]:
+    grouped: dict[tuple[str, int], list[float]] = {}
+    for run in runs:
+        if run.get("status") == "OK" and run.get("quality_score") is not None:
+            key = (str(run.get("model", "unknown")), int(run.get("context", 0)))
+            grouped.setdefault(key, []).append(float(run["quality_score"]))
+    return [
+        {"model": model, "context": context, "avg_quality_score": round(sum(values) / len(values), 2), "runs": len(values)}
+        for (model, context), values in sorted(grouped.items())
+    ]
+
+
 def summarize_errors(runs: list[dict]) -> list[dict]:
     return [
         {
@@ -262,6 +274,7 @@ def render_dashboard(db_path: str | Path) -> None:
     show_table(st, "Recommendations", recommendations, "No recommendations match the selected filters.")
     show_table(st, "Benchmark throughput", summarize_runs(runs), "No successful benchmark runs are stored yet.")
     show_table(st, "Quality by category", summarize_quality(runs), "Quality scores appear after a benchmark plan has run.")
+    show_table(st, "Quality by context", summarize_quality_by_context(runs), "Context quality appears after a benchmark plan has run.")
     show_table(st, "Latency", summarize_latency(runs), "Latency metrics appear after a benchmark plan has run.")
     show_table(st, "Benchmark errors", summarize_errors(runs), "No failed benchmark runs recorded.")
     show_table(st, "Error trend", summarize_error_trend(runs), "No error trend available.")
