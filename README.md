@@ -174,6 +174,12 @@ Den Status der Benchmark-Tasks kannst du separat prüfen:
 python src/main.py --task-status --db data/model_scout.db
 ```
 
+Fehlgeschlagene Tasks können gezielt wieder freigegeben werden:
+
+```powershell
+python src/main.py --retry-failed-plan reports/benchmark_plan.json --db data/model_scout.db
+```
+
 ## Projektstruktur
 
 ```text
