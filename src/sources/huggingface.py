@@ -29,13 +29,18 @@ def parse_huggingface_models(payload: Any) -> list[dict[str, Any]]:
         raw_models = payload or []
 
     parsed: list[dict[str, Any]] = []
+    generative_tags = {"text-generation", "text2text-generation", "conversational"}
     for model in raw_models:
         model_id = model.get("id") or model.get("model_id") or model.get("name")
         if not model_id:
             continue
+        pipeline_tag = model.get("pipeline_tag")
+        if pipeline_tag and pipeline_tag not in generative_tags:
+            continue
         parsed.append({
             "name": model_id,
             "source": "huggingface",
+            **({"pipeline_tag": pipeline_tag} if pipeline_tag else {}),
         })
 
     return parsed
