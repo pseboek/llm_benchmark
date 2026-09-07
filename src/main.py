@@ -108,6 +108,7 @@ def parse_args():
     parser.add_argument("--run-plan", help="Execute a previously generated benchmark plan")
     parser.add_argument("--dry-run-plan", help="Show pending benchmark tasks without executing Ollama")
     parser.add_argument("--db-summary", action="store_true", help="Show a compact SQLite data summary")
+    parser.add_argument("--task-status", action="store_true", help="Show benchmark task status counts")
     return parser.parse_args()
 
 
@@ -124,6 +125,10 @@ def main():
 
     if args.db_summary:
         print(json.dumps(ModelScoutDB(args.db).summary(), indent=2))
+        return
+
+    if args.task_status:
+        print(json.dumps(ModelScoutDB(args.db).benchmark_task_summary(), indent=2))
         return
 
     if args.suggest_weights:

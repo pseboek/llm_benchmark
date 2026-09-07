@@ -360,6 +360,14 @@ class ModelScoutDB:
             for model, context, category, prompt_version, status in rows
         ]
 
+    def benchmark_task_summary(self) -> dict:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT status, COUNT(*) FROM benchmark_tasks GROUP BY status"
+            ).fetchall()
+        by_status = {status: count for status, count in rows}
+        return {"total": sum(by_status.values()), "by_status": by_status}
+
     def save_source_status(self, status: dict[str, dict]) -> None:
         with self._connect() as connection:
             connection.executemany(

@@ -166,6 +166,12 @@ Eine kompakte Übersicht der SQLite-Daten erhältst du mit:
 python src/main.py --db-summary --db data/model_scout.db
 ```
 
+Den Status der Benchmark-Tasks kannst du separat prüfen:
+
+```powershell
+python src/main.py --task-status --db data/model_scout.db
+```
+
 ## Projektstruktur
 
 ```text
