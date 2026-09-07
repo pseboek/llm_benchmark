@@ -9,12 +9,12 @@ MISSING_VALUE = "Not available"
 def load_dashboard_data(db_path: str | Path = "data/model_scout.db") -> dict[str, list[dict]]:
     path = Path(db_path)
     if not path.exists():
-        return {"candidates": [], "benchmark_runs": [], "recommendations": [], "report_snapshots": [], "benchmark_tasks": []}
+        return {"candidates": [], "benchmark_runs": [], "recommendations": [], "report_snapshots": [], "benchmark_tasks": [], "source_status": []}
 
     with sqlite3.connect(path) as connection:
         connection.row_factory = sqlite3.Row
         data = {}
-        for table in ("candidates", "benchmark_runs", "recommendations", "report_snapshots", "benchmark_tasks"):
+        for table in ("candidates", "benchmark_runs", "recommendations", "report_snapshots", "benchmark_tasks", "source_status"):
             rows = connection.execute(f"SELECT * FROM {table} ORDER BY id ASC").fetchall()
             data[table] = [dict(row) for row in rows]
     return data
@@ -100,6 +100,16 @@ def summarize_quality(runs: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_source_status(rows: list[dict]) -> list[dict]:
+    latest: dict[str, dict] = {}
+    for row in rows:
+        latest[str(row.get("source", "unknown"))] = row
+    return [
+        {"source": source, "status": row.get("status", MISSING_VALUE), "candidates": row.get("candidates", 0)}
+        for source, row in sorted(latest.items())
+    ]
+
+
 def filter_dashboard_data(
     data: dict[str, list[dict]],
     *,
@@ -171,6 +181,7 @@ def render_dashboard(db_path: str | Path) -> None:
     show_table(st, "Hardware telemetry", summarize_telemetry(runs), "Hardware telemetry appears after a successful benchmark run.")
     show_table(st, "Report history", summarize_report_history(data["report_snapshots"]), "Report history appears after the next report run.")
     show_table(st, "Benchmark task status", data["benchmark_tasks"], "Benchmark tasks appear after an approved plan is created.")
+    show_table(st, "Source status", summarize_source_status(data["source_status"]), "Source status appears after the next discovery run.")
     show_table(st, "Discovered candidates", candidates, "No candidates were discovered for the selected filters.")
 
 

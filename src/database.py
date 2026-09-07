@@ -80,6 +80,18 @@ class ModelScoutDB:
                 )
                 """
             )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS source_status (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    source TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    candidates INTEGER NOT NULL DEFAULT 0,
+                    error TEXT,
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
             self._ensure_column(connection, "benchmark_runs", "prompt_version", "TEXT NOT NULL DEFAULT 'unknown'")
             self._ensure_column(connection, "benchmark_runs", "prompt_tok_per_sec", "REAL NOT NULL DEFAULT 0")
             self._ensure_column(connection, "benchmark_runs", "ttft_seconds", "REAL")
@@ -346,4 +358,24 @@ class ModelScoutDB:
         return [
             {"model": model, "context": context, "category": category, "prompt_version": prompt_version, "status": status}
             for model, context, category, prompt_version, status in rows
+        ]
+
+    def save_source_status(self, status: dict[str, dict]) -> None:
+        with self._connect() as connection:
+            connection.executemany(
+                "INSERT INTO source_status (source, status, candidates, error) VALUES (?, ?, ?, ?)",
+                [
+                    (source, str(item.get("status", "UNKNOWN")), int(item.get("candidates", 0)), item.get("error"))
+                    for source, item in status.items()
+                ],
+            )
+
+    def list_source_status(self) -> list[dict]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT source, status, candidates, error, created_at FROM source_status ORDER BY id ASC"
+            ).fetchall()
+        return [
+            {"source": source, "status": status, "candidates": candidates, "error": error, "created_at": created_at}
+            for source, status, candidates, error, created_at in rows
         ]

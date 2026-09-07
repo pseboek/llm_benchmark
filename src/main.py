@@ -198,6 +198,8 @@ def main():
         candidates = [enrich_from_benchmark(candidate, db.list_benchmark_runs()) for candidate in candidates]
         db.save_candidates(candidates)
         db.save_recommendations([score_candidate(candidate) for candidate in candidates])
+        db.save_source_status(source_status)
+        db.save_source_status(source_status)
         report = build_report(
             candidates,
             champions=config.get("baseline", []),
