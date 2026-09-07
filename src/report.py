@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from src.scoring import champion_comparison, score_candidate
+from src.scoring import champion_comparison, enrich_from_baseline, score_candidate
 
 
 def build_report(
@@ -15,6 +15,7 @@ def build_report(
     scoring_config = scoring_config or {}
     hardware_limits = (hardware_config or {}).get("vram", {})
     thresholds = (hardware_config or {}).get("thresholds")
+    candidates = [enrich_from_baseline(candidate, champions or []) for candidate in candidates]
     scored = [
         score_candidate(
             candidate,

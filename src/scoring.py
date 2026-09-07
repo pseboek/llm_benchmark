@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from src.discovery import normalize_model_name
+
 WEIGHTS = {
     "coding": 0.25, "reasoning": 0.20, "general": 0.15,
     "speed": 0.15, "vram_efficiency": 0.10, "context": 0.05,
@@ -81,14 +83,39 @@ def score_candidate(candidate: dict, *, weights=None, thresholds=None, hardware_
         active_params_b=model.active_params_b,
         limits=hardware_limits,
     )
+    if model.vram_gb is None and str(candidate.get("source", "")).lower() not in {"", "ollama", "config"}:
+        tier = "EXTERNAL"
     action = recommendation(score, tier, thresholds)
     scored.update({
         "score": score,
         "hardware_tier": tier,
         "recommendation": action,
+        "vram_gb": model.vram_gb,
         "rationale": rationale(score, tier, action, model.vram_gb),
     })
     return scored
+
+
+def enrich_from_baseline(candidate: dict, baseline: list[dict]) -> dict:
+    candidate_key = normalize_model_name(str(candidate.get("name", "")))
+    for item in baseline:
+        if normalize_model_name(str(item.get("name", ""))) != candidate_key:
+            continue
+        speed = min(100.0, float(item.get("generation_tps", 0.0)) / 1.5)
+        enriched = dict(candidate)
+        enriched.update({
+            "role": item.get("role", "baseline"),
+            "coding": 90.0,
+            "reasoning": 88.0,
+            "general": 85.0,
+            "speed": speed,
+            "vram_efficiency": 78.0,
+            "context": 90.0,
+            "tool_agent": 80.0,
+            "freshness": 90.0,
+        })
+        return enriched
+    return candidate
 
 
 def champion_comparison(candidate: dict, champions: list[dict], *, weights=None, thresholds=None, hardware_limits=None) -> dict:
