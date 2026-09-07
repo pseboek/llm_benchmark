@@ -180,6 +180,12 @@ Fehlgeschlagene Tasks können gezielt wieder freigegeben werden:
 python src/main.py --retry-failed-plan reports/benchmark_plan.json --db data/model_scout.db
 ```
 
+Nach einem abgebrochenen Prozess können verwaiste `RUNNING`-Tasks zurückgesetzt werden:
+
+```powershell
+python src/main.py --recover-running-tasks --db data/model_scout.db
+```
+
 ## Projektstruktur
 
 ```text
