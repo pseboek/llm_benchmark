@@ -4,6 +4,30 @@ from datetime import date
 from pathlib import Path
 
 from src.scoring import champion_comparison, enrich_from_baseline, score_candidate
+def build_report_snapshot(
+    candidates: list[dict],
+    scoring_config: dict | None = None,
+    hardware_config: dict | None = None,
+) -> dict[str, int]:
+    scoring_config = scoring_config or {}
+    hardware_config = hardware_config or {}
+    scored = [
+        score_candidate(
+            candidate,
+            weights=scoring_config,
+            thresholds=hardware_config.get("thresholds"),
+            hardware_limits=hardware_config.get("vram", {}),
+        )
+        for candidate in candidates
+    ]
+    return {
+        "total_candidates": len(scored),
+        "test_now": sum(item["recommendation"] == "TEST_NOW" for item in scored),
+        "surprise_test": sum(item["recommendation"] == "SURPRISE_TEST" for item in scored),
+        "watch": sum(item["recommendation"] == "WATCH" for item in scored),
+        "needs_data": sum(item["recommendation"] == "NEEDS_DATA" for item in scored),
+        "ignored": sum(item["recommendation"] == "IGNORE" for item in scored),
+    }
 
 
 def build_report(

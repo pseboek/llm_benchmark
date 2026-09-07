@@ -18,7 +18,7 @@ from src.database import ModelScoutDB
 from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
 from src.download_queue import build_download_plan, execute_download_plan, load_queue, write_download_plan
 from src.pipeline import discover_candidates
-from src.report import build_report, write_report
+from src.report import build_report, build_report_snapshot, write_report
 from src.scoring import Candidate, enrich_from_baseline, hardware_tier, recommendation, score_candidate, weighted_score
 
 
@@ -176,6 +176,7 @@ def main():
             hardware_config={**config.get("hardware", {}), "thresholds": config.get("thresholds", {})},
         )
         output = args.output or str(ROOT / "reports" / f"{date.today().isoformat()}_model_scout.md")
+        db.save_report_snapshot({**build_report_snapshot(candidates, config.get("scoring"), {**config.get("hardware", {}), "thresholds": config.get("thresholds", {})}), "output_path": output})
         write_report(report, output)
         print(report)
         print(f"Report saved to: {output}")

@@ -51,6 +51,21 @@ class ModelScoutDB:
                 )
                 """
             )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS report_snapshots (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    total_candidates INTEGER NOT NULL,
+                    test_now INTEGER NOT NULL,
+                    surprise_test INTEGER NOT NULL,
+                    watch INTEGER NOT NULL,
+                    needs_data INTEGER NOT NULL,
+                    ignored INTEGER NOT NULL,
+                    output_path TEXT,
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
             self._ensure_column(connection, "benchmark_runs", "prompt_version", "TEXT NOT NULL DEFAULT 'unknown'")
             self._ensure_column(connection, "benchmark_runs", "prompt_tok_per_sec", "REAL NOT NULL DEFAULT 0")
             self._ensure_column(connection, "benchmark_runs", "ttft_seconds", "REAL")
@@ -236,4 +251,42 @@ class ModelScoutDB:
         return [
             {"model": model, "score": score, "hardware_tier": tier, "recommendation": action}
             for model, score, tier, action in rows
+        ]
+
+    def save_report_snapshot(self, snapshot: dict) -> None:
+        with self._connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO report_snapshots
+                    (total_candidates, test_now, surprise_test, watch, needs_data, ignored, output_path)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    int(snapshot.get("total_candidates", 0)),
+                    int(snapshot.get("test_now", 0)),
+                    int(snapshot.get("surprise_test", 0)),
+                    int(snapshot.get("watch", 0)),
+                    int(snapshot.get("needs_data", 0)),
+                    int(snapshot.get("ignored", 0)),
+                    snapshot.get("output_path"),
+                ),
+            )
+
+    def list_report_snapshots(self) -> list[dict]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT created_at, total_candidates, test_now, surprise_test, watch, needs_data, ignored, output_path FROM report_snapshots ORDER BY id ASC"
+            ).fetchall()
+        return [
+            {
+                "created_at": created_at,
+                "total_candidates": total_candidates,
+                "test_now": test_now,
+                "surprise_test": surprise_test,
+                "watch": watch,
+                "needs_data": needs_data,
+                "ignored": ignored,
+                "output_path": output_path,
+            }
+            for created_at, total_candidates, test_now, surprise_test, watch, needs_data, ignored, output_path in rows
         ]
