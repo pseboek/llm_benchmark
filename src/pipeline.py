@@ -8,13 +8,29 @@ from src.sources.ollama import list_local_candidates
 from src.sources.swebench import list_swebench_candidates
 
 
-def discover_candidates(ollama_url: str | None = None, huggingface_limit: int = 10) -> list[dict]:
+def discover_candidates(
+    ollama_url: str | None = None,
+    huggingface_limit: int = 10,
+    enabled_sources: dict[str, bool] | None = None,
+) -> list[dict]:
+    enabled = enabled_sources or {
+        "ollama": True,
+        "huggingface": True,
+        "lmarena": True,
+        "artificial_analysis": True,
+        "swebench": True,
+    }
     candidates: list[dict] = []
 
-    candidates.extend(list_local_candidates(ollama_url) if ollama_url else list_local_candidates())
-    candidates.extend(list_hf_candidates(limit=huggingface_limit))
-    candidates.extend(list_lmarena_candidates())
-    candidates.extend(list_artificial_analysis_candidates())
-    candidates.extend(list_swebench_candidates())
+    if enabled.get("ollama", True):
+        candidates.extend(list_local_candidates(ollama_url) if ollama_url else list_local_candidates())
+    if enabled.get("huggingface", True):
+        candidates.extend(list_hf_candidates(limit=huggingface_limit))
+    if enabled.get("lmarena", True):
+        candidates.extend(list_lmarena_candidates())
+    if enabled.get("artificial_analysis", True):
+        candidates.extend(list_artificial_analysis_candidates())
+    if enabled.get("swebench", True):
+        candidates.extend(list_swebench_candidates())
 
     return deduplicate_candidates(candidates)

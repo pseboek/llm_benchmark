@@ -48,3 +48,27 @@ def recommendation(score, tier):
     if score >= 70:
         return "WATCH"
     return "IGNORE"
+
+
+def score_candidate(candidate: dict) -> dict:
+    """Add score, hardware tier, and action fields to a candidate record."""
+    scored = dict(candidate)
+    model = Candidate(
+        name=str(candidate.get("name", "unknown")),
+        **{field: float(candidate.get(field, 50.0)) for field in WEIGHTS},
+        vram_gb=candidate.get("vram_gb"),
+        is_moe=bool(candidate.get("is_moe", False)),
+        active_params_b=candidate.get("active_params_b"),
+    )
+    score = weighted_score(model)
+    tier = hardware_tier(
+        model.vram_gb,
+        is_moe=model.is_moe,
+        active_params_b=model.active_params_b,
+    )
+    scored.update({
+        "score": score,
+        "hardware_tier": tier,
+        "recommendation": recommendation(score, tier),
+    })
+    return scored
