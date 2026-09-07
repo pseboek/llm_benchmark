@@ -9,12 +9,12 @@ MISSING_VALUE = "Not available"
 def load_dashboard_data(db_path: str | Path = "data/model_scout.db") -> dict[str, list[dict]]:
     path = Path(db_path)
     if not path.exists():
-        return {"candidates": [], "benchmark_runs": [], "recommendations": []}
+        return {"candidates": [], "benchmark_runs": [], "recommendations": [], "report_snapshots": []}
 
     with sqlite3.connect(path) as connection:
         connection.row_factory = sqlite3.Row
         data = {}
-        for table in ("candidates", "benchmark_runs", "recommendations"):
+        for table in ("candidates", "benchmark_runs", "recommendations", "report_snapshots"):
             rows = connection.execute(f"SELECT * FROM {table} ORDER BY id ASC").fetchall()
             data[table] = [dict(row) for row in rows]
     return data
@@ -69,6 +69,21 @@ def summarize_telemetry(runs: list[dict]) -> list[dict]:
             "runs": len(model_runs),
         }
         for model, model_runs in sorted(grouped.items())
+    ]
+
+
+def summarize_report_history(snapshots: list[dict]) -> list[dict]:
+    return [
+        {
+            "created_at": snapshot.get("created_at", MISSING_VALUE),
+            "total_candidates": snapshot.get("total_candidates", 0),
+            "test_now": snapshot.get("test_now", 0),
+            "surprise_test": snapshot.get("surprise_test", 0),
+            "watch": snapshot.get("watch", 0),
+            "needs_data": snapshot.get("needs_data", 0),
+            "ignored": snapshot.get("ignored", 0),
+        }
+        for snapshot in snapshots
     ]
 
 
@@ -140,6 +155,7 @@ def render_dashboard(db_path: str | Path) -> None:
     show_table(st, "Benchmark throughput", summarize_runs(runs), "No successful benchmark runs are stored yet.")
     show_table(st, "Throughput by context", summarize_context_runs(runs), "Context throughput appears after a successful benchmark run.")
     show_table(st, "Hardware telemetry", summarize_telemetry(runs), "Hardware telemetry appears after a successful benchmark run.")
+    show_table(st, "Report history", summarize_report_history(data["report_snapshots"]), "Report history appears after the next report run.")
     show_table(st, "Discovered candidates", candidates, "No candidates were discovered for the selected filters.")
 
 
