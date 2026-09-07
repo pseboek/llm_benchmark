@@ -92,8 +92,23 @@ def score_candidate(candidate: dict, *, weights=None, thresholds=None, hardware_
         "recommendation": action,
         "vram_gb": model.vram_gb,
         "rationale": rationale(score, tier, action, model.vram_gb),
+        "assessment_status": "ASSESSED" if score is not None else ("METADATA_ONLY" if model.vram_gb is not None else "NEEDS_DATA"),
     })
     return scored
+
+
+def benchmark_profile(model: str, runs: list[dict]) -> dict | None:
+    successful = [run for run in runs if run.get("model") == model and run.get("status") == "OK"]
+    if not successful:
+        return None
+    speeds = [float(run.get("tok_per_sec", 0)) for run in successful]
+    qualities = [float(run["quality_score"]) for run in successful if run.get("quality_score") is not None]
+    return {
+        "model": model,
+        "avg_tok_per_sec": round(sum(speeds) / len(speeds), 2),
+        "avg_quality_score": round(sum(qualities) / len(qualities), 2) if qualities else None,
+        "runs": len(successful),
+    }
 
 
 def enrich_from_baseline(candidate: dict, baseline: list[dict]) -> dict:
@@ -148,7 +163,7 @@ def enrich_from_benchmark(candidate: dict, runs: list[dict]) -> dict:
     return enriched
 
 
-def champion_comparison(candidate: dict, champions: list[dict], *, weights=None, thresholds=None, hardware_limits=None) -> dict:
+def champion_comparison(candidate: dict, champions: list[dict], *, weights=None, thresholds=None, hardware_limits=None, benchmark_runs=None) -> dict:
     scored_candidate = score_candidate(
         candidate,
         weights=weights,
@@ -168,11 +183,21 @@ def champion_comparison(candidate: dict, champions: list[dict], *, weights=None,
         for champion in champions
     ]
     champion = max(scored_champions, key=lambda item: item["score"] if item["score"] is not None else -1)
+    candidate_profile = benchmark_profile(scored_candidate["name"], benchmark_runs or [])
+    champion_profile = benchmark_profile(champion["name"], benchmark_runs or [])
+    speed_delta = None
+    quality_delta = None
+    if candidate_profile and champion_profile:
+        speed_delta = round(candidate_profile["avg_tok_per_sec"] - champion_profile["avg_tok_per_sec"], 2)
+        if candidate_profile["avg_quality_score"] is not None and champion_profile["avg_quality_score"] is not None:
+            quality_delta = round(candidate_profile["avg_quality_score"] - champion_profile["avg_quality_score"], 2)
     if scored_candidate["score"] is None or champion["score"] is None:
         return {
             "candidate": scored_candidate["name"],
             "champion": champion["name"],
             "delta": None,
+            "speed_delta": speed_delta,
+            "quality_delta": quality_delta,
             "advantage": "needs_data",
         }
     delta = round(scored_candidate["score"] - champion["score"], 2)
@@ -180,5 +205,7 @@ def champion_comparison(candidate: dict, champions: list[dict], *, weights=None,
         "candidate": scored_candidate["name"],
         "champion": champion["name"],
         "delta": delta,
+        "speed_delta": speed_delta,
+        "quality_delta": quality_delta,
         "advantage": "challenger" if delta > 0 else "champion",
     }

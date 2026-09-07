@@ -287,6 +287,7 @@ python src/main.py --recover-running-tasks --db data/model_scout.db
 - Endpunkte können über Umgebungsvariablen überschrieben werden; für Artificial Analysis ist `ARTIFICIAL_ANALYSIS_API_KEY` erforderlich.
 - Die Discovery-Ausgabe ist bewusst einfach und soll als Grundlage für spätere Scoring- und Ranking-Logik dienen.
 - Jeder Report enthält eine Source-Coverage mit Kandidatenanzahl pro Quelle; `0` bedeutet, dass die Quelle in diesem Lauf keine verwertbaren Kandidaten geliefert hat.
+- Jeder Kandidat erhält im Report einen Bewertungsstatus: `ASSESSED`, `METADATA_ONLY` oder `NEEDS_DATA`.
 - Jeder Report enthält zusätzlich den Quellenstatus `OK`, `EMPTY`, `DISABLED` oder `ERROR`, damit leere externe Quellen diagnostizierbar bleiben.
 - Die Kandidaten werden anhand der konfigurierten Gewichtung bewertet und in `TEST_NOW`, `SURPRISE_TEST`, `WATCH` und `IGNORE` eingeteilt.
 - Kandidaten ohne eigene Qualitätsmessung werden als `NEEDS_DATA` mit Score `not assessed` geführt; sie werden nicht fälschlich als `IGNORE` mit neutralem Score bewertet.

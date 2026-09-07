@@ -135,7 +135,8 @@ def build_report(
                 f"- {candidate.get('name', 'unknown')} "
                 f"(score={score_text}, tier={candidate['hardware_tier']}, "
                 f"source={candidate.get('source', 'unknown')}, "
-                f"VRAM={candidate.get('vram_gb', 'unknown')} GB) "
+                f"VRAM={candidate.get('vram_gb', 'unknown')} GB, "
+                f"assessment={candidate.get('assessment_status', 'UNKNOWN')}) "
                 f"Reason: {candidate['rationale']}"
             )
     lines.extend(["", "## Candidates"])
@@ -146,7 +147,8 @@ def build_report(
         score_text = f"{candidate['score']:.2f}" if candidate["score"] is not None else "not assessed"
         lines.append(
             f"- {name} ({source}, {candidate['hardware_tier']}, {score_text}, "
-            f"VRAM={candidate.get('vram_gb', 'unknown')} GB)"
+            f"VRAM={candidate.get('vram_gb', 'unknown')} GB, "
+            f"assessment={candidate.get('assessment_status', 'UNKNOWN')})"
         )
 
     if benchmark_runs is not None:
@@ -180,14 +182,20 @@ def build_report(
                 weights=scoring_config,
                 thresholds=thresholds,
                 hardware_limits=hardware_limits,
+                benchmark_runs=benchmark_runs,
             )
             if comparison["champion"] is None:
                 lines.append(f"- {comparison['candidate']}: no champion configured")
             else:
                 delta_text = f"{comparison['delta']:+.2f}" if comparison["delta"] is not None else "not assessed"
+                delta_details = ""
+                if comparison.get("speed_delta") is not None:
+                    delta_details += f", speed_delta={comparison['speed_delta']:+.2f} tok/s"
+                if comparison.get("quality_delta") is not None:
+                    delta_details += f", quality_delta={comparison['quality_delta']:+.2f}"
                 lines.append(
                     f"- {comparison['candidate']} vs {comparison['champion']}: "
-                    f"delta={delta_text} ({comparison['advantage']})"
+                    f"delta={delta_text} ({comparison['advantage']}{delta_details})"
                 )
 
     return "\n".join(lines)
