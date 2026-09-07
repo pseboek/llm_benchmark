@@ -118,6 +118,27 @@ def summarize_errors(runs: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_latency(runs: list[dict]) -> list[dict]:
+    grouped: dict[str, list[dict]] = {}
+    for run in runs:
+        if run.get("status") == "OK":
+            grouped.setdefault(str(run.get("model", "unknown")), []).append(run)
+
+    def average(rows: list[dict], field: str) -> float | None:
+        values = [float(row[field]) for row in rows if row.get(field) is not None]
+        return round(sum(values) / len(values), 2) if values else None
+
+    return [
+        {
+            "model": model,
+            "avg_ttft_seconds": average(model_runs, "ttft_seconds"),
+            "avg_prompt_tok_per_sec": average(model_runs, "prompt_tok_per_sec"),
+            "runs": len(model_runs),
+        }
+        for model, model_runs in sorted(grouped.items())
+    ]
+
+
 def summarize_task_progress(tasks: list[dict]) -> list[dict]:
     counts: dict[str, int] = {}
     for task in tasks:
@@ -229,6 +250,7 @@ def render_dashboard(db_path: str | Path) -> None:
     show_table(st, "Recommendations", recommendations, "No recommendations match the selected filters.")
     show_table(st, "Benchmark throughput", summarize_runs(runs), "No successful benchmark runs are stored yet.")
     show_table(st, "Quality by category", summarize_quality(runs), "Quality scores appear after a benchmark plan has run.")
+    show_table(st, "Latency", summarize_latency(runs), "Latency metrics appear after a benchmark plan has run.")
     show_table(st, "Benchmark errors", summarize_errors(runs), "No failed benchmark runs recorded.")
     show_table(st, "Throughput by context", summarize_context_runs(runs), "Context throughput appears after a successful benchmark run.")
     show_table(st, "Hardware telemetry", summarize_telemetry(runs), "Hardware telemetry appears after a successful benchmark run.")
