@@ -357,6 +357,10 @@ messen:
 - RAM
 - GPU-Auslastung
 
+Der aktuelle Benchmark misst Prompt tok/s und speichert die Prompt-Version.
+TTFT, VRAM, RAM und GPU/CPU-Aufteilung benötigen noch eine separate
+Streaming- und Hardware-Telemetrie-Integration.
+
 Generation tok/s:
 
 ```python
