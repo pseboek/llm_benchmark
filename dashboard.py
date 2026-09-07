@@ -4,6 +4,7 @@ import argparse
 import sqlite3
 from pathlib import Path
 
+MISSING_VALUE = "Not available"
 
 def load_dashboard_data(db_path: str | Path = "data/model_scout.db") -> dict[str, list[dict]]:
     path = Path(db_path)
@@ -89,6 +90,22 @@ def filter_dashboard_data(
     return filtered
 
 
+def display_rows(rows: list[dict]) -> list[dict]:
+    """Create display copies without replacing missing values in stored data."""
+    return [
+        {key: MISSING_VALUE if value is None else value for key, value in row.items()}
+        for row in rows
+    ]
+
+
+def show_table(st, title: str, rows: list[dict], empty_message: str) -> None:
+    st.subheader(title)
+    if rows:
+        st.dataframe(display_rows(rows), use_container_width=True, hide_index=True)
+    else:
+        st.info(empty_message)
+
+
 def render_dashboard(db_path: str | Path) -> None:
     import streamlit as st
 
@@ -119,18 +136,11 @@ def render_dashboard(db_path: str | Path) -> None:
     third.metric("Test now", test_now)
     fourth.metric("Watchlist", watch)
 
-    st.subheader("Recommendations")
-    st.dataframe(recommendations, use_container_width=True, hide_index=True)
-
-    st.subheader("Benchmark throughput")
-    st.dataframe(summarize_runs(runs), use_container_width=True, hide_index=True)
-    st.subheader("Throughput by context")
-    st.dataframe(summarize_context_runs(runs), use_container_width=True, hide_index=True)
-    st.subheader("Hardware telemetry")
-    st.dataframe(summarize_telemetry(runs), use_container_width=True, hide_index=True)
-
-    st.subheader("Discovered candidates")
-    st.dataframe(candidates, use_container_width=True, hide_index=True)
+    show_table(st, "Recommendations", recommendations, "No recommendations match the selected filters.")
+    show_table(st, "Benchmark throughput", summarize_runs(runs), "No successful benchmark runs are stored yet.")
+    show_table(st, "Throughput by context", summarize_context_runs(runs), "Context throughput appears after a successful benchmark run.")
+    show_table(st, "Hardware telemetry", summarize_telemetry(runs), "Hardware telemetry appears after a successful benchmark run.")
+    show_table(st, "Discovered candidates", candidates, "No candidates were discovered for the selected filters.")
 
 
 def main() -> None:
