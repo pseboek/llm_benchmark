@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from typing import Any
 
 import requests
@@ -24,10 +23,29 @@ def parse_ollama_models(payload: dict[str, Any]) -> list[dict[str, Any]]:
         name = model.get("name")
         if not name:
             continue
-        parsed.append({
+        candidate = {
             "name": name,
             "source": "ollama",
-        })
+        }
+        details = model.get("details") or {}
+        if model.get("size") is not None:
+            candidate["size_bytes"] = int(model["size"])
+            candidate["estimated_vram_gb"] = round(model["size"] / 1024**3, 2)
+        for target, source in {
+            "format": "format",
+            "parameter_size": "parameter_size",
+            "quantization": "quantization_level",
+        }.items():
+            if details.get(source) is not None:
+                candidate[target] = details[source]
+        for field in ("digest", "modified_at"):
+            if model.get(field) is not None:
+                candidate[field] = model[field]
+        if details.get("family") is not None:
+            candidate["architecture"] = details["family"]
+        if details.get("families") is not None:
+            candidate["families"] = details["families"]
+        parsed.append(candidate)
 
     return parsed
 

@@ -53,6 +53,10 @@ class ModelScoutDB:
             )
             self._ensure_column(connection, "benchmark_runs", "prompt_version", "TEXT NOT NULL DEFAULT 'unknown'")
             self._ensure_column(connection, "benchmark_runs", "prompt_tok_per_sec", "REAL NOT NULL DEFAULT 0")
+            self._ensure_column(connection, "candidates", "parameter_size", "TEXT")
+            self._ensure_column(connection, "candidates", "quantization", "TEXT")
+            self._ensure_column(connection, "candidates", "architecture", "TEXT")
+            self._ensure_column(connection, "candidates", "estimated_vram_gb", "REAL")
 
     @staticmethod
     def _ensure_column(connection: sqlite3.Connection, table: str, column: str, definition: str) -> None:
@@ -69,18 +73,47 @@ class ModelScoutDB:
                     continue
                 source = str(candidate.get("source", "unknown")).strip() or "unknown"
                 connection.execute(
-                    "INSERT OR IGNORE INTO candidates (name, source) VALUES (?, ?)",
-                    (name, source),
+                    """
+                    INSERT INTO candidates
+                        (name, source, parameter_size, quantization, architecture, estimated_vram_gb)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(name) DO UPDATE SET
+                        source = excluded.source,
+                        parameter_size = COALESCE(excluded.parameter_size, candidates.parameter_size),
+                        quantization = COALESCE(excluded.quantization, candidates.quantization),
+                        architecture = COALESCE(excluded.architecture, candidates.architecture),
+                        estimated_vram_gb = COALESCE(excluded.estimated_vram_gb, candidates.estimated_vram_gb)
+                    """,
+                    (
+                        name,
+                        source,
+                        candidate.get("parameter_size"),
+                        candidate.get("quantization"),
+                        candidate.get("architecture"),
+                        candidate.get("estimated_vram_gb"),
+                    ),
                 )
-                saved.append({"name": name, "source": source})
+                saved.append(dict(candidate, name=name, source=source))
         return saved
 
     def list_candidates(self) -> list[dict]:
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT name, source FROM candidates ORDER BY id ASC"
+                "SELECT name, source, parameter_size, quantization, architecture, estimated_vram_gb FROM candidates ORDER BY id ASC"
             ).fetchall()
-        return [{"name": name, "source": source} for name, source in rows]
+        candidates = []
+        for name, source, parameter_size, quantization, architecture, estimated_vram_gb in rows:
+            candidate = {"name": name, "source": source}
+            for key, value in {
+                "parameter_size": parameter_size,
+                "quantization": quantization,
+                "architecture": architecture,
+                "estimated_vram_gb": estimated_vram_gb,
+            }.items():
+                if value is not None:
+                    candidate[key] = value
+            candidates.append(candidate)
+        return candidates
 
     def save_benchmark_runs(self, runs: Iterable[dict]) -> None:
         with self._connect() as connection:

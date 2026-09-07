@@ -54,3 +54,20 @@ def test_database_stores_benchmark_runs_and_recommendations(tmp_path):
     assert db.list_benchmark_runs()[0]["prompt_version"] == "v1"
     assert db.list_benchmark_runs()[0]["prompt_tok_per_sec"] == 12.5
     assert db.list_recommendations()[0]["recommendation"] == "TEST_NOW"
+
+
+def test_database_stores_candidate_metadata(tmp_path):
+    db = ModelScoutDB(tmp_path / "scout.db")
+    db.save_candidates([{
+        "name": "model-a",
+        "source": "ollama",
+        "parameter_size": "14B",
+        "quantization": "Q4_K_M",
+        "architecture": "qwen2",
+        "estimated_vram_gb": 8.0,
+    }])
+
+    candidate = db.list_candidates()[0]
+    assert candidate["parameter_size"] == "14B"
+    assert candidate["quantization"] == "Q4_K_M"
+    assert candidate["estimated_vram_gb"] == 8.0
