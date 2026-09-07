@@ -30,7 +30,4 @@ def parse_artificial_analysis_models(payload: Any) -> list[dict[str, Any]]:
 
 
 def list_artificial_analysis_candidates(url: str | None = None) -> list[dict[str, Any]]:
-    try:
-        return fetch_artificial_analysis_models(url or endpoint_from_env("ARTIFICIAL_ANALYSIS_API_URL", ARTIFICIAL_ANALYSIS_API_URL))
-    except Exception:
-        return []
+    return fetch_artificial_analysis_models(url or endpoint_from_env("ARTIFICIAL_ANALYSIS_API_URL", ARTIFICIAL_ANALYSIS_API_URL))

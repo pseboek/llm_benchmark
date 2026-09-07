@@ -30,7 +30,4 @@ def parse_lmarena_models(payload: Any) -> list[dict[str, Any]]:
 
 
 def list_lmarena_candidates(url: str | None = None) -> list[dict[str, Any]]:
-    try:
-        return fetch_lmarena_models(url or endpoint_from_env("LMARENA_API_URL", LMARENA_API_URL))
-    except Exception:
-        return []
+    return fetch_lmarena_models(url or endpoint_from_env("LMARENA_API_URL", LMARENA_API_URL))
