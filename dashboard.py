@@ -73,8 +73,10 @@ def summarize_telemetry(runs: list[dict]) -> list[dict]:
 
 
 def summarize_report_history(snapshots: list[dict]) -> list[dict]:
-    return [
-        {
+    summary = []
+    previous = None
+    for snapshot in snapshots:
+        row = {
             "created_at": snapshot.get("created_at", MISSING_VALUE),
             "total_candidates": snapshot.get("total_candidates", 0),
             "test_now": snapshot.get("test_now", 0),
@@ -83,8 +85,11 @@ def summarize_report_history(snapshots: list[dict]) -> list[dict]:
             "needs_data": snapshot.get("needs_data", 0),
             "ignored": snapshot.get("ignored", 0),
         }
-        for snapshot in snapshots
-    ]
+        for field in ("total_candidates", "test_now", "surprise_test", "watch", "needs_data", "ignored"):
+            row[f"{field}_delta"] = row[field] - (previous[field] if previous else row[field])
+        summary.append(row)
+        previous = row
+    return summary
 
 
 def summarize_quality(runs: list[dict]) -> list[dict]:
