@@ -43,6 +43,8 @@ def hardware_tier(vram_gb, *, is_moe=False, active_params_b=None, limits=None):
     return "UNLIKELY"
 
 def recommendation(score, tier, thresholds=None):
+    if score is None:
+        return "NEEDS_DATA"
     active_thresholds = thresholds or {"test_now": 85, "surprise": 80, "watch": 70}
     if score >= active_thresholds["test_now"]:
         return "TEST_NOW"
@@ -55,20 +57,24 @@ def recommendation(score, tier, thresholds=None):
 
 def rationale(score: float, tier: str, action: str, vram_gb: float | None = None) -> str:
     hardware = f"estimated VRAM {vram_gb:g} GB" if vram_gb is not None else "VRAM estimate unavailable"
+    if score is None:
+        return f"NEEDS_DATA: quality benchmark data is not assessed; hardware tier {tier}, {hardware}."
     return f"{action}: score {score:.2f}, hardware tier {tier}, {hardware}."
 
 
 def score_candidate(candidate: dict, *, weights=None, thresholds=None, hardware_limits=None) -> dict:
     """Add score, hardware tier, and action fields to a candidate record."""
     scored = dict(candidate)
+    quality_fields = set(WEIGHTS).intersection(candidate)
+    has_quality_data = bool(quality_fields)
     model = Candidate(
         name=str(candidate.get("name", "unknown")),
-        **{field: float(candidate.get(field, 50.0)) for field in WEIGHTS},
-        vram_gb=candidate.get("vram_gb"),
+        **{field: float(candidate.get(field, 0.0)) for field in WEIGHTS},
+        vram_gb=candidate.get("vram_gb", candidate.get("estimated_vram_gb")),
         is_moe=bool(candidate.get("is_moe", False)),
         active_params_b=candidate.get("active_params_b"),
     )
-    score = weighted_score(model, weights)
+    score = weighted_score(model, weights) if has_quality_data else None
     tier = hardware_tier(
         model.vram_gb,
         is_moe=model.is_moe,
@@ -104,7 +110,14 @@ def champion_comparison(candidate: dict, champions: list[dict], *, weights=None,
         )
         for champion in champions
     ]
-    champion = max(scored_champions, key=lambda item: item["score"])
+    champion = max(scored_champions, key=lambda item: item["score"] if item["score"] is not None else -1)
+    if scored_candidate["score"] is None or champion["score"] is None:
+        return {
+            "candidate": scored_candidate["name"],
+            "champion": champion["name"],
+            "delta": None,
+            "advantage": "needs_data",
+        }
     delta = round(scored_candidate["score"] - champion["score"], 2)
     return {
         "candidate": scored_candidate["name"],

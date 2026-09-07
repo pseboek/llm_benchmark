@@ -68,12 +68,41 @@ class ModelScoutDB:
             self._ensure_column(connection, "candidates", "estimated_vram_gb", "REAL")
             self._ensure_column(connection, "candidates", "parameters_total_b", "REAL")
             self._ensure_column(connection, "candidates", "context_length", "INTEGER")
+            self._migrate_nullable_recommendation_score(connection)
 
     @staticmethod
     def _ensure_column(connection: sqlite3.Connection, table: str, column: str, definition: str) -> None:
         columns = {row[1] for row in connection.execute(f"PRAGMA table_info({table})")}
         if column not in columns:
             connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+
+    @staticmethod
+    def _migrate_nullable_recommendation_score(connection: sqlite3.Connection) -> None:
+        columns = connection.execute("PRAGMA table_info(recommendations)").fetchall()
+        score_column = next((column for column in columns if column[1] == "score"), None)
+        if score_column is None or score_column[3] == 0:
+            return
+        connection.execute("ALTER TABLE recommendations RENAME TO recommendations_legacy")
+        connection.execute(
+            """
+            CREATE TABLE recommendations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                model TEXT NOT NULL,
+                score REAL,
+                hardware_tier TEXT NOT NULL,
+                recommendation TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        connection.execute(
+            """
+            INSERT INTO recommendations (model, score, hardware_tier, recommendation, created_at)
+            SELECT model, score, hardware_tier, recommendation, created_at
+            FROM recommendations_legacy
+            """
+        )
+        connection.execute("DROP TABLE recommendations_legacy")
 
     def save_candidates(self, candidates: Iterable[dict]) -> list[dict]:
         saved: list[dict] = []
@@ -193,7 +222,7 @@ class ModelScoutDB:
                     "INSERT INTO recommendations (model, score, hardware_tier, recommendation) VALUES (?, ?, ?, ?)",
                     (
                         model,
-                        float(item.get("score", 0.0)),
+                        item.get("score"),
                         str(item.get("hardware_tier", "UNKNOWN")),
                         str(item.get("recommendation", "IGNORE")),
                     ),
