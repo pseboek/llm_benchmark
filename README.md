@@ -136,6 +136,14 @@ python src/main.py --download-queue reports/benchmark_queue.json --approve-model
 
 Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
 
+### 10) Benchmark-Plan nach Freigabe erzeugen
+
+```powershell
+python src/main.py --benchmark-plan reports/benchmark_queue.json --approve-models deepseek-coder:latest --contexts 8192 16384 --output reports/benchmark_plan.json
+```
+
+Der Plan erzeugt je freigegebenem Modell, Kontext und persönlicher Prompt-Kategorie einen `PENDING_EXECUTION`-Task. Die Ausführung bleibt ein separater, kontrollierbarer Schritt.
+
 ## Projektstruktur
 
 ```text
@@ -148,6 +156,7 @@ Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
 ├── dashboard.py
 ├── reports/
 │   ├── benchmark_queue.json
+│   ├── benchmark_plan.json
 │   ├── download_plan.json
 │   └── offline_model_scout.md
 ├── scripts/
@@ -165,6 +174,7 @@ Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
 │   ├── discovery.py
 │   ├── scoring.py
 │   ├── adaptive.py
+│   ├── benchmark_plan.py
 │   └── sources/
 │       ├── __init__.py
 │       ├── lmarena.py
@@ -192,7 +202,8 @@ Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
 │   ├── test_report_reasons.py
 │   ├── test_configured_scoring.py
 │   ├── test_scheduler_script.py
-│   └── test_adaptive_cli.py
+│   ├── test_adaptive_cli.py
+│   └── test_benchmark_plan.py
 ├── data/
 ├── reports/
 └── .env.example

@@ -16,6 +16,7 @@ from benchmark.runner import run_benchmark
 from src.adaptive import adaptive_weights
 from src.database import ModelScoutDB
 from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
+from src.benchmark_plan import build_benchmark_plan, write_benchmark_plan
 from src.download_queue import build_download_plan, execute_download_plan, load_queue, write_download_plan
 from src.pipeline import discover_candidates
 from src.report import build_report, build_report_snapshot, write_report
@@ -103,6 +104,7 @@ def parse_args():
     parser.add_argument("--approve-models", nargs="*", default=[], help="Explicit model names approved for download")
     parser.add_argument("--execute-downloads", action="store_true", help="Execute approved ollama pull commands")
     parser.add_argument("--suggest-weights", action="store_true", help="Suggest scoring weights from benchmark history")
+    parser.add_argument("--benchmark-plan", help="Create benchmark tasks from an approved model queue")
     return parser.parse_args()
 
 
@@ -209,6 +211,19 @@ def main():
         write_download_plan(plan, output)
         print(json.dumps(plan, indent=2))
         print(f"Download plan saved to: {output}")
+        return
+
+    if args.benchmark_plan:
+        queue = load_queue(args.benchmark_plan)
+        plan = build_benchmark_plan(
+            queue,
+            set(args.approve_models),
+            args.contexts or config.get("benchmark", {}).get("contexts", [8192, 16384, 32768]),
+        )
+        output = args.output or str(ROOT / "reports" / "benchmark_plan.json")
+        write_benchmark_plan(plan, output)
+        print(json.dumps(plan, indent=2))
+        print(f"Benchmark plan saved to: {output}")
         return
 
     candidates = build_demo_candidates(config)
