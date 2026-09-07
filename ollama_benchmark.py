@@ -144,6 +144,37 @@ def result_path(output_dir, timestamp):
     return output_dir / f"ollama_benchmark_{timestamp}.csv"
 
 
+def unload_loaded_models():
+    """Evict any models still resident in VRAM from a previous run/session.
+
+    Ollama keeps a model loaded for OLLAMA_KEEP_ALIVE (default 5 min) after
+    its last use. On a tight-VRAM GPU a leftover model from an interrupted
+    run can leave too little free memory for the next model to load,
+    causing the very first request of a fresh run to hang or crash.
+    """
+    try:
+        response = requests.get("http://localhost:11434/api/ps", timeout=10)
+        response.raise_for_status()
+        loaded = response.json().get("models", [])
+    except Exception as e:
+        print(f"WARNING: could not query loaded models: {e}")
+        return
+
+    for entry in loaded:
+        model_name = entry.get("name") or entry.get("model")
+        if not model_name:
+            continue
+        try:
+            requests.post(
+                OLLAMA_URL,
+                json={"model": model_name, "keep_alive": 0},
+                timeout=30,
+            )
+            print(f"Unloaded stale model from VRAM: {model_name}")
+        except Exception as e:
+            print(f"WARNING: could not unload {model_name}: {e}")
+
+
 def generate(model, prompt, num_ctx, measure_ttft=False):
     """
     Execute one Ollama generation with a specific context size.
@@ -215,6 +246,8 @@ def run_benchmark():
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    unload_loaded_models()
+
     total_runs = (
         len(MODELS)
         * len(CONTEXT_SIZES)
@@ -235,6 +268,10 @@ def run_benchmark():
     print()
 
     for model in MODELS:
+
+        # Ensure the previous model has been evicted before loading a new
+        # one; on tight-VRAM GPUs, two resident models can exceed capacity.
+        unload_loaded_models()
 
         for num_ctx in CONTEXT_SIZES:
 
