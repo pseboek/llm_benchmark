@@ -208,6 +208,7 @@ Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
 - Externe Quellen verwenden `.env`-Tokens, JSON-Validierung, Timeouts und Retries für temporäre HTTP-Fehler.
 - Die Discovery-Ausgabe ist bewusst einfach und soll als Grundlage für spätere Scoring- und Ranking-Logik dienen.
 - Die Kandidaten werden anhand der konfigurierten Gewichtung bewertet und in `TEST_NOW`, `SURPRISE_TEST`, `WATCH` und `IGNORE` eingeteilt.
+- Kandidaten ohne eigene Qualitätsmessung werden als `NEEDS_DATA` mit Score `not assessed` geführt; sie werden nicht fälschlich als `IGNORE` mit neutralem Score bewertet.
 - Die Quellenadapter sind fehlertolerant: eine nicht erreichbare externe Quelle verhindert nicht die lokale Ollama-Auswertung.
 - Welche Quellen aktiv sind, wird im Abschnitt `sources` von `config.yaml` gesteuert.
 - [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) beschreibt Architektur, Datenmodell und verbleibende Betriebsschritte.

@@ -418,6 +418,9 @@ score >= 80 + ungewöhnlich hoher Hardware-/Architekturwert
 score >= 70
     -> WATCH
 
+quality data missing
+        -> NEEDS_DATA
+
 sonst
     -> IGNORE
 ```
