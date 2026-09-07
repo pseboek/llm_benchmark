@@ -253,6 +253,7 @@ def main():
             hardware_config={**config.get("hardware", {}), "thresholds": config.get("thresholds", {})},
             source_status=source_status,
             benchmark_runs=ModelScoutDB(args.db).list_benchmark_runs(),
+            benchmark_tasks=ModelScoutDB(args.db).list_benchmark_tasks(),
         )
         print(report)
         return
@@ -280,6 +281,7 @@ def main():
             hardware_config={**config.get("hardware", {}), "thresholds": config.get("thresholds", {})},
             source_status=source_status,
             benchmark_runs=db.list_benchmark_runs(),
+            benchmark_tasks=db.list_benchmark_tasks(),
         )
         output = args.output or str(ROOT / "reports" / f"{date.today().isoformat()}_model_scout.md")
         db.save_report_snapshot({**build_report_snapshot(candidates, config.get("scoring"), {**config.get("hardware", {}), "thresholds": config.get("thresholds", {})}), "output_path": output})
