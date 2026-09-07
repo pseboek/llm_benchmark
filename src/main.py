@@ -11,6 +11,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from benchmark.runner import run_benchmark
+from pipeline import discover_candidates
+from report import build_report
 from scoring import Candidate, hardware_tier, recommendation, weighted_score
 
 
@@ -59,8 +61,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description="LLM Model Scout")
     parser.add_argument("--list-models", action="store_true", help="Display the configured benchmark models")
     parser.add_argument("--run-benchmark", action="store_true", help="Execute the local Ollama benchmark")
+    parser.add_argument("--discover", action="store_true", help="Discover and deduplicate Ollama and Hugging Face candidates")
+    parser.add_argument("--report", action="store_true", help="Generate a markdown-style candidate report")
     parser.add_argument("--models", nargs="*", help="Restrict benchmark to specific model names")
     parser.add_argument("--contexts", nargs="*", type=int, help="Context sizes to use for the benchmark")
+    parser.add_argument("--hf-limit", type=int, default=10, help="Maximum number of Hugging Face models to inspect")
     return parser.parse_args()
 
 
@@ -77,6 +82,17 @@ def main():
 
     if args.run_benchmark:
         run_benchmark(models=args.models, contexts=args.contexts)
+        return
+
+    if args.discover:
+        candidates = discover_candidates(huggingface_limit=args.hf_limit)
+        report = build_report(candidates)
+        print(report)
+        return
+
+    if args.report:
+        candidates = discover_candidates(huggingface_limit=args.hf_limit)
+        print(build_report(candidates))
         return
 
     candidates = build_demo_candidates(config)
