@@ -30,6 +30,20 @@ def build_report_snapshot(
     }
 
 
+def benchmark_task_progress(tasks: list[dict]) -> dict[str, int | float]:
+    total = len(tasks)
+    completed = sum(task.get("status") == "COMPLETED" for task in tasks)
+    pending = sum(task.get("status") in {"PENDING_EXECUTION", "RUNNING"} for task in tasks)
+    failed = sum(task.get("status") == "FAILED" for task in tasks)
+    return {
+        "total": total,
+        "completed": completed,
+        "pending": pending,
+        "failed": failed,
+        "percent": round(completed / total * 100, 2) if total else 0.0,
+    }
+
+
 def benchmark_evidence_by_context(runs: list[dict]) -> list[dict]:
     grouped: dict[tuple[str, int], list[dict]] = {}
     for run in runs:
@@ -56,6 +70,7 @@ def build_report(
     hardware_config: dict | None = None,
     source_status: dict[str, dict] | None = None,
     benchmark_runs: list[dict] | None = None,
+    benchmark_tasks: list[dict] | None = None,
 ) -> str:
     scoring_config = scoring_config or {}
     hardware_limits = (hardware_config or {}).get("vram", {})
@@ -87,6 +102,14 @@ def build_report(
         "",
         "## Executive Summary",
     ]
+    if benchmark_runs is not None:
+        lines.append("- Benchmark evidence: available")
+    if benchmark_tasks is not None:
+        progress = benchmark_task_progress(benchmark_tasks)
+        lines.append(
+            f"- Benchmark progress: {progress['completed']}/{progress['total']} "
+            f"completed ({progress['percent']:.2f}%), pending={progress['pending']}, failed={progress['failed']}"
+        )
     for action, title in groups.items():
         lines.append(f"- {title}: {sum(item['recommendation'] == action for item in scored)}")
     source_names = ("ollama", "huggingface", "lmarena", "artificial_analysis", "swebench")
