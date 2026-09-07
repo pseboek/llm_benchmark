@@ -90,7 +90,7 @@ python src/main.py --list-models
 streamlit run dashboard.py
 ```
 
-Das Dashboard liest die SQLite-Historie und zeigt Kandidaten, Empfehlungen, Benchmark-Task-Status, Report-Historie mit Lauf-Deltas, Qualitätswerte pro Kategorie, Benchmark-Fehler, `NEEDS_DATA`-Anzahl, durchschnittliche Benchmark-Geschwindigkeit, Kontextvergleiche und Hardware-Telemetrie. Modelle, Empfehlungen, Quellen und Hardware-Tiers können direkt gefiltert werden. Ein anderer Datenbankpfad kann über den Startparameter gesetzt werden:
+Das Dashboard liest die SQLite-Historie und zeigt Kandidaten, Empfehlungen, Benchmark-Task-Status und Fortschritt, Report-Historie mit Lauf-Deltas, Qualitätswerte pro Kategorie, Benchmark-Fehler, `NEEDS_DATA`-Anzahl, durchschnittliche Benchmark-Geschwindigkeit, Kontextvergleiche und Hardware-Telemetrie. Modelle, Empfehlungen, Quellen und Hardware-Tiers können direkt gefiltert werden. Ein anderer Datenbankpfad kann über den Startparameter gesetzt werden:
 
 ```powershell
 streamlit run dashboard.py -- --db data/alternative.db

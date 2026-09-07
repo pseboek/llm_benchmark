@@ -1,30 +1,30 @@
 # Model Scout Report
 
 - Generated: 2026-09-07
-- Total candidates: 14
-- 14 candidates
+- Total candidates: 13
+- 13 candidates
 - Sources: ollama, huggingface, lmarena, artificial_analysis, swebench
 
 ## Executive Summary
 - Test Now: 2
 - Surprise Candidates: 0
 - Watchlist: 4
-- Needs Data: 8
+- Needs Data: 7
 - Ignored: 0
 
 ## Source Coverage
 - ollama: 13
-- huggingface: 1
+- huggingface: 0
 - lmarena: 0
 - artificial_analysis: 0
 - swebench: 0
 
 ## Source Status
 - ollama: OK
-- huggingface: OK
-- lmarena: EMPTY
-- artificial_analysis: EMPTY
-- swebench: EMPTY
+- huggingface: DISABLED
+- lmarena: DISABLED
+- artificial_analysis: DISABLED
+- swebench: DISABLED
 
 ## Recommendations
 
@@ -49,7 +49,6 @@
 - nomic-embed-text:latest (score=not assessed, tier=SAFE, source=ollama, VRAM=0.26 GB) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier SAFE, estimated VRAM 0.26 GB.
 - qwen2.5-coder:14b (score=not assessed, tier=SAFE, source=ollama, VRAM=8.37 GB) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier SAFE, estimated VRAM 8.37 GB.
 - gemma3:4b (score=not assessed, tier=SAFE, source=ollama, VRAM=3.11 GB) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier SAFE, estimated VRAM 3.11 GB.
-- google/electra-base-discriminator (score=not assessed, tier=EXTERNAL, source=huggingface, VRAM=None GB) Reason: NEEDS_DATA: quality benchmark data is not assessed; hardware tier EXTERNAL, VRAM estimate unavailable.
 
 ### Ignored
 - None
@@ -68,7 +67,9 @@
 - qwen2.5-coder:14b (ollama, SAFE, not assessed, VRAM=8.37 GB)
 - deepseek-r1:8b (ollama, SAFE, 84.65, VRAM=4.87 GB)
 - gemma3:4b (ollama, SAFE, not assessed, VRAM=3.11 GB)
-- google/electra-base-discriminator (huggingface, EXTERNAL, not assessed, VRAM=None GB)
+
+## Benchmark Evidence
+- deepseek-coder:latest: 420.39 tok/s, 75.71 quality, runs=21
 
 ## Champion Comparison
 - qwen3.6:27b-q4_K_M vs gpt-oss:20b: delta=not assessed (needs_data)
@@ -84,4 +85,3 @@
 - qwen2.5-coder:14b vs gpt-oss:20b: delta=not assessed (needs_data)
 - deepseek-r1:8b vs gpt-oss:20b: delta=not assessed (needs_data)
 - gemma3:4b vs gpt-oss:20b: delta=not assessed (needs_data)
-- google/electra-base-discriminator vs gpt-oss:20b: delta=not assessed (needs_data)

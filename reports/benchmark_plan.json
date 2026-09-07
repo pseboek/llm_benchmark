@@ -18,125 +18,125 @@
     "context": 8192,
     "category": "03 React",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 8192,
     "category": "04 TypeScript",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 8192,
     "category": "05 SQL DB2",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 8192,
     "category": "06 Debugging",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 8192,
     "category": "07 Architecture",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 8192,
     "category": "08 MCP",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 8192,
     "category": "09 RAG",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 8192,
     "category": "10 General Reasoning",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "01 Java",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "02 Spring Boot",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "03 React",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "04 TypeScript",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "05 SQL DB2",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "06 Debugging",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "07 Architecture",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "08 MCP",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "09 RAG",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   },
   {
     "model": "deepseek-coder:latest",
     "context": 16384,
     "category": "10 General Reasoning",
     "prompt_version": "v1",
-    "status": "PENDING_EXECUTION"
+    "status": "COMPLETED"
   }
 ]
