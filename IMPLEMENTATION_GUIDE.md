@@ -358,8 +358,9 @@ messen:
 - GPU-Auslastung
 
 Der aktuelle Benchmark misst Prompt tok/s und speichert die Prompt-Version.
-TTFT, VRAM, RAM und GPU/CPU-Aufteilung benötigen noch eine separate
-Streaming- und Hardware-Telemetrie-Integration.
+TTFT wird inzwischen per Ollama-Streaming gemessen und persistiert. VRAM, RAM
+und GPU/CPU-Aufteilung benötigen noch eine separate Hardware-Telemetrie-
+Integration.
 
 Generation tok/s:
 
@@ -510,7 +511,7 @@ HUGGINGFACE_TOKEN=
 Discovery + Scoring + Markdown Report
 
 ### V2
-Ollama-Benchmark integrieren
+Ollama-Benchmark integrieren (inklusive persönlicher Prompts, Prompt-tok/s und TTFT)
 
 ### V3
 SQLite-Historie

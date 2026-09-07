@@ -1,4 +1,5 @@
 import csv
+import json
 import time
 import requests
 from datetime import datetime
@@ -100,7 +101,39 @@ PROMPTS = PERSONAL_PROMPTS
 # Ollama API
 # ============================================================
 
-def generate(model, prompt, num_ctx):
+def collect_stream_response(lines, started_at, clock=time.perf_counter):
+    response_parts = []
+    first_token_at = None
+    final_data = {}
+
+    for line in lines:
+        if not line:
+            continue
+        data = json.loads(line)
+        final_data.update(data)
+        text = data.get("response", "")
+        if text:
+            response_parts.append(text)
+            if first_token_at is None:
+                first_token_at = clock()
+
+    eval_duration = final_data.get("eval_duration", 0)
+    prompt_duration = final_data.get("prompt_eval_duration", 0)
+    return {
+        "response": "".join(response_parts),
+        "eval_count": final_data.get("eval_count", 0),
+        "eval_duration_ns": eval_duration,
+        "tok_per_sec": final_data.get("eval_count", 0) / (eval_duration / 1_000_000_000) if eval_duration else 0,
+        "prompt_eval_count": final_data.get("prompt_eval_count", 0),
+        "prompt_eval_duration_ns": prompt_duration,
+        "prompt_tok_per_sec": final_data.get("prompt_eval_count", 0) / (prompt_duration / 1_000_000_000) if prompt_duration else 0,
+        "total_duration_ns": final_data.get("total_duration", 0),
+        "load_duration_ns": final_data.get("load_duration", 0),
+        "ttft_seconds": first_token_at - started_at if first_token_at is not None else None,
+    }
+
+
+def generate(model, prompt, num_ctx, measure_ttft=False):
     """
     Execute one Ollama generation with a specific context size.
     """
@@ -108,7 +141,7 @@ def generate(model, prompt, num_ctx):
     payload = {
         "model": model,
         "prompt": prompt,
-        "stream": False,
+        "stream": measure_ttft,
         "options": {
             "num_ctx": num_ctx,
             "temperature": 0.0,
@@ -117,15 +150,16 @@ def generate(model, prompt, num_ctx):
 
     start = time.perf_counter()
 
-    response = requests.post(
-        OLLAMA_URL,
-        json=payload,
-        timeout=600
-    )
-
-    elapsed = time.perf_counter() - start
+    response = requests.post(OLLAMA_URL, json=payload, timeout=600, stream=measure_ttft)
 
     response.raise_for_status()
+
+    if measure_ttft:
+        data = collect_stream_response(response.iter_lines(), start)
+        data["elapsed"] = time.perf_counter() - start
+        return data
+
+    elapsed = time.perf_counter() - start
 
     data = response.json()
 
@@ -155,6 +189,7 @@ def generate(model, prompt, num_ctx):
             if data.get("prompt_eval_duration")
             else 0
         ),
+        "ttft_seconds": None,
         "elapsed": elapsed,
     }
 
@@ -222,7 +257,8 @@ def run_benchmark():
                     result = generate(
                         model=model,
                         prompt=prompt,
-                        num_ctx=num_ctx
+                        num_ctx=num_ctx,
+                        measure_ttft=True,
                     )
 
                     print(
@@ -253,6 +289,7 @@ def run_benchmark():
                             / 1_000_000_000,
 
                         "prompt_tok_per_sec": result["prompt_tok_per_sec"],
+                        "ttft_seconds": result["ttft_seconds"],
 
                         "load_seconds":
                             result["load_duration_ns"]
@@ -283,6 +320,7 @@ def run_benchmark():
                         "prompt_tokens": 0,
                         "prompt_seconds": 0,
                         "prompt_tok_per_sec": 0,
+                        "ttft_seconds": None,
                         "load_seconds": 0,
                         "total_seconds": 0,
                         "response": "",
@@ -313,6 +351,7 @@ def run_benchmark():
         "prompt_tokens",
         "prompt_seconds",
         "prompt_tok_per_sec",
+        "ttft_seconds",
         "load_seconds",
         "total_seconds",
         "response",
