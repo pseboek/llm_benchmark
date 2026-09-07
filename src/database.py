@@ -97,6 +97,7 @@ class ModelScoutDB:
             self._ensure_column(connection, "benchmark_runs", "ttft_seconds", "REAL")
             self._ensure_column(connection, "benchmark_runs", "quality_score", "REAL")
             self._ensure_column(connection, "benchmark_runs", "quality_method", "TEXT")
+            self._ensure_column(connection, "benchmark_runs", "error", "TEXT")
             for column in (
                 "gpu_utilization_percent",
                 "gpu_memory_used_mb",
@@ -210,9 +211,9 @@ class ModelScoutDB:
                 """
                 INSERT INTO benchmark_runs
                     (model, context, category, status, tok_per_sec, prompt_version,
-                     prompt_tok_per_sec, ttft_seconds, quality_score, quality_method,
+                     prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, error,
                      gpu_utilization_percent, gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 [
                     (
@@ -226,6 +227,7 @@ class ModelScoutDB:
                         run.get("ttft_seconds"),
                         run.get("quality_score"),
                         run.get("quality_method"),
+                        run.get("error"),
                         run.get("gpu_utilization_percent"),
                         run.get("gpu_memory_used_mb"),
                         run.get("gpu_memory_total_mb"),
@@ -239,7 +241,7 @@ class ModelScoutDB:
     def list_benchmark_runs(self) -> list[dict]:
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, gpu_utilization_percent, gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent FROM benchmark_runs ORDER BY id ASC"
+                "SELECT model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, error, gpu_utilization_percent, gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent FROM benchmark_runs ORDER BY id ASC"
             ).fetchall()
         return [
             {
@@ -249,6 +251,7 @@ class ModelScoutDB:
                 "ttft_seconds": ttft_seconds,
                 "quality_score": quality_score,
                 "quality_method": quality_method,
+                "error": error,
                 "gpu_utilization_percent": gpu_utilization_percent,
                 "gpu_memory_used_mb": gpu_memory_used_mb,
                 "gpu_memory_total_mb": gpu_memory_total_mb,
@@ -256,7 +259,7 @@ class ModelScoutDB:
                 "cpu_percent": cpu_percent,
             }
             for model, context, category, status, tok_per_sec, prompt_version,
-            prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, gpu_utilization_percent,
+            prompt_tok_per_sec, ttft_seconds, quality_score, quality_method, error, gpu_utilization_percent,
             gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent in rows
         ]
 
