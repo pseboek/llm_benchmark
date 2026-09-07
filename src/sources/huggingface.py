@@ -4,6 +4,8 @@ from typing import Any
 
 import requests
 
+from src.sources.http import request_json
+
 HUGGINGFACE_API_URL = "https://huggingface.co/api/models"
 
 
@@ -12,9 +14,11 @@ def fetch_huggingface_models(limit: int = 10, search: str | None = None) -> list
     if search:
         params["search"] = search
 
-    response = requests.get(HUGGINGFACE_API_URL, params=params, timeout=30)
-    response.raise_for_status()
-    payload = response.json()
+    payload = request_json(
+        HUGGINGFACE_API_URL,
+        params=params,
+        token_env="HUGGINGFACE_TOKEN",
+    )
     return parse_huggingface_models(payload)
 
 
