@@ -16,6 +16,9 @@ from src.grading import grade_response
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 REQUEST_TIMEOUT_SECONDS = 600
+# Hard cap on generated tokens: bounds worst-case generation time even if a
+# model loops/repeats and never emits a natural stop token.
+NUM_PREDICT = 2048
 RESULTS_DIR = Path(".")
 
 MODELS = [
@@ -106,12 +109,19 @@ PROMPTS = PERSONAL_PROMPTS
 # Ollama API
 # ============================================================
 
-def collect_stream_response(lines, started_at, clock=time.perf_counter):
+def collect_stream_response(lines, started_at, clock=time.perf_counter, deadline_seconds=None, response=None):
     response_parts = []
     first_token_at = None
     final_data = {}
 
     for line in lines:
+        if deadline_seconds is not None and clock() - started_at > deadline_seconds:
+            if response is not None:
+                response.close()
+            raise TimeoutError(
+                f"Streaming generation exceeded {deadline_seconds}s wall-clock deadline "
+                "(model likely stuck in a repetition loop)"
+            )
         if not line:
             continue
         data = json.loads(line)
@@ -187,6 +197,7 @@ def generate(model, prompt, num_ctx, measure_ttft=False):
         "options": {
             "num_ctx": num_ctx,
             "temperature": 0.0,
+            "num_predict": NUM_PREDICT,
         }
     }
 
@@ -197,7 +208,12 @@ def generate(model, prompt, num_ctx, measure_ttft=False):
     response.raise_for_status()
 
     if measure_ttft:
-        data = collect_stream_response(response.iter_lines(), start)
+        data = collect_stream_response(
+            response.iter_lines(),
+            start,
+            deadline_seconds=REQUEST_TIMEOUT_SECONDS,
+            response=response,
+        )
         data["elapsed"] = time.perf_counter() - start
         return data
 
