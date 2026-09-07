@@ -18,7 +18,7 @@ from src.database import ModelScoutDB
 from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
 from src.benchmark_plan import build_benchmark_plan, write_benchmark_plan
 from src.download_queue import build_download_plan, execute_download_plan, load_queue, write_download_plan
-from src.pipeline import discover_candidates
+from src.pipeline import discover_candidates, discover_with_status
 from src.report import build_report, build_report_snapshot, write_report
 from src.scoring import Candidate, enrich_from_baseline, enrich_from_benchmark, hardware_tier, recommendation, score_candidate, weighted_score
 
@@ -166,7 +166,7 @@ def main():
         enabled_sources = {name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()}
         if args.offline:
             enabled_sources = {name: name == "ollama" for name in enabled_sources}
-        candidates = discover_candidates(
+        candidates, source_status = discover_with_status(
             huggingface_limit=args.hf_limit,
             enabled_sources=enabled_sources,
         )
@@ -179,6 +179,7 @@ def main():
             champions=config.get("baseline", []),
             scoring_config=config.get("scoring"),
             hardware_config={**config.get("hardware", {}), "thresholds": config.get("thresholds", {})},
+            source_status=source_status,
         )
         print(report)
         return
@@ -187,7 +188,7 @@ def main():
         enabled_sources = {name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()}
         if args.offline:
             enabled_sources = {name: name == "ollama" for name in enabled_sources}
-        candidates = discover_candidates(
+        candidates, source_status = discover_with_status(
             huggingface_limit=args.hf_limit,
             enabled_sources=enabled_sources,
         )
@@ -202,6 +203,7 @@ def main():
             champions=config.get("baseline", []),
             scoring_config=config.get("scoring"),
             hardware_config={**config.get("hardware", {}), "thresholds": config.get("thresholds", {})},
+            source_status=source_status,
         )
         output = args.output or str(ROOT / "reports" / f"{date.today().isoformat()}_model_scout.md")
         db.save_report_snapshot({**build_report_snapshot(candidates, config.get("scoring"), {**config.get("hardware", {}), "thresholds": config.get("thresholds", {})}), "output_path": output})
