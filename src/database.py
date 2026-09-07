@@ -54,6 +54,14 @@ class ModelScoutDB:
             self._ensure_column(connection, "benchmark_runs", "prompt_version", "TEXT NOT NULL DEFAULT 'unknown'")
             self._ensure_column(connection, "benchmark_runs", "prompt_tok_per_sec", "REAL NOT NULL DEFAULT 0")
             self._ensure_column(connection, "benchmark_runs", "ttft_seconds", "REAL")
+            for column in (
+                "gpu_utilization_percent",
+                "gpu_memory_used_mb",
+                "gpu_memory_total_mb",
+                "ram_used_mb",
+                "cpu_percent",
+            ):
+                self._ensure_column(connection, "benchmark_runs", column, "REAL")
             self._ensure_column(connection, "candidates", "parameter_size", "TEXT")
             self._ensure_column(connection, "candidates", "quantization", "TEXT")
             self._ensure_column(connection, "candidates", "architecture", "TEXT")
@@ -119,7 +127,13 @@ class ModelScoutDB:
     def save_benchmark_runs(self, runs: Iterable[dict]) -> None:
         with self._connect() as connection:
             connection.executemany(
-                "INSERT INTO benchmark_runs (model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec, ttft_seconds) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                """
+                INSERT INTO benchmark_runs
+                    (model, context, category, status, tok_per_sec, prompt_version,
+                     prompt_tok_per_sec, ttft_seconds, gpu_utilization_percent,
+                     gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
                 [
                     (
                         str(run.get("model", "unknown")),
@@ -130,6 +144,11 @@ class ModelScoutDB:
                         str(run.get("prompt_version", "unknown")),
                         float(run.get("prompt_tok_per_sec", 0.0)),
                         run.get("ttft_seconds"),
+                        run.get("gpu_utilization_percent"),
+                        run.get("gpu_memory_used_mb"),
+                        run.get("gpu_memory_total_mb"),
+                        run.get("ram_used_mb"),
+                        run.get("cpu_percent"),
                     )
                     for run in runs
                 ],
@@ -138,11 +157,23 @@ class ModelScoutDB:
     def list_benchmark_runs(self) -> list[dict]:
         with self._connect() as connection:
             rows = connection.execute(
-                "SELECT model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec, ttft_seconds FROM benchmark_runs ORDER BY id ASC"
+                "SELECT model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec, ttft_seconds, gpu_utilization_percent, gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent FROM benchmark_runs ORDER BY id ASC"
             ).fetchall()
         return [
-            {"model": model, "context": context, "category": category, "status": status, "tok_per_sec": tok_per_sec, "prompt_version": prompt_version, "prompt_tok_per_sec": prompt_tok_per_sec, "ttft_seconds": ttft_seconds}
-            for model, context, category, status, tok_per_sec, prompt_version, prompt_tok_per_sec, ttft_seconds in rows
+            {
+                "model": model, "context": context, "category": category,
+                "status": status, "tok_per_sec": tok_per_sec,
+                "prompt_version": prompt_version, "prompt_tok_per_sec": prompt_tok_per_sec,
+                "ttft_seconds": ttft_seconds,
+                "gpu_utilization_percent": gpu_utilization_percent,
+                "gpu_memory_used_mb": gpu_memory_used_mb,
+                "gpu_memory_total_mb": gpu_memory_total_mb,
+                "ram_used_mb": ram_used_mb,
+                "cpu_percent": cpu_percent,
+            }
+            for model, context, category, status, tok_per_sec, prompt_version,
+            prompt_tok_per_sec, ttft_seconds, gpu_utilization_percent,
+            gpu_memory_used_mb, gpu_memory_total_mb, ram_used_mb, cpu_percent in rows
         ]
 
     def save_recommendations(self, recommendations: Iterable[dict]) -> None:

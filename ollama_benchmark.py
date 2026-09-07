@@ -6,6 +6,7 @@ from datetime import datetime
 from statistics import mean
 
 from benchmark.prompts import PERSONAL_PROMPTS, PROMPT_VERSION
+from src.telemetry import capture_telemetry
 
 # ============================================================
 # Configuration
@@ -253,13 +254,13 @@ def run_benchmark():
                 )
 
                 try:
-
                     result = generate(
                         model=model,
                         prompt=prompt,
                         num_ctx=num_ctx,
                         measure_ttft=True,
                     )
+                    telemetry_after = capture_telemetry()
 
                     print(
                         f"{result['tok_per_sec']:>7.2f} tok/s"
@@ -290,6 +291,7 @@ def run_benchmark():
 
                         "prompt_tok_per_sec": result["prompt_tok_per_sec"],
                         "ttft_seconds": result["ttft_seconds"],
+                        **telemetry_after,
 
                         "load_seconds":
                             result["load_duration_ns"]
@@ -321,6 +323,11 @@ def run_benchmark():
                         "prompt_seconds": 0,
                         "prompt_tok_per_sec": 0,
                         "ttft_seconds": None,
+                        "gpu_utilization_percent": None,
+                        "gpu_memory_used_mb": None,
+                        "gpu_memory_total_mb": None,
+                        "ram_used_mb": None,
+                        "cpu_percent": None,
                         "load_seconds": 0,
                         "total_seconds": 0,
                         "response": "",
@@ -352,6 +359,11 @@ def run_benchmark():
         "prompt_seconds",
         "prompt_tok_per_sec",
         "ttft_seconds",
+        "gpu_utilization_percent",
+        "gpu_memory_used_mb",
+        "gpu_memory_total_mb",
+        "ram_used_mb",
+        "cpu_percent",
         "load_seconds",
         "total_seconds",
         "response",
