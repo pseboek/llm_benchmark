@@ -12,10 +12,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from benchmark.runner import run_benchmark
-from database import ModelScoutDB
-from pipeline import discover_candidates
-from report import build_report, write_report
-from scoring import Candidate, hardware_tier, recommendation, weighted_score
+from src.database import ModelScoutDB
+from src.pipeline import discover_candidates
+from src.report import build_report, write_report
+from src.scoring import Candidate, hardware_tier, recommendation, score_candidate, weighted_score
 
 
 def load_config():
@@ -48,6 +48,18 @@ def build_demo_candidates(config):
     return candidates
 
 
+def build_baseline_records(config):
+    return [
+        {
+            "name": item.get("name", "unknown-model"),
+            "source": "config",
+            "role": item.get("role", "baseline"),
+            "generation_tps": float(item.get("generation_tps", 0.0)),
+        }
+        for item in config.get("baseline", [])
+    ]
+
+
 def print_summary(candidates):
     for candidate in candidates:
         score = weighted_score(candidate)
@@ -70,6 +82,7 @@ def parse_args():
     parser.add_argument("--hf-limit", type=int, default=10, help="Maximum number of Hugging Face models to inspect")
     parser.add_argument("--db", default=str(ROOT / "data" / "model_scout.db"), help="SQLite history database path")
     parser.add_argument("--output", help="Report output path; defaults to reports/YYYY-MM-DD_model_scout.md")
+    parser.add_argument("--offline", action="store_true", help="Use local Ollama only and fall back to configured baseline")
     return parser.parse_args()
 
 
@@ -91,22 +104,32 @@ def main():
         return
 
     if args.discover:
+        enabled_sources = {name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()}
+        if args.offline:
+            enabled_sources = {name: name == "ollama" for name in enabled_sources}
         candidates = discover_candidates(
             huggingface_limit=args.hf_limit,
-            enabled_sources={name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()},
+            enabled_sources=enabled_sources,
         )
+        candidates = candidates or build_baseline_records(config)
         ModelScoutDB(args.db).save_candidates(candidates)
+        ModelScoutDB(args.db).save_recommendations([score_candidate(candidate) for candidate in candidates])
         report = build_report(candidates, champions=config.get("baseline", []))
         print(report)
         return
 
     if args.report:
+        enabled_sources = {name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()}
+        if args.offline:
+            enabled_sources = {name: name == "ollama" for name in enabled_sources}
         candidates = discover_candidates(
             huggingface_limit=args.hf_limit,
-            enabled_sources={name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()},
+            enabled_sources=enabled_sources,
         )
+        candidates = candidates or build_baseline_records(config)
         db = ModelScoutDB(args.db)
         db.save_candidates(candidates)
+        db.save_recommendations([score_candidate(candidate) for candidate in candidates])
         report = build_report(candidates, champions=config.get("baseline", []))
         output = args.output or str(ROOT / "reports" / f"{date.today().isoformat()}_model_scout.md")
         write_report(report, output)

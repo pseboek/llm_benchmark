@@ -41,6 +41,14 @@ pip install -r requirements.txt
 python src/main.py --discover --hf-limit 10
 ```
 
+Für einen reproduzierbaren Lauf ohne externe Quellen:
+
+```powershell
+python src/main.py --report --offline --output reports/offline_model_scout.md
+```
+
+Wenn Ollama nicht erreichbar ist, verwendet der Offline-Lauf die konfigurierte Baseline als Report-Grundlage.
+
 Das sammelt derzeit:
 
 - lokale Ollama-Modelle
@@ -145,9 +153,9 @@ Die Funktion `src/adaptive.py` kann historische Benchmark-Runs auswerten und ein
 
 ## Nächste Erweiterungen
 
-- Champion/Challenger-Vergleich mit historischen Benchmark-Runs
-- Dashboard für Report-Historie
-- Auswahl von `TEST_NOW`-Kandidaten für manuelle Benchmark-Queues
+- Windows-Task-Scheduler-Vorlage für den zweiwöchigen Offline-Report
+- bessere Metadatenanreicherung aus Ollama-Tags und lokalen Benchmark-Runs
+- Auswahl von `TEST_NOW`-Kandidaten für manuelle Download- und Benchmark-Queues
 
 ## Weiterführende Doku
 
