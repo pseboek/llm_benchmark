@@ -507,6 +507,11 @@ HUGGINGFACE_TOKEN=
 
 `.env` muss in `.gitignore`.
 
+Die externen Adapter lesen `HUGGINGFACE_TOKEN` und
+`ARTIFICIAL_ANALYSIS_API_KEY` nur aus der Prozessumgebung. Temporäre
+HTTP-Fehler werden begrenzt wiederholt; dauerhafte Fehler führen zu einer
+leeren Quelle und stoppen nicht die lokale Discovery.
+
 ---
 
 ## 20. Entwicklungsstufen

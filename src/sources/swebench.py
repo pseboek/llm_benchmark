@@ -4,13 +4,13 @@ from typing import Any
 
 import requests
 
+from src.sources.http import request_json
+
 SWEBENCH_API_URL = "https://api.swebench.com/benchmarks"
 
 
 def fetch_swebench_models(url: str = SWEBENCH_API_URL) -> list[dict[str, Any]]:
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
-    payload = response.json()
+    payload = request_json(url)
     return parse_swebench_models(payload)
 
 

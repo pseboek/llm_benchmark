@@ -4,13 +4,13 @@ from typing import Any
 
 import requests
 
+from src.sources.http import request_json
+
 ARTIFICIAL_ANALYSIS_API_URL = "https://artificialanalysis.ai/api/models"
 
 
 def fetch_artificial_analysis_models(url: str = ARTIFICIAL_ANALYSIS_API_URL) -> list[dict[str, Any]]:
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
-    payload = response.json()
+    payload = request_json(url, token_env="ARTIFICIAL_ANALYSIS_API_KEY")
     return parse_artificial_analysis_models(payload)
 
 

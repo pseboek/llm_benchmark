@@ -4,13 +4,13 @@ from typing import Any
 
 import requests
 
+from src.sources.http import request_json
+
 LMARENA_API_URL = "https://lmarena.ai/leaderboard"
 
 
 def fetch_lmarena_models(url: str = LMARENA_API_URL) -> list[dict[str, Any]]:
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
-    payload = response.json()
+    payload = request_json(url)
     return parse_lmarena_models(payload)
 
 
