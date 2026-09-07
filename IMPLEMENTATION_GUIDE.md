@@ -358,9 +358,10 @@ messen:
 - GPU-Auslastung
 
 Der aktuelle Benchmark misst Prompt tok/s und speichert die Prompt-Version.
-TTFT wird inzwischen per Ollama-Streaming gemessen und persistiert. VRAM, RAM
-und GPU/CPU-Aufteilung benötigen noch eine separate Hardware-Telemetrie-
-Integration.
+TTFT wird inzwischen per Ollama-Streaming gemessen und persistiert. Wenn die
+lokale Umgebung `nvidia-smi` und `psutil` bereitstellt, werden außerdem
+GPU-Auslastung, GPU-Speicher, RAM und CPU-Auslastung erfasst. Fehlende
+Telemetrie-Tools bleiben ohne Einfluss auf den Benchmarklauf.
 
 Generation tok/s:
 
