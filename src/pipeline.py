@@ -3,7 +3,6 @@ from __future__ import annotations
 from src.discovery import deduplicate_candidates
 from src.sources.artificial_analysis import list_artificial_analysis_candidates
 from src.sources.huggingface import list_hf_candidates
-from src.sources.lmarena import list_lmarena_candidates
 from src.sources.ollama import list_local_candidates
 from src.sources.swebench import list_swebench_candidates
 
@@ -16,14 +15,12 @@ def discover_candidates(
     enabled = enabled_sources or {
         "ollama": True,
         "huggingface": True,
-        "lmarena": True,
         "artificial_analysis": True,
         "swebench": True,
     }
     loaders = {
         "ollama": lambda: list_local_candidates(ollama_url) if ollama_url else list_local_candidates(),
         "huggingface": lambda: list_hf_candidates(limit=huggingface_limit),
-        "lmarena": list_lmarena_candidates,
         "artificial_analysis": list_artificial_analysis_candidates,
         "swebench": list_swebench_candidates,
     }
@@ -48,14 +45,12 @@ def discover_with_status(
     enabled = enabled_sources or {
         "ollama": True,
         "huggingface": True,
-        "lmarena": True,
         "artificial_analysis": True,
         "swebench": True,
     }
     loaders = {
         "ollama": lambda: list_local_candidates(ollama_url) if ollama_url else list_local_candidates(),
         "huggingface": lambda: list_hf_candidates(limit=huggingface_limit),
-        "lmarena": list_lmarena_candidates,
         "artificial_analysis": list_artificial_analysis_candidates,
         "swebench": list_swebench_candidates,
     }

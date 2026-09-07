@@ -7,7 +7,7 @@ Lokaler Model-Discovery- und Benchmark-Scout für Ollama-Modelle, lokale Benchma
 Das Projekt kombiniert zwei Ebenen:
 
 - Discovery: lokale Ollama-Modelle plus Hugging Face Kandidaten sammeln und normalisieren
-- Erweiterung: zusätzlich LMArena, Artificial Analysis und SWE-bench Kandidaten einbinden
+- Erweiterung: zusätzlich Artificial Analysis und SWE-bench Kandidaten einbinden
 - Benchmark: ausgewählte Modelle lokal mit definierter Kontextgröße und Prompts testen
 - Reporting: zusammengefasste Kandidatenliste und erste Auswertung erzeugen
 - Persistence: entdeckte Kandidaten in einer SQLite-Datenbank speichern und später wieder verwenden
@@ -21,7 +21,6 @@ flowchart LR
     subgraph Sources["Discovery-Quellen"]
         Ollama[(Ollama\nlokale Modelle)]
         HF[Hugging Face API]
-        LMA[LMArena]
         AA[Artificial Analysis]
         SWE[SWE-bench]
     end
@@ -105,7 +104,7 @@ Das sammelt derzeit:
 
 - lokale Ollama-Modelle
 - einen kurzen Satz aus Hugging Face Kandidaten
-- zusätzliche Kandidaten aus LMArena, Artificial Analysis und SWE-bench
+- zusätzliche Kandidaten aus Artificial Analysis und SWE-bench
 - dedupliziert und normalisiert die Modellnamen
 
 Die Ergebnisse werden zusätzlich in einer lokalen SQLite-Datenbank unter `data/model_scout.db` persistiert.
@@ -299,7 +298,6 @@ python src/main.py --recover-running-tasks --db data/model_scout.db
 │   ├── telemetry.py
 │   └── sources/
 │       ├── __init__.py
-│       ├── lmarena.py
 │       ├── artificial_analysis.py
 │       ├── swebench.py
 │       ├── ollama.py
@@ -386,13 +384,12 @@ sequenceDiagram
 - Die Kandidaten werden anhand der konfigurierten Gewichtung bewertet und in `TEST_NOW`, `SURPRISE_TEST`, `WATCH` und `IGNORE` eingeteilt.
 - Kandidaten ohne eigene Qualitätsmessung werden als `NEEDS_DATA` mit Score `not assessed` geführt; sie werden nicht fälschlich als `IGNORE` mit neutralem Score bewertet.
 - Die Quellenadapter sind fehlertolerant: eine nicht erreichbare externe Quelle verhindert nicht die lokale Ollama-Auswertung.
-- SWE-bench liefert Kandidaten durch Parsen des in `swebench.com` eingebetteten `leaderboard-data`-JSON-Blocks (keine offizielle API). Artificial Analysis nutzt ohne konfigurierten `ARTIFICIAL_ANALYSIS_API_KEY` einen Best-Effort-Fallback über die auf der Startseite verlinkten Modelle (nur ein Ausschnitt der vollen Rangliste). LMArena (`arena.ai`) ist eine rein clientseitig gerenderte Seite hinter einem Cookie-Consent-Layer und liefert ohne echten Browser keine Daten; die Quelle bleibt als `ERROR` sichtbar.
+- SWE-bench liefert Kandidaten durch Parsen des in `swebench.com` eingebetteten `leaderboard-data`-JSON-Blocks (keine offizielle API). Artificial Analysis nutzt ohne konfigurierten `ARTIFICIAL_ANALYSIS_API_KEY` einen Best-Effort-Fallback über die auf der Startseite verlinkten Modelle (nur ein Ausschnitt der vollen Rangliste).
 - Welche Quellen aktiv sind, wird im Abschnitt `sources` von `config.yaml` gesteuert.
 - [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) beschreibt Architektur, Datenmodell und verbleibende Betriebsschritte.
 
 ## Nächste Erweiterungen
 
-- echte API-Anbindung für LMArena, sobald ein verifizierter, maschinenlesbarer Endpunkt verfügbar ist
 - zusätzliche Qualitätsgrader für Antwortqualität und Coding-Ergebnisse
 
 ## Weiterführende Doku

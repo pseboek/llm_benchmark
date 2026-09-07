@@ -30,7 +30,6 @@ benchmark:
 sources:
   ollama: {enabled: true}
   huggingface: {enabled: true}
-  lmarena: {enabled: true}
   artificial_analysis: {enabled: true}
   swebench: {enabled: true}
 

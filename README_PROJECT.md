@@ -8,7 +8,7 @@ Reports sowie einer SQLite-Historie dokumentiert.
 
 Die folgende Implementierung ist in der aktuellen Codebasis verifiziert:
 
-- Discovery über Ollama, Hugging Face, LMArena, Artificial Analysis und SWE-bench
+- Discovery über Ollama, Hugging Face, Artificial Analysis und SWE-bench
 - Deduplizierung und Normalisierung von Modellnamen und Metadaten
 - Benchmark-Planung, Task-Lifecycle und Wiederaufnahme nach Abbruch
 - Champion/Challenger-Vergleich mit Benchmark-Deltas

@@ -8,7 +8,7 @@ Der **LLM Model Scout** entdeckt regelmäßig neue Open-Weight-LLMs, bewertet de
 
 Die aktuelle Implementierung umfasst die folgenden, in der Test-Suite bestätigten Funktionen:
 
-- Discovery über Ollama, Hugging Face, LMArena, Artificial Analysis und SWE-bench
+- Discovery über Ollama, Hugging Face, Artificial Analysis und SWE-bench
 - Kandidaten-Normalisierung und De-Duplizierung
 - SQLite-basierte Persistenz mit Kandidaten, Runs, Empfehlungen, Tasks und Source-Status
 - Benchmark-Task-Lifecycle mit `PENDING_EXECUTION`, `RUNNING`, `COMPLETED` und `FAILED`
@@ -50,7 +50,6 @@ Discovery und Benchmark werden bewusst getrennt:
 ```text
 Ollama ───────────────┐
 Hugging Face ─────────┤
-LMArena ──────────────┤
 Artificial Analysis ──┤──> Discovery ─> Normalisierung
 SWE-bench ────────────┘                 │
                                         v
@@ -87,12 +86,6 @@ https://ollama.com/library
 Quelle für neue Open-Weight-Modelle, Modellkarten, Parameter, Quantisierungen und Community-Benchmarks.
 
 https://huggingface.co/
-
-### LMArena
-
-Quelle für menschliche Präferenzdaten. Besonders interessant ist der Software-/IT-Bereich.
-
-https://lmarena.ai/leaderboard
 
 ### Artificial Analysis
 
@@ -241,7 +234,6 @@ llm-model-scout/
 │       ├── __init__.py
 │       ├── ollama.py
 │       ├── huggingface.py
-│       ├── lmarena.py
 │       ├── artificial_analysis.py
 │       └── swebench.py
 ├── benchmark/
@@ -320,7 +312,6 @@ Alle Quellen liefern zunächst Kandidaten:
 candidates = []
 candidates.extend(ollama.discover())
 candidates.extend(huggingface.discover())
-candidates.extend(lmarena.discover())
 candidates.extend(artificial_analysis.discover())
 candidates.extend(swebench.discover())
 candidates = deduplicate(candidates)
@@ -328,7 +319,7 @@ candidates = deduplicate(candidates)
 
 Danach werden die Daten zu einem Modellprofil zusammengeführt.
 
-Ein Modell kann beispielsweise gleichzeitig in Ollama, Hugging Face, LMArena und Artificial Analysis auftauchen.
+Ein Modell kann beispielsweise gleichzeitig in Ollama, Hugging Face und Artificial Analysis auftauchen.
 
 ---
 

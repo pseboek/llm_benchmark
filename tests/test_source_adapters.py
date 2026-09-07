@@ -8,24 +8,7 @@ if str(ROOT) not in sys.path:
 
 from src.database import ModelScoutDB
 from src.sources.artificial_analysis import parse_artificial_analysis_models
-from src.sources.lmarena import parse_lmarena_models
 from src.sources.swebench import parse_swebench_models
-
-
-def test_parse_lmarena_models_extracts_names():
-    payload = {
-        "leaderboard": [
-            {"name": "GPT-4.1"},
-            {"name": "Claude 3.7 Sonnet"},
-        ]
-    }
-
-    models = parse_lmarena_models(payload)
-
-    assert models == [
-        {"name": "GPT-4.1", "source": "lmarena"},
-        {"name": "Claude 3.7 Sonnet", "source": "lmarena"},
-    ]
 
 
 def test_parse_artificial_analysis_models_extracts_names():
@@ -75,7 +58,7 @@ def test_model_scout_db_persists_candidates(tmp_path):
 
     db.save_candidates([
         {"name": "qwen2.5-coder:14b-instruct", "source": "ollama"},
-        {"name": "GPT-4.1", "source": "lmarena"},
+        {"name": "GPT-4.1", "source": "huggingface"},
     ])
 
     rows = db.list_candidates()
