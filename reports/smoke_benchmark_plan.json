@@ -1,0 +1,9 @@
+[
+  {
+    "model": "deepseek-coder:latest",
+    "context": 8192,
+    "category": "01 Java",
+    "prompt_version": "v1",
+    "status": "COMPLETED"
+  }
+]
