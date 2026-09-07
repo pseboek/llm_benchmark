@@ -118,6 +118,15 @@ def summarize_errors(runs: list[dict]) -> list[dict]:
     ]
 
 
+def dashboard_metrics(recommendations: list[dict], runs: list[dict]) -> dict[str, int]:
+    return {
+        "test_now": sum(item.get("recommendation") == "TEST_NOW" for item in recommendations),
+        "watch": sum(item.get("recommendation") == "WATCH" for item in recommendations),
+        "needs_data": sum(item.get("recommendation") == "NEEDS_DATA" for item in recommendations),
+        "errors": sum(item.get("status") == "ERROR" for item in runs),
+    }
+
+
 def summarize_source_status(rows: list[dict]) -> list[dict]:
     latest: dict[str, dict] = {}
     for row in rows:
@@ -195,14 +204,15 @@ def render_dashboard(db_path: str | Path) -> None:
     candidates = data["candidates"]
     recommendations = data["recommendations"]
     runs = data["benchmark_runs"]
-    test_now = sum(item.get("recommendation") == "TEST_NOW" for item in recommendations)
-    watch = sum(item.get("recommendation") == "WATCH" for item in recommendations)
+    metrics = dashboard_metrics(recommendations, runs)
 
-    first, second, third, fourth = st.columns(4)
+    first, second, third, fourth, fifth, sixth = st.columns(6)
     first.metric("Candidates", len(candidates))
     second.metric("Benchmark runs", len(runs))
-    third.metric("Test now", test_now)
-    fourth.metric("Watchlist", watch)
+    third.metric("Test now", metrics["test_now"])
+    fourth.metric("Watchlist", metrics["watch"])
+    fifth.metric("Needs data", metrics["needs_data"])
+    sixth.metric("Errors", metrics["errors"])
 
     show_table(st, "Recommendations", recommendations, "No recommendations match the selected filters.")
     show_table(st, "Benchmark throughput", summarize_runs(runs), "No successful benchmark runs are stored yet.")
