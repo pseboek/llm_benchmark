@@ -124,7 +124,11 @@ Die Funktion `src/adaptive.py` kann historische Benchmark-Runs auswerten und ein
 │   ├── test_ollama_source.py
 │   ├── test_huggingface_source.py
 │   ├── test_report.py
-│   └── test_dashboard.py
+│   ├── test_dashboard.py
+│   ├── test_workflow.py
+│   ├── test_champion.py
+│   ├── test_adaptive.py
+│   └── test_prompts.py
 ├── data/
 ├── reports/
 └── .env.example

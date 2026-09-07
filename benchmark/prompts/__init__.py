@@ -1,0 +1,3 @@
+from .personal import PERSONAL_PROMPTS, PROMPT_VERSION
+
+__all__ = ["PERSONAL_PROMPTS", "PROMPT_VERSION"]
