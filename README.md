@@ -14,6 +14,46 @@ Das Projekt kombiniert zwei Ebenen:
 - Dashboard: historische Summaries, Filters, Fehlertrends, Lauf-Delta und Hardware-Telemetrie visualisieren
 - Champion/Challenger: echte Benchmark-Deltas statt reiner Score-Vergleiche nutzen
 
+### Architekturüberblick
+
+```mermaid
+flowchart LR
+    subgraph Sources["Discovery-Quellen"]
+        Ollama[(Ollama\nlokale Modelle)]
+        HF[Hugging Face API]
+        LMA[LMArena]
+        AA[Artificial Analysis]
+        SWE[SWE-bench]
+    end
+
+    CLI["src/main.py (CLI)"]
+    Discovery["src/discovery.py"]
+    Scoring["src/scoring.py\n+ config.yaml"]
+    Grading["src/grading.py"]
+    Telemetry["src/telemetry.py"]
+    Queue["benchmark_queue.py\ndownload_queue.py\nbenchmark_plan.py"]
+    Runner["benchmark/runner.py\n→ ollama_benchmark.py"]
+    DB[("data/model_scout.db\nSQLite")]
+    Report["src/report.py\n→ reports/*.md"]
+    Dashboard["dashboard.py\n(Streamlit)"]
+
+    Sources --> Discovery
+    CLI --> Discovery
+    Discovery --> Scoring
+    Scoring --> DB
+    Scoring --> Report
+    CLI --> Queue
+    Queue --> Runner
+    Runner -- "HTTP /api/generate" --> Ollama
+    Runner --> Grading
+    Runner --> Telemetry
+    Grading --> DB
+    Telemetry --> DB
+    DB --> Report
+    DB --> Dashboard
+    CLI --> Dashboard
+```
+
 ## Aktueller Status
 
 Die aktuelle Implementierung ist vollständig für die verifizierte Test-Suite und umfasst:
@@ -123,6 +163,20 @@ python src/main.py --queue --baseline-only --output reports/benchmark_queue.json
 ```
 
 Die Queue enthält höchstens `--max-candidates` Modelle mit `TEST_NOW` oder `SURPRISE_TEST`. Sie startet keinen Download und keinen Benchmark automatisch; jedes Element bleibt zunächst auf `PENDING_REVIEW`.
+
+Der Weg von der Queue bis zum ausgeführten Benchmark folgt einer bewusst kontrollierten, mehrstufigen Freigabekette:
+
+```mermaid
+flowchart TD
+    A["--queue\nbenchmark_queue.json\n(PENDING_REVIEW)"] --> B["--download-queue\ndownload_plan.json\n(PENDING_APPROVAL)"]
+    B -- "--approve-models + --execute-downloads" --> C["ollama pull"]
+    A --> D["--benchmark-plan\n--approve-models\nbenchmark_plan.json\n(PENDING_EXECUTION)"]
+    D -- "--dry-run-plan" --> E["Prüfung ohne Ausführung"]
+    D -- "--run-plan" --> F["Ausführung der Tasks\n(COMPLETED / FAILED)"]
+    F --> G[("data/model_scout.db")]
+    F -- "--retry-failed-plan" --> D
+    F -- "--recover-running-tasks" --> F
+```
 
 ### 8) Zweiwöchigen Report automatisieren
 
@@ -280,6 +334,33 @@ python src/main.py --recover-running-tasks --db data/model_scout.db
 ├── data/
 ├── reports/
 └── .env.example
+```
+
+## Ablauf eines einzelnen Benchmark-Runs
+
+```mermaid
+sequenceDiagram
+    participant Main as src/main.py
+    participant Runner as benchmark/runner.py
+    participant Bench as ollama_benchmark.py
+    participant Ollama as Ollama API
+    participant Grade as src/grading.py
+    participant Tele as src/telemetry.py
+    participant DB as SQLite (model_scout.db)
+
+    Main->>Runner: run_benchmark_plan(plan)
+    Runner->>Bench: run_benchmark()
+    loop je Modell / Kontext / Prompt
+        Bench->>Tele: capture_telemetry() vorher
+        Bench->>Ollama: POST /api/generate (stream, num_predict, deadline)
+        Ollama-->>Bench: Tokens / Antwort
+        Bench->>Tele: capture_telemetry() nachher
+        Bench->>Grade: grade_response(response, category)
+        Grade-->>Bench: quality_score, components
+        Bench-->>Runner: Ergebnis-Zeile (OK/ERROR)
+    end
+    Runner-->>Main: Ergebnisse + aktualisierter Plan-Status
+    Main->>DB: Ergebnisse speichern
 ```
 
 ## Wichtige Hinweise
