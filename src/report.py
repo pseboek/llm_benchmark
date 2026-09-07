@@ -68,6 +68,10 @@ def build_report(
     ]
     for action, title in groups.items():
         lines.append(f"- {title}: {sum(item['recommendation'] == action for item in scored)}")
+    source_names = ("ollama", "huggingface", "lmarena", "artificial_analysis", "swebench")
+    source_counts = {source: sum(item.get("source") == source for item in candidates) for source in source_names}
+    lines.extend(["", "## Source Coverage"])
+    lines.extend(f"- {source}: {source_counts[source]}" for source in source_names)
     lines.extend(["", "## Recommendations"])
     for action, title in groups.items():
         lines.extend(["", f"### {title}"])

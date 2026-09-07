@@ -449,6 +449,10 @@ Hardware-Fit
 Quellen
 ```
 
+Zusätzlich weist der Report die Kandidatenanzahl je Quelle aus. Nicht
+verfügbare oder nicht strukturierte externe Endpunkte werden dadurch sichtbar,
+ohne lokale Discovery-Ergebnisse zu verschleiern.
+
 Jede Empfehlung soll begründen:
 
 - Warum?
