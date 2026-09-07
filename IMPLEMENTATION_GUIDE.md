@@ -478,10 +478,10 @@ Download und Benchmark zunächst bewusst manuell auslösen.
 
 Später kann die Pipeline für `TEST_NOW` automatisiert werden.
 
-Der aktuelle Stand stellt die CLI und das Dashboard bereit. Die eigentliche
-Ausführung über Windows Task Scheduler bleibt absichtlich ein lokaler
-Betriebsschritt, damit keine ungeprüften externen Downloads oder Ollama-Runs
-automatisch gestartet werden.
+Der aktuelle Stand stellt die CLI, das Dashboard und
+`scripts/run_scout_report.ps1` bereit. Das Skript kann im Windows Task
+Scheduler als Aktion für einen zweiwöchigen Offline-Report hinterlegt werden.
+Downloads und lokale Modellbenchmarks bleiben bewusst manuell.
 
 ---
 
