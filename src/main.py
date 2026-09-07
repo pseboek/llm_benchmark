@@ -107,6 +107,7 @@ def parse_args():
     parser.add_argument("--benchmark-plan", help="Create benchmark tasks from an approved model queue")
     parser.add_argument("--run-plan", help="Execute a previously generated benchmark plan")
     parser.add_argument("--dry-run-plan", help="Show pending benchmark tasks without executing Ollama")
+    parser.add_argument("--db-summary", action="store_true", help="Show a compact SQLite data summary")
     return parser.parse_args()
 
 
@@ -119,6 +120,10 @@ def main():
         print("Configured benchmark models:")
         for item in benchmark_models:
             print(f"- {item.get('name')}")
+        return
+
+    if args.db_summary:
+        print(json.dumps(ModelScoutDB(args.db).summary(), indent=2))
         return
 
     if args.suggest_weights:

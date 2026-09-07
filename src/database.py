@@ -379,3 +379,16 @@ class ModelScoutDB:
             {"source": source, "status": status, "candidates": candidates, "error": error, "created_at": created_at}
             for source, status, candidates, error, created_at in rows
         ]
+
+    def summary(self) -> dict[str, int]:
+        with self._connect() as connection:
+            summary = {}
+            for table in ("candidates", "recommendations", "benchmark_runs", "benchmark_tasks", "report_snapshots", "source_status"):
+                summary[table] = connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            summary["needs_data"] = connection.execute(
+                "SELECT COUNT(*) FROM recommendations WHERE recommendation = 'NEEDS_DATA'"
+            ).fetchone()[0]
+            summary["scored"] = connection.execute(
+                "SELECT COUNT(*) FROM recommendations WHERE score IS NOT NULL"
+            ).fetchone()[0]
+            return summary

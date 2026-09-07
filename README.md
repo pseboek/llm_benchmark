@@ -160,6 +160,12 @@ python src/main.py --dry-run-plan reports/benchmark_plan.json
 
 Der Dry Run startet kein Ollama und verändert keine Benchmark-Daten.
 
+Eine kompakte Übersicht der SQLite-Daten erhältst du mit:
+
+```powershell
+python src/main.py --db-summary --db data/model_scout.db
+```
+
 ## Projektstruktur
 
 ```text
