@@ -90,7 +90,7 @@ python src/main.py --list-models
 streamlit run dashboard.py
 ```
 
-Das Dashboard liest die SQLite-Historie und zeigt Kandidaten, Empfehlungen, durchschnittliche Benchmark-Geschwindigkeit sowie Kontextvergleiche. Modelle und Empfehlungen können direkt gefiltert werden. Ein anderer Datenbankpfad kann über den Startparameter gesetzt werden:
+Das Dashboard liest die SQLite-Historie und zeigt Kandidaten, Empfehlungen, durchschnittliche Benchmark-Geschwindigkeit, Kontextvergleiche und Hardware-Telemetrie. Modelle und Empfehlungen können direkt gefiltert werden. Ein anderer Datenbankpfad kann über den Startparameter gesetzt werden:
 
 ```powershell
 streamlit run dashboard.py -- --db data/alternative.db
@@ -214,7 +214,6 @@ Ohne `--execute-downloads` wird kein `ollama pull` gestartet.
 
 ## Nächste Erweiterungen
 
-- bessere Hardware-Telemetrie-Dokumentation und Visualisierung
 - historische Report-Vergleiche
 - automatische Auswahl von Benchmark-Tasks nach bestätigter Freigabe
 

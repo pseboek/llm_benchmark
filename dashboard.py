@@ -45,6 +45,32 @@ def summarize_context_runs(runs: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_telemetry(runs: list[dict]) -> list[dict]:
+    grouped: dict[str, list[dict]] = {}
+    for run in runs:
+        if run.get("status") == "OK":
+            grouped.setdefault(str(run.get("model", "unknown")), []).append(run)
+
+    def average(runs_for_model: list[dict], field: str) -> float | None:
+        values = [float(run[field]) for run in runs_for_model if run.get(field) is not None]
+        return round(sum(values) / len(values), 2) if values else None
+
+    return [
+        {
+            "model": model,
+            "avg_gpu_percent": average(model_runs, "gpu_utilization_percent"),
+            "peak_gpu_memory_mb": max(
+                [float(run["gpu_memory_used_mb"]) for run in model_runs if run.get("gpu_memory_used_mb") is not None],
+                default=None,
+            ),
+            "avg_ram_mb": average(model_runs, "ram_used_mb"),
+            "avg_cpu_percent": average(model_runs, "cpu_percent"),
+            "runs": len(model_runs),
+        }
+        for model, model_runs in sorted(grouped.items())
+    ]
+
+
 def filter_dashboard_data(
     data: dict[str, list[dict]],
     *,
@@ -100,6 +126,8 @@ def render_dashboard(db_path: str | Path) -> None:
     st.dataframe(summarize_runs(runs), use_container_width=True, hide_index=True)
     st.subheader("Throughput by context")
     st.dataframe(summarize_context_runs(runs), use_container_width=True, hide_index=True)
+    st.subheader("Hardware telemetry")
+    st.dataframe(summarize_telemetry(runs), use_container_width=True, hide_index=True)
 
     st.subheader("Discovered candidates")
     st.dataframe(candidates, use_container_width=True, hide_index=True)
