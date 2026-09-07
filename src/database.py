@@ -66,6 +66,20 @@ class ModelScoutDB:
                 )
                 """
             )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS benchmark_tasks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    model TEXT NOT NULL,
+                    context INTEGER NOT NULL,
+                    category TEXT NOT NULL,
+                    prompt_version TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(model, context, category, prompt_version)
+                )
+                """
+            )
             self._ensure_column(connection, "benchmark_runs", "prompt_version", "TEXT NOT NULL DEFAULT 'unknown'")
             self._ensure_column(connection, "benchmark_runs", "prompt_tok_per_sec", "REAL NOT NULL DEFAULT 0")
             self._ensure_column(connection, "benchmark_runs", "ttft_seconds", "REAL")
@@ -289,4 +303,41 @@ class ModelScoutDB:
                 "output_path": output_path,
             }
             for created_at, total_candidates, test_now, surprise_test, watch, needs_data, ignored, output_path in rows
+        ]
+
+    def save_benchmark_tasks(self, tasks: Iterable[dict]) -> None:
+        with self._connect() as connection:
+            connection.executemany(
+                """
+                INSERT INTO benchmark_tasks (model, context, category, prompt_version, status)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(model, context, category, prompt_version) DO UPDATE SET status = excluded.status
+                """,
+                [
+                    (
+                        str(task.get("model", "unknown")),
+                        int(task.get("context", 0)),
+                        str(task.get("category", "unknown")),
+                        str(task.get("prompt_version", "unknown")),
+                        str(task.get("status", "PENDING_EXECUTION")),
+                    )
+                    for task in tasks
+                ],
+            )
+
+    def update_benchmark_task_status(self, model: str, context: int, category: str, status: str) -> None:
+        with self._connect() as connection:
+            connection.execute(
+                "UPDATE benchmark_tasks SET status = ? WHERE model = ? AND context = ? AND category = ?",
+                (status, model, context, category),
+            )
+
+    def list_benchmark_tasks(self) -> list[dict]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT model, context, category, prompt_version, status FROM benchmark_tasks ORDER BY id ASC"
+            ).fetchall()
+        return [
+            {"model": model, "context": context, "category": category, "prompt_version": prompt_version, "status": status}
+            for model, context, category, prompt_version, status in rows
         ]

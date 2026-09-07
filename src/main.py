@@ -140,9 +140,14 @@ def main():
 
     if args.run_plan:
         plan = load_queue(args.run_plan)
+        db = ModelScoutDB(args.db)
+        db.save_benchmark_tasks([{**task, "status": "RUNNING"} for task in plan])
         results = run_benchmark_plan(plan)
         if results:
-            ModelScoutDB(args.db).save_benchmark_runs(results)
+            db.save_benchmark_runs(results)
+            for result in results:
+                status = "COMPLETED" if result.get("status") == "OK" else "FAILED"
+                db.update_benchmark_task_status(result["model"], result["context"], result["category"], status)
         return
 
     if args.discover:
@@ -229,6 +234,7 @@ def main():
             args.contexts or config.get("benchmark", {}).get("contexts", [8192, 16384, 32768]),
         )
         output = args.output or str(ROOT / "reports" / "benchmark_plan.json")
+        ModelScoutDB(args.db).save_benchmark_tasks(plan)
         write_benchmark_plan(plan, output)
         print(json.dumps(plan, indent=2))
         print(f"Benchmark plan saved to: {output}")
