@@ -96,7 +96,7 @@ def main():
             enabled_sources={name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()},
         )
         ModelScoutDB(args.db).save_candidates(candidates)
-        report = build_report(candidates)
+        report = build_report(candidates, champions=config.get("baseline", []))
         print(report)
         return
 
@@ -107,7 +107,7 @@ def main():
         )
         db = ModelScoutDB(args.db)
         db.save_candidates(candidates)
-        report = build_report(candidates)
+        report = build_report(candidates, champions=config.get("baseline", []))
         output = args.output or str(ROOT / "reports" / f"{date.today().isoformat()}_model_scout.md")
         write_report(report, output)
         print(report)

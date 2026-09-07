@@ -72,3 +72,19 @@ def score_candidate(candidate: dict) -> dict:
         "recommendation": recommendation(score, tier),
     })
     return scored
+
+
+def champion_comparison(candidate: dict, champions: list[dict]) -> dict:
+    scored_candidate = score_candidate(candidate)
+    if not champions:
+        return {"candidate": candidate.get("name", "unknown"), "champion": None, "delta": None, "advantage": "unknown"}
+
+    scored_champions = [score_candidate(champion) for champion in champions]
+    champion = max(scored_champions, key=lambda item: item["score"])
+    delta = round(scored_candidate["score"] - champion["score"], 2)
+    return {
+        "candidate": scored_candidate["name"],
+        "champion": champion["name"],
+        "delta": delta,
+        "advantage": "challenger" if delta > 0 else "champion",
+    }

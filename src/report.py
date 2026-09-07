@@ -3,10 +3,10 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from src.scoring import score_candidate
+from src.scoring import champion_comparison, score_candidate
 
 
-def build_report(candidates: list[dict]) -> str:
+def build_report(candidates: list[dict], champions: list[dict] | None = None) -> str:
     scored = [score_candidate(candidate) for candidate in candidates]
     groups = {
         "TEST_NOW": "Test Now",
@@ -45,6 +45,18 @@ def build_report(candidates: list[dict]) -> str:
         name = candidate.get("name", "unknown")
         source = candidate.get("source", "unknown")
         lines.append(f"- {name} ({source}, {candidate['hardware_tier']}, {candidate['score']:.2f})")
+
+    if champions is not None:
+        lines.extend(["", "## Champion Comparison"])
+        for candidate in scored:
+            comparison = champion_comparison(candidate, champions)
+            if comparison["champion"] is None:
+                lines.append(f"- {comparison['candidate']}: no champion configured")
+            else:
+                lines.append(
+                    f"- {comparison['candidate']} vs {comparison['champion']}: "
+                    f"delta={comparison['delta']:+.2f} ({comparison['advantage']})"
+                )
 
     return "\n".join(lines)
 
