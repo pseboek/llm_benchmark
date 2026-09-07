@@ -35,6 +35,7 @@ def build_report(
     champions: list[dict] | None = None,
     scoring_config: dict | None = None,
     hardware_config: dict | None = None,
+    source_status: dict[str, dict] | None = None,
 ) -> str:
     scoring_config = scoring_config or {}
     hardware_limits = (hardware_config or {}).get("vram", {})
@@ -72,6 +73,12 @@ def build_report(
     source_counts = {source: sum(item.get("source") == source for item in candidates) for source in source_names}
     lines.extend(["", "## Source Coverage"])
     lines.extend(f"- {source}: {source_counts[source]}" for source in source_names)
+    if source_status:
+        lines.extend(["", "## Source Status"])
+        for source in source_names:
+            item = source_status.get(source, {"status": "UNKNOWN"})
+            detail = f", error={item['error']}" if item.get("error") else ""
+            lines.append(f"- {source}: {item.get('status', 'UNKNOWN')}{detail}")
     lines.extend(["", "## Recommendations"])
     for action, title in groups.items():
         lines.extend(["", f"### {title}"])
