@@ -1,0 +1,43 @@
+hardware:
+  gpu: "RTX 4080"
+  vram_gb: 16
+  system_ram_gb: 32
+  cpu: "Ryzen 7 7800X3D"
+  vram:
+    safe_gb: 13
+    borderline_gb: 18
+    experimental_gb: 24
+
+scoring:
+  coding: 0.25
+  reasoning: 0.20
+  general: 0.15
+  speed: 0.15
+  vram_efficiency: 0.10
+  context: 0.05
+  tool_agent: 0.05
+  freshness: 0.05
+
+thresholds:
+  test_now: 85
+  surprise: 80
+  watch: 70
+
+benchmark:
+  contexts: [8192, 16384, 32768]
+  max_candidates: 5
+
+sources:
+  ollama: {enabled: true}
+  huggingface: {enabled: true}
+  lmarena: {enabled: true}
+  artificial_analysis: {enabled: true}
+  swebench: {enabled: true}
+
+baseline:
+  - {name: "gpt-oss:20b", role: "general", generation_tps: 140.0}
+  - {name: "qwen2.5-coder:14b-instruct", role: "coding", generation_tps: 67.0}
+  - {name: "qwen3.5:9B", role: "fast-general", generation_tps: 98.0}
+  - {name: "deepseek-r1:8b", role: "reasoning", generation_tps: 110.0}
+  - {name: "gemma4:12b", role: "general", generation_tps: 70.0}
+  - {name: "deepseek-coder:latest", role: "ultra-fast-coding", generation_tps: 466.0}
