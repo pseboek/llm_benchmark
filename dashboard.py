@@ -118,6 +118,18 @@ def summarize_errors(runs: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_error_trend(runs: list[dict]) -> list[dict]:
+    counts: dict[tuple[str, str], int] = {}
+    for run in runs:
+        if run.get("status") == "ERROR":
+            key = (str(run.get("model", "unknown")), str(run.get("category", "unknown")))
+            counts[key] = counts.get(key, 0) + 1
+    return [
+        {"model": model, "category": category, "errors": count}
+        for (model, category), count in sorted(counts.items())
+    ]
+
+
 def summarize_latency(runs: list[dict]) -> list[dict]:
     grouped: dict[str, list[dict]] = {}
     for run in runs:
@@ -252,6 +264,7 @@ def render_dashboard(db_path: str | Path) -> None:
     show_table(st, "Quality by category", summarize_quality(runs), "Quality scores appear after a benchmark plan has run.")
     show_table(st, "Latency", summarize_latency(runs), "Latency metrics appear after a benchmark plan has run.")
     show_table(st, "Benchmark errors", summarize_errors(runs), "No failed benchmark runs recorded.")
+    show_table(st, "Error trend", summarize_error_trend(runs), "No error trend available.")
     show_table(st, "Throughput by context", summarize_context_runs(runs), "Context throughput appears after a successful benchmark run.")
     show_table(st, "Hardware telemetry", summarize_telemetry(runs), "Hardware telemetry appears after a successful benchmark run.")
     show_table(st, "Report history", summarize_report_history(data["report_snapshots"]), "Report history appears after the next report run.")
