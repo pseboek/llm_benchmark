@@ -36,6 +36,7 @@ def build_report(
     scoring_config: dict | None = None,
     hardware_config: dict | None = None,
     source_status: dict[str, dict] | None = None,
+    benchmark_runs: list[dict] | None = None,
 ) -> str:
     scoring_config = scoring_config or {}
     hardware_limits = (hardware_config or {}).get("vram", {})
@@ -105,6 +106,22 @@ def build_report(
             f"- {name} ({source}, {candidate['hardware_tier']}, {score_text}, "
             f"VRAM={candidate.get('vram_gb', 'unknown')} GB)"
         )
+
+    if benchmark_runs is not None:
+        evidence: dict[str, list[dict]] = {}
+        for run in benchmark_runs:
+            if run.get("status") == "OK":
+                evidence.setdefault(str(run.get("model", "unknown")), []).append(run)
+        lines.extend(["", "## Benchmark Evidence"])
+        if not evidence:
+            lines.append("- No successful benchmark runs available.")
+        for model, runs in sorted(evidence.items()):
+            speeds = [float(run.get("tok_per_sec", 0)) for run in runs]
+            qualities = [float(run["quality_score"]) for run in runs if run.get("quality_score") is not None]
+            quality_text = f"{sum(qualities) / len(qualities):.2f} quality" if qualities else "quality not assessed"
+            lines.append(
+                f"- {model}: {sum(speeds) / len(speeds):.2f} tok/s, {quality_text}, runs={len(runs)}"
+            )
 
     if champions is not None:
         lines.extend(["", "## Champion Comparison"])
