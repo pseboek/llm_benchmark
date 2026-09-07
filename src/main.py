@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
 from benchmark.runner import run_benchmark
 from src.database import ModelScoutDB
 from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
+from src.download_queue import build_download_plan, execute_download_plan, load_queue, write_download_plan
 from src.pipeline import discover_candidates
 from src.report import build_report, write_report
 from src.scoring import Candidate, hardware_tier, recommendation, score_candidate, weighted_score
@@ -97,6 +98,9 @@ def parse_args():
     parser.add_argument("--queue", action="store_true", help="Create a manual benchmark queue from actionable candidates")
     parser.add_argument("--max-candidates", type=int, default=5, help="Maximum candidates in the manual benchmark queue")
     parser.add_argument("--baseline-only", action="store_true", help="Build a queue or report from configured baseline data")
+    parser.add_argument("--download-queue", help="Create or apply a controlled Ollama download plan from a queue JSON")
+    parser.add_argument("--approve-models", nargs="*", default=[], help="Explicit model names approved for download")
+    parser.add_argument("--execute-downloads", action="store_true", help="Execute approved ollama pull commands")
     return parser.parse_args()
 
 
@@ -178,6 +182,16 @@ def main():
         write_benchmark_queue(queue, output)
         print(json.dumps(queue, indent=2))
         print(f"Queue saved to: {output}")
+        return
+
+    if args.download_queue:
+        plan = build_download_plan(load_queue(args.download_queue), set(args.approve_models))
+        if args.execute_downloads:
+            plan = execute_download_plan(plan)
+        output = args.output or str(ROOT / "reports" / "download_plan.json")
+        write_download_plan(plan, output)
+        print(json.dumps(plan, indent=2))
+        print(f"Download plan saved to: {output}")
         return
 
     candidates = build_demo_candidates(config)

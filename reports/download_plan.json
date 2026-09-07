@@ -1,0 +1,29 @@
+[
+  {
+    "model": "deepseek-coder:latest",
+    "command": [
+      "ollama",
+      "pull",
+      "deepseek-coder:latest"
+    ],
+    "status": "PENDING_APPROVAL"
+  },
+  {
+    "model": "gpt-oss:20b",
+    "command": [
+      "ollama",
+      "pull",
+      "gpt-oss:20b"
+    ],
+    "status": "PENDING_APPROVAL"
+  },
+  {
+    "model": "deepseek-r1:8b",
+    "command": [
+      "ollama",
+      "pull",
+      "deepseek-r1:8b"
+    ],
+    "status": "PENDING_APPROVAL"
+  }
+]
