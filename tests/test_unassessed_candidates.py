@@ -29,3 +29,33 @@ def test_report_labels_unassessed_candidates_explicitly():
     assert "NEEDS_DATA" in report
     assert "not assessed" in report
     assert "50.00" not in report
+
+
+def test_proprietary_cloud_model_is_flagged_not_local():
+    scored = score_candidate({"name": "Gemini 3.8 Flash", "source": "artificial_analysis"})
+
+    assert scored["score"] is None
+    assert scored["hardware_tier"] == "EXTERNAL_ONLY"
+    assert scored["recommendation"] == "NOT_LOCAL"
+    assert "ollama pull" in scored["rationale"]
+
+
+def test_open_weight_gpt_oss_is_not_flagged_as_proprietary():
+    scored = score_candidate({
+        "name": "gpt-oss:20b",
+        "source": "ollama",
+        "estimated_vram_gb": 12.85,
+    })
+
+    assert scored["recommendation"] != "NOT_LOCAL"
+    assert scored["hardware_tier"] != "EXTERNAL_ONLY"
+
+
+def test_report_lists_not_local_candidates_in_dedicated_section():
+    report = build_report([
+        {"name": "Claude 4.5 Opus", "source": "artificial_analysis"},
+        {"name": "gpt-oss:20b", "source": "ollama", "estimated_vram_gb": 12.85},
+    ])
+
+    assert "Not Locally Available (Proprietary)" in report
+    assert "Claude 4.5 Opus" in report
