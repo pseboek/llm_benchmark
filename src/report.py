@@ -30,6 +30,25 @@ def build_report_snapshot(
     }
 
 
+def benchmark_evidence_by_context(runs: list[dict]) -> list[dict]:
+    grouped: dict[tuple[str, int], list[dict]] = {}
+    for run in runs:
+        if run.get("status") == "OK":
+            grouped.setdefault((str(run.get("model", "unknown")), int(run.get("context", 0))), []).append(run)
+    evidence = []
+    for (model, context), rows in sorted(grouped.items()):
+        speeds = [float(row.get("tok_per_sec", 0)) for row in rows]
+        qualities = [float(row["quality_score"]) for row in rows if row.get("quality_score") is not None]
+        evidence.append({
+            "model": model,
+            "context": context,
+            "avg_tok_per_sec": round(sum(speeds) / len(speeds), 2),
+            "avg_quality_score": round(sum(qualities) / len(qualities), 2) if qualities else None,
+            "runs": len(rows),
+        })
+    return evidence
+
+
 def build_report(
     candidates: list[dict],
     champions: list[dict] | None = None,
@@ -121,6 +140,12 @@ def build_report(
             quality_text = f"{sum(qualities) / len(qualities):.2f} quality" if qualities else "quality not assessed"
             lines.append(
                 f"- {model}: {sum(speeds) / len(speeds):.2f} tok/s, {quality_text}, runs={len(runs)}"
+            )
+        lines.extend(["", "### By Context"])
+        for item in benchmark_evidence_by_context(benchmark_runs):
+            quality_text = f"{item['avg_quality_score']:.2f} quality" if item["avg_quality_score"] is not None else "quality not assessed"
+            lines.append(
+                f"- {item['model']} @ {item['context']}: {item['avg_tok_per_sec']:.2f} tok/s, {quality_text}, runs={item['runs']}"
             )
 
     if champions is not None:
