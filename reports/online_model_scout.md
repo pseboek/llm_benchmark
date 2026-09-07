@@ -6,6 +6,8 @@
 - Sources: ollama, huggingface, lmarena, artificial_analysis, swebench
 
 ## Executive Summary
+- Benchmark evidence: available
+- Benchmark progress: 20/20 completed (100.00%), pending=0, failed=0
 - Test Now: 2
 - Surprise Candidates: 0
 - Watchlist: 4
@@ -70,6 +72,10 @@
 
 ## Benchmark Evidence
 - deepseek-coder:latest: 420.39 tok/s, 75.71 quality, runs=21
+
+### By Context
+- deepseek-coder:latest @ 8192: 420.25 tok/s, 75.91 quality, runs=11
+- deepseek-coder:latest @ 16384: 420.55 tok/s, 75.50 quality, runs=10
 
 ## Champion Comparison
 - qwen3.6:27b-q4_K_M vs gpt-oss:20b: delta=not assessed (needs_data)
