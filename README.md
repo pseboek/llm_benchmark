@@ -100,6 +100,14 @@ streamlit run dashboard.py -- --db data/alternative.db
 
 Die Funktion `src/adaptive.py` kann historische Benchmark-Runs auswerten und eine vorgeschlagene Gewichtung berechnen. Die Änderung wird bewusst nicht automatisch in `config.yaml` geschrieben; dadurch bleibt jede Anpassung nachvollziehbar und reviewbar.
 
+### 7) Manuelle Benchmark-Queue erzeugen
+
+```powershell
+python src/main.py --queue --baseline-only --output reports/benchmark_queue.json
+```
+
+Die Queue enthält höchstens `--max-candidates` Modelle mit `TEST_NOW` oder `SURPRISE_TEST`. Sie startet keinen Download und keinen Benchmark automatisch; jedes Element bleibt zunächst auf `PENDING_REVIEW`.
+
 ## Projektstruktur
 
 ```text
@@ -111,7 +119,10 @@ Die Funktion `src/adaptive.py` kann historische Benchmark-Runs auswerten und ein
 ├── ollama_benchmark.py
 ├── dashboard.py
 ├── benchmark/
-│   └── runner.py
+│   ├── runner.py
+│   └── prompts/
+│       ├── __init__.py
+│       └── personal.py
 ├── src/
 │   ├── main.py
 │   ├── pipeline.py
@@ -149,7 +160,7 @@ Die Funktion `src/adaptive.py` kann historische Benchmark-Runs auswerten und ein
 - Die Kandidaten werden anhand der konfigurierten Gewichtung bewertet und in `TEST_NOW`, `SURPRISE_TEST`, `WATCH` und `IGNORE` eingeteilt.
 - Die Quellenadapter sind fehlertolerant: eine nicht erreichbare externe Quelle verhindert nicht die lokale Ollama-Auswertung.
 - Welche Quellen aktiv sind, wird im Abschnitt `sources` von `config.yaml` gesteuert.
-- Die Dokumentation in [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) beschreibt die nächste Phasen-Planung für Champion/Challenger, Hardware-Fit und Automated Reports.
+- [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) beschreibt Architektur, Datenmodell und verbleibende Betriebsschritte.
 
 ## Nächste Erweiterungen
 

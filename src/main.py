@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from datetime import date
 from pathlib import Path
@@ -13,6 +14,7 @@ if str(ROOT) not in sys.path:
 
 from benchmark.runner import run_benchmark
 from src.database import ModelScoutDB
+from src.benchmark_queue import build_benchmark_queue, write_benchmark_queue
 from src.pipeline import discover_candidates
 from src.report import build_report, write_report
 from src.scoring import Candidate, hardware_tier, recommendation, score_candidate, weighted_score
@@ -55,6 +57,15 @@ def build_baseline_records(config):
             "source": "config",
             "role": item.get("role", "baseline"),
             "generation_tps": float(item.get("generation_tps", 0.0)),
+            "coding": 90.0,
+            "reasoning": 88.0,
+            "general": 85.0,
+            "speed": min(100.0, float(item.get("generation_tps", 0.0)) / 1.5),
+            "vram_efficiency": 78.0,
+            "context": 90.0,
+            "tool_agent": 80.0,
+            "freshness": 90.0,
+            "vram_gb": 15.5,
         }
         for item in config.get("baseline", [])
     ]
@@ -83,6 +94,9 @@ def parse_args():
     parser.add_argument("--db", default=str(ROOT / "data" / "model_scout.db"), help="SQLite history database path")
     parser.add_argument("--output", help="Report output path; defaults to reports/YYYY-MM-DD_model_scout.md")
     parser.add_argument("--offline", action="store_true", help="Use local Ollama only and fall back to configured baseline")
+    parser.add_argument("--queue", action="store_true", help="Create a manual benchmark queue from actionable candidates")
+    parser.add_argument("--max-candidates", type=int, default=5, help="Maximum candidates in the manual benchmark queue")
+    parser.add_argument("--baseline-only", action="store_true", help="Build a queue or report from configured baseline data")
     return parser.parse_args()
 
 
@@ -135,6 +149,19 @@ def main():
         write_report(report, output)
         print(report)
         print(f"Report saved to: {output}")
+        return
+
+    if args.queue:
+        enabled_sources = {name: bool(settings.get("enabled", False)) for name, settings in config.get("sources", {}).items()}
+        if args.offline:
+            enabled_sources = {name: name == "ollama" for name in enabled_sources}
+        candidates = [] if args.baseline_only else discover_candidates(huggingface_limit=args.hf_limit, enabled_sources=enabled_sources)
+        candidates = candidates or build_baseline_records(config)
+        output = args.output or str(ROOT / "reports" / "benchmark_queue.json")
+        queue = build_benchmark_queue(candidates, max_candidates=args.max_candidates)
+        write_benchmark_queue(queue, output)
+        print(json.dumps(queue, indent=2))
+        print(f"Queue saved to: {output}")
         return
 
     candidates = build_demo_candidates(config)
