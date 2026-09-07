@@ -400,3 +400,10 @@ class ModelScoutDB:
                 "SELECT COUNT(*) FROM recommendations WHERE score IS NOT NULL"
             ).fetchone()[0]
             return summary
+
+    def recover_running_tasks(self) -> int:
+        with self._connect() as connection:
+            cursor = connection.execute(
+                "UPDATE benchmark_tasks SET status = 'PENDING_EXECUTION' WHERE status = 'RUNNING'"
+            )
+            return cursor.rowcount

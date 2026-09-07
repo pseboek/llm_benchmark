@@ -111,6 +111,7 @@ def parse_args():
     parser.add_argument("--db-summary", action="store_true", help="Show a compact SQLite data summary")
     parser.add_argument("--task-status", action="store_true", help="Show benchmark task status counts")
     parser.add_argument("--retry-failed-plan", help="Reset failed benchmark tasks to pending execution")
+    parser.add_argument("--recover-running-tasks", action="store_true", help="Reset stale RUNNING tasks after an interrupted process")
     return parser.parse_args()
 
 
@@ -141,6 +142,11 @@ def main():
             if task.get("status") == "PENDING_EXECUTION":
                 db.update_benchmark_task_status(task["model"], task["context"], task["category"], "PENDING_EXECUTION")
         print(json.dumps({"reset_tasks": sum(task.get("status") == "PENDING_EXECUTION" for task in plan)}, indent=2))
+        return
+
+    if args.recover_running_tasks:
+        recovered = ModelScoutDB(args.db).recover_running_tasks()
+        print(json.dumps({"recovered_tasks": recovered}, indent=2))
         return
 
     if args.suggest_weights:
@@ -181,7 +187,8 @@ def main():
             for result in results:
                 status = "COMPLETED" if result.get("status") == "OK" else "FAILED"
                 db.update_benchmark_task_status(result["model"], result["context"], result["category"], status)
-            Path(args.run_plan).write_text(json.dumps(apply_result_statuses(all_plan, results), indent=2), encoding="utf-8")
+            attempted = {(task.get("model"), task.get("context"), task.get("category")) for task in plan}
+            Path(args.run_plan).write_text(json.dumps(apply_result_statuses(all_plan, results, attempted), indent=2), encoding="utf-8")
             candidates = [
                 enrich_from_benchmark(enrich_from_baseline(candidate, config.get("baseline", [])), db.list_benchmark_runs())
                 for candidate in db.list_candidates()
