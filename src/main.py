@@ -106,6 +106,7 @@ def parse_args():
     parser.add_argument("--suggest-weights", action="store_true", help="Suggest scoring weights from benchmark history")
     parser.add_argument("--benchmark-plan", help="Create benchmark tasks from an approved model queue")
     parser.add_argument("--run-plan", help="Execute a previously generated benchmark plan")
+    parser.add_argument("--dry-run-plan", help="Show pending benchmark tasks without executing Ollama")
     return parser.parse_args()
 
 
@@ -148,6 +149,17 @@ def main():
             for result in results:
                 status = "COMPLETED" if result.get("status") == "OK" else "FAILED"
                 db.update_benchmark_task_status(result["model"], result["context"], result["category"], status)
+        return
+
+    if args.dry_run_plan:
+        plan = load_queue(args.dry_run_plan)
+        pending = [task for task in plan if task.get("status") == "PENDING_EXECUTION"]
+        print(json.dumps({
+            "pending_tasks": len(pending),
+            "models": sorted({task.get("model") for task in pending}),
+            "contexts": sorted({task.get("context") for task in pending}),
+            "categories": list(dict.fromkeys(task.get("category") for task in pending)),
+        }, indent=2))
         return
 
     if args.discover:

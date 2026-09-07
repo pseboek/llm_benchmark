@@ -152,6 +152,14 @@ python src/main.py --run-plan reports/benchmark_plan.json --db data/model_scout.
 
 Dabei werden ausschließlich Tasks mit `PENDING_EXECUTION` ausgeführt und die Ergebnisse anschließend in SQLite gespeichert.
 
+Vor der Ausführung kann der Plan sicher geprüft werden:
+
+```powershell
+python src/main.py --dry-run-plan reports/benchmark_plan.json
+```
+
+Der Dry Run startet kein Ollama und verändert keine Benchmark-Daten.
+
 ## Projektstruktur
 
 ```text

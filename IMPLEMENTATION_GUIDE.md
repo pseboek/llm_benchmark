@@ -553,6 +553,9 @@ Nach einer expliziten Freigabe erzeugt `src/benchmark_plan.py` aus den
 freigegebenen Modellen, konfigurierten Kontextgrößen und dem versionierten
 Promptkatalog reproduzierbare `PENDING_EXECUTION`-Tasks.
 
+Vor der Ausführung kann `--dry-run-plan` die offenen Tasks anzeigen, ohne
+Ollama zu starten oder Benchmark-Daten zu verändern.
+
 ### V7
 adaptive Gewichte anhand historischer Benchmarks (Vorschlag in `src/adaptive.py` und über `--suggest-weights`, keine automatische Konfigurationsänderung)
 
