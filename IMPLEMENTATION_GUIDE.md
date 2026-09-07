@@ -211,12 +211,14 @@ llm-model-scout/
 ├── config.yaml
 ├── .env.example
 ├── .gitignore
+├── dashboard.py
 ├── src/
 │   ├── __init__.py
 │   ├── main.py
 │   ├── scoring.py
 │   ├── database.py
 │   ├── report.py
+│   ├── adaptive.py
 │   └── sources/
 │       ├── __init__.py
 │       ├── ollama.py
@@ -226,6 +228,8 @@ llm-model-scout/
 │       └── swebench.py
 ├── benchmark/
 │   ├── prompts/
+│   │   ├── __init__.py
+│   │   └── personal.py
 │   └── runner.py
 ├── data/
 ├── reports/
@@ -384,6 +388,11 @@ Prompts werden versioniert und zwischen Runs nicht verändert.
 
 Das Ziel ist nicht ein allgemeiner LLM-Test, sondern ein **persönlicher Benchmark für die tatsächlichen Aufgaben**.
 
+Die erste versionierte Sammlung liegt in `benchmark/prompts/personal.py` und
+enthält die zehn Kategorien als `PROMPT_VERSION = "v1"`. Änderungen an den
+Aufgaben sollen eine neue Prompt-Version erhalten, damit historische Runs
+vergleichbar bleiben.
+
 ---
 
 ## 16. Entscheidungslogik
@@ -463,6 +472,11 @@ Download und Benchmark zunächst bewusst manuell auslösen.
 
 Später kann die Pipeline für `TEST_NOW` automatisiert werden.
 
+Der aktuelle Stand stellt die CLI und das Dashboard bereit. Die eigentliche
+Ausführung über Windows Task Scheduler bleibt absichtlich ein lokaler
+Betriebsschritt, damit keine ungeprüften externen Downloads oder Ollama-Runs
+automatisch gestartet werden.
+
 ---
 
 ## 19. API-Sicherheit
@@ -498,16 +512,16 @@ Ollama-Benchmark integrieren
 SQLite-Historie
 
 ### V4
-Streamlit-Dashboard
+Streamlit-Dashboard (implementiert in `dashboard.py`)
 
 ### V5
-automatischer Champion/Challenger-Vergleich
+automatischer Champion/Challenger-Vergleich (implementiert in `src/scoring.py` und `src/report.py`)
 
 ### V6
 automatische Downloads ausgewählter Kandidaten
 
 ### V7
-adaptive Gewichte anhand historischer Benchmarks
+adaptive Gewichte anhand historischer Benchmarks (Vorschlag in `src/adaptive.py`, keine automatische Konfigurationsänderung)
 
 ---
 
