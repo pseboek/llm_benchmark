@@ -280,7 +280,8 @@ python src/main.py --recover-running-tasks --db data/model_scout.db
 - Reports enthalten zusätzlich eine Benchmark-Evidence mit gemessener Geschwindigkeit, Quality-Score, erfolgreicher Run-Anzahl und Kontextvergleich.
 - Fehlerhafte Benchmark-Runs speichern ihren Fehlertext in SQLite, damit Timeouts und Ollama-Probleme im Dashboard nachvollziehbar bleiben.
 - TTFT wird im Benchmark über Ollama-Streaming bis zum ersten Antworttoken gemessen und in CSV sowie SQLite gespeichert.
-- Wenn verfügbar, werden zusätzlich GPU-Auslastung, GPU-Speicher, RAM-Nutzung und CPU-Auslastung über `nvidia-smi` und `psutil` erfasst.
+- Wenn verfügbar, werden zusätzlich GPU-Auslastung, GPU-Speicher, RAM-Nutzung und CPU-Auslastung über `nvidia-smi` und `psutil` erfasst. Bei Multi-GPU-Systemen werden Anzahl, mittlere/peak GPU-Auslastung, aggregierter Speicher und Speicherauslastung gespeichert.
+- Neue Benchmark-Runs speichern außerdem einen UTC-Zeitstempel, Messdauer sowie Vorher/Nachher-Deltas und Peak-Werte für GPU, RAM und CPU; ältere Runs bleiben mit den bisherigen Feldern kompatibel.
 - Ollama-Kandidaten werden über `/api/show` um Architektur, Quantisierung, Parametergröße und Kontextlänge angereichert.
 - Hugging Face filtert bekannte Nicht-Text-Generationsmodelle wie Embedding- und Encoder-Modelle aus der LLM-Kandidatenliste.
 - Externe Quellen verwenden `.env`-Tokens, JSON-Validierung, Timeouts und Retries für temporäre HTTP-Fehler.

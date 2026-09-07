@@ -538,6 +538,11 @@ ergänzt werden.
 Gespeicherte erfolgreiche Runs werden bei der Report-Erzeugung wieder in die
 Kandidatenprofile und deren Score übernommen.
 
+Die Hardware-Telemetrie wird pro Benchmark-Run vor und nach der Anfrage erfasst.
+GPU-Werte werden über alle von `nvidia-smi` gemeldeten Geräte aggregiert. Neben
+Durchschnitts- und Peak-Werten werden Messdauer sowie Deltas für GPU, Speicher,
+RAM und CPU gespeichert. Nicht verfügbare Sensoren bleiben `NULL`.
+
 Jeder Kandidat wird außerdem als `ASSESSED`, `METADATA_ONLY` oder `NEEDS_DATA`
 gekennzeichnet. Champion/Challenger-Vergleiche verwenden verfügbare lokale
 Benchmarkprofile für Speed- und Quality-Deltas.

@@ -7,7 +7,7 @@ from pathlib import Path
 from statistics import mean
 
 from benchmark.prompts import PERSONAL_PROMPTS, PROMPT_VERSION
-from src.telemetry import capture_telemetry
+from src.telemetry import capture_telemetry, summarize_telemetry_samples
 from src.grading import grade_response
 
 # ============================================================
@@ -264,6 +264,7 @@ def run_benchmark():
                 )
 
                 try:
+                    telemetry_before = capture_telemetry()
                     result = generate(
                         model=model,
                         prompt=prompt,
@@ -271,6 +272,11 @@ def run_benchmark():
                         measure_ttft=True,
                     )
                     telemetry_after = capture_telemetry()
+                    telemetry_run = {
+                        **telemetry_after,
+                        **summarize_telemetry_samples(telemetry_before, telemetry_after),
+                        "telemetry_duration_seconds": result["elapsed"],
+                    }
 
                     print(
                         f"{result['tok_per_sec']:>7.2f} tok/s"
@@ -302,7 +308,7 @@ def run_benchmark():
 
                         "prompt_tok_per_sec": result["prompt_tok_per_sec"],
                         "ttft_seconds": result["ttft_seconds"],
-                        **telemetry_after,
+                        **telemetry_run,
 
                         "load_seconds":
                             result["load_duration_ns"]
@@ -330,6 +336,7 @@ def run_benchmark():
                         "category": category,
                         "prompt_version": PROMPT_VERSION,
                         "status": "ERROR",
+                        "telemetry_captured_at": None,
                         "tokens": 0,
                         "generation_seconds": 0,
                         "tok_per_sec": 0,
@@ -337,11 +344,23 @@ def run_benchmark():
                         "prompt_seconds": 0,
                         "prompt_tok_per_sec": 0,
                         "ttft_seconds": None,
+                        "gpu_count": None,
                         "gpu_utilization_percent": None,
+                        "gpu_utilization_peak_percent": None,
                         "gpu_memory_used_mb": None,
                         "gpu_memory_total_mb": None,
+                        "gpu_memory_utilization_percent": None,
                         "ram_used_mb": None,
                         "cpu_percent": None,
+                        "telemetry_duration_seconds": None,
+                        "gpu_utilization_percent_delta": None,
+                        "gpu_utilization_percent_peak": None,
+                        "gpu_memory_used_mb_delta": None,
+                        "gpu_memory_used_mb_peak": None,
+                        "ram_used_mb_delta": None,
+                        "ram_used_mb_peak": None,
+                        "cpu_percent_delta": None,
+                        "cpu_percent_peak": None,
                         "load_seconds": 0,
                         "total_seconds": 0,
                         "response": "",
@@ -373,6 +392,24 @@ def run_benchmark():
         "prompt_seconds",
         "prompt_tok_per_sec",
         "ttft_seconds",
+        "telemetry_captured_at",
+        "telemetry_duration_seconds",
+        "gpu_count",
+        "gpu_utilization_percent",
+        "gpu_utilization_peak_percent",
+        "gpu_utilization_percent_delta",
+        "gpu_utilization_percent_peak",
+        "gpu_memory_used_mb",
+        "gpu_memory_total_mb",
+        "gpu_memory_utilization_percent",
+        "gpu_memory_used_mb_delta",
+        "gpu_memory_used_mb_peak",
+        "ram_used_mb",
+        "ram_used_mb_delta",
+        "ram_used_mb_peak",
+        "cpu_percent",
+        "cpu_percent_delta",
+        "cpu_percent_peak",
         "quality_score",
         "quality_method",
         "quality_confidence",
