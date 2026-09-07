@@ -87,6 +87,19 @@ def summarize_report_history(snapshots: list[dict]) -> list[dict]:
     ]
 
 
+def summarize_quality(runs: list[dict]) -> list[dict]:
+    grouped: dict[tuple[str, str], list[float]] = {}
+    for run in runs:
+        if run.get("status") != "OK" or run.get("quality_score") is None:
+            continue
+        key = (str(run.get("model", "unknown")), str(run.get("category", "unknown")))
+        grouped.setdefault(key, []).append(float(run["quality_score"]))
+    return [
+        {"model": model, "category": category, "avg_quality_score": round(sum(values) / len(values), 2), "runs": len(values)}
+        for (model, category), values in sorted(grouped.items())
+    ]
+
+
 def filter_dashboard_data(
     data: dict[str, list[dict]],
     *,
@@ -153,6 +166,7 @@ def render_dashboard(db_path: str | Path) -> None:
 
     show_table(st, "Recommendations", recommendations, "No recommendations match the selected filters.")
     show_table(st, "Benchmark throughput", summarize_runs(runs), "No successful benchmark runs are stored yet.")
+    show_table(st, "Quality by category", summarize_quality(runs), "Quality scores appear after a benchmark plan has run.")
     show_table(st, "Throughput by context", summarize_context_runs(runs), "Context throughput appears after a successful benchmark run.")
     show_table(st, "Hardware telemetry", summarize_telemetry(runs), "Hardware telemetry appears after a successful benchmark run.")
     show_table(st, "Report history", summarize_report_history(data["report_snapshots"]), "Report history appears after the next report run.")
