@@ -20,18 +20,22 @@ def discover_candidates(
         "artificial_analysis": True,
         "swebench": True,
     }
+    loaders = {
+        "ollama": lambda: list_local_candidates(ollama_url) if ollama_url else list_local_candidates(),
+        "huggingface": lambda: list_hf_candidates(limit=huggingface_limit),
+        "lmarena": list_lmarena_candidates,
+        "artificial_analysis": list_artificial_analysis_candidates,
+        "swebench": list_swebench_candidates,
+    }
     candidates: list[dict] = []
-
-    if enabled.get("ollama", True):
-        candidates.extend(list_local_candidates(ollama_url) if ollama_url else list_local_candidates())
-    if enabled.get("huggingface", True):
-        candidates.extend(list_hf_candidates(limit=huggingface_limit))
-    if enabled.get("lmarena", True):
-        candidates.extend(list_lmarena_candidates())
-    if enabled.get("artificial_analysis", True):
-        candidates.extend(list_artificial_analysis_candidates())
-    if enabled.get("swebench", True):
-        candidates.extend(list_swebench_candidates())
+    for source, loader in loaders.items():
+        if not enabled.get(source, True):
+            continue
+        try:
+            candidates.extend(loader())
+        except Exception:
+            # A broken/misconfigured source must not abort discovery for the others.
+            continue
 
     return deduplicate_candidates(candidates)
 
